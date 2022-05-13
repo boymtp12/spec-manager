@@ -1,0 +1,53 @@
+.logo-icon {
+    padding: 10px;
+    font-size: 22px;
+    background: blanchedalmond;
+    border-radius: 9px;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 44px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f4f3f3;
+    z-index: 100;
+}
+
+.logo-header {
+    font-size: 20px;
+    font-weight: 600;
+    color: #de9104;
+    border-radius: 4px;
+    line-height: 47px;
+    padding: 0 12px;
+}
+
+.body {
+    margin: 100px auto;
+}
+
+.text-log {
+    position: relative;
+    display: inline-block;
+    padding: 15px 22px;
+    font-weight: 500;
+    font-size: 15px;
+    margin-right: 32px;
+}
+
+.line {
+    position: absolute;
+    right: 129px;
+    top: 24px;
+    width: 1.5px;
+    height: 32px;
+    background: #ccc;
+}
+
+.text-register {
+    font-weight: 600;
+    color: rgb(37, 87, 167);
+}
