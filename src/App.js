@@ -6,7 +6,7 @@ function App() {
   return (
     <div className='App container'>
         <TabsQl />
-        <Test1 />
+        {/* <Test /> */}
     </div>
   )
 }
