@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Autocomplete, Badge, Tab, Tabs, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import $ from 'jquery'
@@ -8,9 +9,10 @@ import TableQl from './TableQl'
 import { ajaxCallGet, URL_API_GET } from '../../libs/base'
 import Edit from '../Edit'
 import { Link } from 'react-router-dom'
-import "../../css_main/css/tabsQl.css"
+import '../../css_main/css/tabsQl.css'
+import { changeData } from '../../reducer_action/DataUserToolReducerAction'
 
-function TabPanel(props) {
+function TabPanel (props) {
   const { children, value, index, ...other } = props
 
   return (
@@ -36,13 +38,14 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired
 }
 
-function a11yProps(index) {
+function a11yProps (index) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`
   }
 }
-function createData(id,
+function createData (
+  id,
   mathietbi,
   matool,
   hovaten,
@@ -67,25 +70,32 @@ function createData(id,
   }
 }
 
-export default function TabsQl() {
+export default function TabsQl () {
+  const dispatch = useDispatch()
+
   const [value, setValue] = React.useState(0)
   const [accountChinhThuc, setAccountChinhThuc] = React.useState(0)
-  const [check, setCheck] = React.useState(0)
-  const [mainDataUser, setMainDataUser] = React.useState([])
-  const [mainDataUser2, setMainDataUser2] = React.useState([])
-  const [autoLabel, setAutoLabel] = React.useState([])
-  const [searchTerm, setSearchTerm] = React.useState("")
+
+  const mainDataUser = useSelector(state => state.userTool.dataUser)
+  // const [mainDataUser, setMainDataUser] = React.useState()
+
+  const [autoLabel, setAutoLabel] = React.useState()
+  const [searchTerm, setSearchTerm] = React.useState('')
   const [time, setTime] = React.useState(0)
+
   React.useEffect(() => {
-    setCheck(Math.random())
+    // renderData()
   }, [mainDataUser])
+
   React.useEffect(() => {
     let dataa = []
     let label = []
-    ajaxCallGet(`user-tool?queries=clMaTool=GoodChild`).then(rs => {
-      rs.map(item => {
+    ajaxCallGet(`user-tool?queries=clMaTool=GoodChild`).then(async rs => {
+      for (let x in rs) {
+        let item = rs[x]
         dataa.push(
-          createData(item.clId,
+          createData(
+            item.clId,
             item.clMaThietBi,
             item.clMaTool,
             item.clHoTen,
@@ -99,14 +109,28 @@ export default function TabsQl() {
         )
         label.push({ label: item.clSdt, year: item.clMaThietBi })
         setAutoLabel(label)
-      })
-      setMainDataUser(dataa)
-      setMainDataUser2(dataa)
+      }
+      // setMainDataUser(dataa)
+      const action2 = changeData(dataa)
+      await dispatch(action2)
+      renderData()
     })
   }, [])
-
+  //   handleChange: function (e) {
+  //     // 1. Make a shallow copy of the items
+  //     let items = [...this.state.items];
+  //     // 2. Make a shallow copy of the item you want to mutate
+  //     let item = {...items[1]};
+  //     // 3. Replace the property you're intested in
+  //     item.name = 'newName';
+  //     // 4. Put it back into our array. N.B. we are mutating the array here, but that's why we made a copy first
+  //     items[1] = item;
+  //     // 5. Set the state to our new copy
+  //     this.setState({items});
+  // }
   const handleData = (type, data) => {
     if (data.length > 0) {
+      console.log(data)
       return (
         <TableQl type={type} onCountItem={setAccountChinhThuc} data={data} />
       )
@@ -116,52 +140,49 @@ export default function TabsQl() {
     setValue(newValue)
   }
 
-  let inputHandler = (e) => {
+  const inputHandler = e => {
     // console.log("kdkdkd");
-    // clearTimeout(time)
-    // let tm = setTimeout(() => {
-    // console.log("jdjdjd");
-
-    var inputCheck = e.target.value;
-      console.log(inputCheck);
-      let dataa = [];
-      let label = [];
-      fetch(URL_API_GET + `user-tool/find-like-sdt/?sdt=${inputCheck}`)
-        .then(response => response.json())
-        .then(rs => {
-          console.log(rs.data)
-          rs.data.map(item => {
-            dataa.push(createData(item.clId,
-              item.clMaThietBi,
-              item.clMaTool,
-              item.clHoTen,
-              item.clSdt,
-              item.clGmail,
-              item.clChucVu,
-              item.clNoiLamViec,
-              item.clNgayDangKy,
-              item.clNgayHetHan))
-
-            label.push({ label: item.clSdt, year: item.clMaThietBi })
-            setAutoLabel(label)
-          })
-          console.log(dataa)
-          setMainDataUser(dataa)
-          setMainDataUser2(dataa)
-        })
-    // }, 1000);
-    // setTime(tm)
+    clearTimeout(time)
+    let tm = setTimeout(async () => {
+      var inputCheck = e.target.value
+      let dataa = []
+      let label = []
+      let rs = await fetch(
+        URL_API_GET + `user-tool/find-like-sdt?sdt=${inputCheck}`
+      ).then(response => response.json())
+      for (let x in rs.data) {
+        let item = rs.data[x]
+        dataa.push(
+          createData(
+            item.clId,
+            item.clMaThietBi,
+            item.clMaTool,
+            item.clHoTen,
+            item.clSdt,
+            item.clGmail,
+            item.clChucVu,
+            item.clNoiLamViec,
+            item.clNgayDangKy,
+            item.clNgayHetHan
+          )
+        )
+        label.push({ label: item.clSdt, year: item.clMaThietBi })
+        setAutoLabel(label)
+      }
+      // setMainDataUser([...dataa])
+      const action2 = changeData(dataa)
+      dispatch(action2)
+    }, 1000)
+    setTime(tm)
   }
 
-  console.log(mainDataUser);
-  console.log(mainDataUser2);
-
   const renderData = () => {
+    let data = mainDataUser
     return (
       <div className='w-100'>
         <div className='header mt-2 d-flex justify-content-between'>
           <div>
-            <i className="logo-icon fab fa-accusoft"></i>
+            <i className='logo-icon fab fa-accusoft'></i>
             <span className='logo-header mb-0'>GoodChild</span>
           </div>
           <div>
@@ -172,11 +193,14 @@ export default function TabsQl() {
               label='Tìm kiếm'
               variant='outlined'
             />
-            <Link className="text-log" to='/login'>Đăng nhập</Link >
-            <div className="line"></div>
-            <Link className="text-register" to='/register'>Đăng ký</Link >
+            <Link className='text-log' to='/login'>
+              Đăng nhập
+            </Link>
+            <div className='line'></div>
+            <Link className='text-register' to='/register'>
+              Đăng ký
+            </Link>
           </div>
-
         </div>
         <Box
           sx={{ width: '80%' }}
@@ -196,24 +220,30 @@ export default function TabsQl() {
             <Tab label='Hết hạn' {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            {handleData(1, mainDataUser2)}
+            {handleData(1, data)}
           </TabPanel>
           <TabPanel value={value} index={1}>
-            {handleData(2, mainDataUser2)}
+            {handleData(2, data)}
           </TabPanel>
           <TabPanel value={value} index={2}>
-            {handleData(3, mainDataUser2)}
+            {handleData(3, data)}
           </TabPanel>
           <TabPanel value={value} index={3}>
-            {handleData(4, mainDataUser2)}
+            {handleData(4, data)}
           </TabPanel>
         </Box>
       </div>
     )
-
-
   }
-
-  return renderData()
-
+  try {
+    if (mainDataUser.length > 0) {
+      return renderData()
+    } else {
+      const action2 = changeData([])
+      dispatch(action2)
+    }
+  } catch (err) {
+    const action2 = changeData([])
+    dispatch(action2)
+  }
 }

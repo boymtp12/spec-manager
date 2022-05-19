@@ -22,13 +22,16 @@ import { visuallyHidden } from '@mui/utils'
 import { ajaxCallGet, ajaxCallPost, URL_API_GET } from './../../libs/base'
 import { toast } from 'wc-toast'
 import Edit from '../Edit'
-import Button from '@mui/material/Button';
+import Button from '@mui/material/Button'
 import { Link } from 'react-router-dom'
-import Stack from '@mui/material/Stack';
+import Stack from '@mui/material/Stack'
+import { useDispatch, useSelector } from 'react-redux'
+import { changeData } from '../../reducer_action/DataUserToolReducerAction'
 
+const userToolContext = React.createContext()
 
-
-function createData(id,
+function createData (
+  id,
   mathietbi,
   matool,
   hovaten,
@@ -53,9 +56,7 @@ function createData(id,
   }
 }
 
-
-
-function descendingComparator(a, b, orderBy) {
+function descendingComparator (a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1
   }
@@ -65,7 +66,7 @@ function descendingComparator(a, b, orderBy) {
   return 0
 }
 
-function getComparator(order, orderBy) {
+function getComparator (order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -73,7 +74,7 @@ function getComparator(order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
+function stableSort (array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
@@ -118,13 +119,13 @@ const headCells = [
     id: 'ngaydangky',
     numeric: false,
     disablePadding: false,
-    label: 'Ngày đăng ký',
+    label: 'Ngày đăng ký'
   },
   {
     id: 'ngayhethan',
     numeric: false,
     disablePadding: false,
-    label: 'Ngày hết hạn',
+    label: 'Ngày hết hạn'
   },
   {
     id: 'gmail',
@@ -156,7 +157,7 @@ const headCells = [
   }
 ]
 
-function EnhancedTableHead(props) {
+function EnhancedTableHead (props) {
   const {
     onSelectAllClick,
     order,
@@ -196,7 +197,6 @@ function EnhancedTableHead(props) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
-
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -275,13 +275,11 @@ const EnhancedTableToolbar = props => {
   )
 }
 
-
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 }
 
-export default function TableQl(props) {
-
+export default function TableQl (props) {
   const [order, setOrder] = React.useState('asc')
   const [rows, setRows] = React.useState([])
   const [typee, setTypee] = React.useState(props.type)
@@ -290,12 +288,13 @@ export default function TableQl(props) {
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [dense, setDense] = React.useState(false)
-  const [mainDataUser, setMainDataUser] = React.useState(props.data)
+  // const [mainDataUser, setMainDataUser] = React.useState(props.data)
+  const dispatch = useDispatch()
+  const mainDataUser = useSelector(state => state.userTool.dataUser)
 
   const [rowsPerPage, setRowsPerPage] = React.useState(25)
 
   const [date, setDate] = React.useState('')
-
 
   React.useEffect(() => {
     let arr = mainDataUser
@@ -326,6 +325,10 @@ export default function TableQl(props) {
           var c = new Date(item.ngayhethan)
           return c < date
         })
+        props.onCountItem(arr.length)
+        setRows(arr)
+        break
+      default:
         props.onCountItem(arr.length)
         setRows(arr)
         break
@@ -378,104 +381,98 @@ export default function TableQl(props) {
 
   const handleChangeResDate = (e, id) => {
     setDate(e.target.value)
-    ajaxCallGet('user-tool' + '/' + id)
-      .then(rs => {
+    ajaxCallGet('user-tool' + '/' + id).then(rs => {
+      console.log(rs)
+      let data = {
+        clId: id,
+        clMaThietBi: rs.clMaThietBi,
+        clMaTool: rs.clMaTool,
+        clTenSanPham: rs.clTenSanPham,
+        clHoTen: rs.clHoTen,
+        clSdt: rs.clSdt,
+        clGmail: rs.clGmail,
+        clChucVu: rs.clChucVu,
+        clNoiLamViec: rs.clNoiLamViec,
+        clNgayDangKy: e.target.value,
+        clNgayHetHan: rs.clNgayHetHan,
+        clCheDo: rs.clCheDo,
+        clMatKhau: rs.clMatKhau,
+        clPhanMemChoPhep: rs.clPhanMemChoPhep,
+        clWebCanChan: rs.clWebCanChan,
+        clWebChoChay: rs.clWebChoChay,
+        clPmDaChan: rs.clPmDaChan,
+        clWebDaChan: rs.clWebDaChan,
+        clTrangThai: rs.clTrangThai,
+        clLichSuWeb: rs.clLichSuWeb,
+        clThoiGianBat: rs.clThoiGianBat,
+        clThoiGianTat: rs.clThoiGianTat
+      }
+      ajaxCallPost('user-tool', data).then(rs => {
         console.log(rs)
-        let data = {
-          "clId": id,
-          "clMaThietBi": rs.clMaThietBi,
-          "clMaTool": rs.clMaTool,
-          "clTenSanPham": rs.clTenSanPham,
-          "clHoTen": rs.clHoTen,
-          "clSdt": rs.clSdt,
-          "clGmail": rs.clGmail,
-          "clChucVu": rs.clChucVu,
-          "clNoiLamViec": rs.clNoiLamViec,
-          "clNgayDangKy": e.target.value,
-          "clNgayHetHan": rs.clNgayHetHan,
-          "clCheDo": rs.clCheDo,
-          "clMatKhau": rs.clMatKhau,
-          "clPhanMemChoPhep": rs.clPhanMemChoPhep,
-          "clWebCanChan": rs.clWebCanChan,
-          "clWebChoChay": rs.clWebChoChay,
-          "clPmDaChan": rs.clPmDaChan,
-          "clWebDaChan": rs.clWebDaChan,
-          "clTrangThai": rs.clTrangThai,
-          "clLichSuWeb": rs.clLichSuWeb,
-          "clThoiGianBat": rs.clThoiGianBat,
-          "clThoiGianTat": rs.clThoiGianTat
-        }
-        ajaxCallPost('user-tool', data)
-          .then(rs => {
-            console.log(rs)
-            toast.success('Sửa thành công')
-          })
-
+        toast.success('Sửa thành công')
       })
-
+    })
   }
 
   const handleChangeEndDate = (e, id) => {
     setDate(e.target.value)
-    ajaxCallGet('user-tool' + '/' + id)
-      .then(rs => {
+    ajaxCallGet('user-tool' + '/' + id).then(rs => {
+      console.log(rs)
+      let data = {
+        clId: id,
+        clMaThietBi: rs.clMaThietBi,
+        clMaTool: rs.clMaTool,
+        clTenSanPham: rs.clTenSanPham,
+        clHoTen: rs.clHoTen,
+        clSdt: rs.clSdt,
+        clGmail: rs.clGmail,
+        clChucVu: rs.clChucVu,
+        clNoiLamViec: rs.clNoiLamViec,
+        clNgayDangKy: rs.clNgayDangKy,
+        clNgayHetHan: e.target.value,
+        clCheDo: rs.clCheDo,
+        clMatKhau: rs.clMatKhau,
+        clPhanMemChoPhep: rs.clPhanMemChoPhep,
+        clWebCanChan: rs.clWebCanChan,
+        clWebChoChay: rs.clWebChoChay,
+        clPmDaChan: rs.clPmDaChan,
+        clWebDaChan: rs.clWebDaChan,
+        clTrangThai: rs.clTrangThai,
+        clLichSuWeb: rs.clLichSuWeb,
+        clThoiGianBat: rs.clThoiGianBat,
+        clThoiGianTat: rs.clThoiGianTat
+      }
+      ajaxCallPost('user-tool', data).then(rs => {
         console.log(rs)
-        let data = {
-          "clId": id,
-          "clMaThietBi": rs.clMaThietBi,
-          "clMaTool": rs.clMaTool,
-          "clTenSanPham": rs.clTenSanPham,
-          "clHoTen": rs.clHoTen,
-          "clSdt": rs.clSdt,
-          "clGmail": rs.clGmail,
-          "clChucVu": rs.clChucVu,
-          "clNoiLamViec": rs.clNoiLamViec,
-          "clNgayDangKy": rs.clNgayDangKy,
-          "clNgayHetHan": e.target.value,
-          "clCheDo": rs.clCheDo,
-          "clMatKhau": rs.clMatKhau,
-          "clPhanMemChoPhep": rs.clPhanMemChoPhep,
-          "clWebCanChan": rs.clWebCanChan,
-          "clWebChoChay": rs.clWebChoChay,
-          "clPmDaChan": rs.clPmDaChan,
-          "clWebDaChan": rs.clWebDaChan,
-          "clTrangThai": rs.clTrangThai,
-          "clLichSuWeb": rs.clLichSuWeb,
-          "clThoiGianBat": rs.clThoiGianBat,
-          "clThoiGianTat": rs.clThoiGianTat
-        }
-        ajaxCallPost('user-tool', data)
-          .then(rs => {
-            console.log(rs)
-            toast.success('Sửa thành công')
-          })
-
+        toast.success('Sửa thành công')
       })
-
+    })
   }
 
   const handleChangeDense = event => {
     setDense(event.target.checked)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = id => {
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       }
     }
-    fetch(`http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`, options)
+    fetch(
+      `http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`,
+      options
+    )
       .then(response => response.json())
-      .then((rs) => {
+      .then(rs => {
         console.log(rs, 'success')
         toast.success('Xóa thành công')
         getAllUser()
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err, 'error')
       })
-
   }
 
   const getAllUser = () => {
@@ -485,7 +482,8 @@ export default function TableQl(props) {
       .then(rs => {
         rs.map(item => {
           dataa.push(
-            createData(item.clId,
+            createData(
+              item.clId,
               item.clMaThietBi,
               item.clMaTool,
               item.clHoTen,
@@ -495,10 +493,13 @@ export default function TableQl(props) {
               item.clNoiLamViec,
               item.clNgayDangKy,
               item.clNgayHetHan
-            ))
-          setMainDataUser(dataa)
+            )
+          )
+          // setMainDataUser(dataa)
+          const action2 = changeData(dataa)
+          dispatch(action2)
         })
-      });
+      })
   }
 
   const isSelected = name => selected.indexOf(name) !== -1
@@ -506,121 +507,137 @@ export default function TableQl(props) {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
-
-  return (
-    <Paper sx={{ width: '100%', mb: 2 }}>
-      <EnhancedTableToolbar numSelected={selected.length} />
-      <TableContainer>
-        <Table
-          sx={{ minWidth: 750 }}
-          aria-labelledby='tableTitle'
-          size={dense ? 'small' : 'medium'}
-        >
-          <EnhancedTableHead
-            numSelected={selected.length}
-            order={order}
-            orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
-            rowCount={rows.length}
-          />
-          <TableBody>
-            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+  const renderTabe = () => {
+    return (
+      <Paper sx={{ width: '100%', mb: 2 }}>
+        <EnhancedTableToolbar numSelected={selected.length} />
+        <TableContainer>
+          <Table
+            sx={{ minWidth: 750 }}
+            aria-labelledby='tableTitle'
+            size={dense ? 'small' : 'medium'}
+          >
+            <EnhancedTableHead
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.mathietbi)
-                const labelId = `enhanced-table-checkbox-${index}`
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.mathietbi)
+                  const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <TableRow
-                    hover
-                    // onClick={event => handleClick(event, row.mathietbi)}
-                    role='checkbox'
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.mathietbi}
-                    selected={isItemSelected}
-                  >
-                    <TableCell padding='checkbox'>
-                      <Checkbox
-                        color='primary'
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component='th'
-                      id={labelId}
-                      scope='row'
-                      style={{ 'whiteSpace': 'nowrap' }}
-                      padding='none'
+                  return (
+                    <TableRow
+                      hover
+                      // onClick={event => handleClick(event, row.mathietbi)}
+                      role='checkbox'
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.mathietbi}
+                      selected={isItemSelected}
                     >
-                      {row.mathietbi}
-                    </TableCell>
-                    <TableCell align='center'>{row.matool}</TableCell>
-                    <TableCell
-                      style={{ 'whiteSpace': 'nowrap' }}
-                    >
-                      {row.hovaten}
-                    </TableCell>
-                    <TableCell>{row.sdt}</TableCell>
-                    <TableCell align='center'>
-                      <input
-                        type='date'
-                        onChange={(e) => handleChangeResDate(e, row.id)}
-                        defaultValue={row.ngaydangky}
-                      />
-                    </TableCell>
-                    <TableCell align='center'>
-                      <input
-                        type='date'
-                        onChange={(e) => handleChangeEndDate(e, row.id)}
-                        defaultValue={row.ngayhethan}
-                      />
-                    </TableCell>
-                    <TableCell align='center'>{row.gmail}</TableCell>
-                    <TableCell>{row.chucvu}</TableCell>
-                    <TableCell>{row.noilamviec}</TableCell>
-                    <TableCell align='center'>
-                      <Stack direction="row" spacing={2}>
-                        <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
-                          Delete
-                        </Button>
-                        <Link to={`/edit/${row.id}`}>
-                          <Button variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
-                        </Link>
-                      </Stack>
-                    </TableCell>
-
-                  </TableRow>
-                )
-              })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: (dense ? 33 : 53) * emptyRows
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[25, 100, 1000]}
-        component='div'
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-
-    </Paper>
-  )
+                      <TableCell padding='checkbox'>
+                        <Checkbox
+                          color='primary'
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component='th'
+                        id={labelId}
+                        scope='row'
+                        style={{ whiteSpace: 'nowrap' }}
+                        padding='none'
+                      >
+                        {row.mathietbi}
+                      </TableCell>
+                      <TableCell align='center'>{row.matool}</TableCell>
+                      <TableCell style={{ whiteSpace: 'nowrap' }}>
+                        {row.hovaten}
+                      </TableCell>
+                      <TableCell>{row.sdt}</TableCell>
+                      <TableCell align='center'>
+                        <input
+                          type='date'
+                          onChange={e => handleChangeResDate(e, row.id)}
+                          defaultValue={row.ngaydangky}
+                        />
+                      </TableCell>
+                      <TableCell align='center'>
+                        <input
+                          type='date'
+                          onChange={e => handleChangeEndDate(e, row.id)}
+                          defaultValue={row.ngayhethan}
+                        />
+                      </TableCell>
+                      <TableCell align='center'>{row.gmail}</TableCell>
+                      <TableCell>{row.chucvu}</TableCell>
+                      <TableCell>{row.noilamviec}</TableCell>
+                      <TableCell align='center'>
+                        <Stack direction='row' spacing={2}>
+                          <Button
+                            style={{
+                              color: '#f3341e',
+                              border: '1px solid #f3341e'
+                            }}
+                            onClick={() => handleDelete(row.id)}
+                            variant='outlined'
+                            startIcon={<DeleteIcon />}
+                          >
+                            Delete
+                          </Button>
+                          <Link to={`/edit/${row.id}`}>
+                            <Button
+                              variant='contained'
+                              endIcon={
+                                <i
+                                  style={{ color: '#fff' }}
+                                  className='fas fa-edit'
+                                ></i>
+                              }
+                            >
+                              Edit
+                            </Button>
+                          </Link>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: (dense ? 33 : 53) * emptyRows
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[25, 100, 1000]}
+          component='div'
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
+    )
+  }
+  return renderTabe()
 }
