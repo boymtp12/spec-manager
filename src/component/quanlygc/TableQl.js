@@ -21,15 +21,25 @@ import FilterListIcon from '@mui/icons-material/FilterList'
 import { visuallyHidden } from '@mui/utils'
 import { ajaxCallGet, ajaxCallPost, URL_API_GET } from './../../libs/base'
 import { toast } from 'wc-toast'
+
 import FormEditUserTool from '../FormEditUserTool'
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import Stack from '@mui/material/Stack';
 import FormAddUserTool from '../FormAddUserTool'
 
+import Edit from '../Edit'
+import Button from '@mui/material/Button'
+import { Link } from 'react-router-dom'
+import Stack from '@mui/material/Stack'
+import { useDispatch, useSelector } from 'react-redux'
+import { changeData } from '../../reducer_action/DataUserToolReducerAction'
 
 
-function createData(id,
+const userToolContext = React.createContext()
+
+function createData (
+  id,
   mathietbi,
   matool,
   hovaten,
@@ -54,9 +64,7 @@ function createData(id,
   }
 }
 
-
-
-function descendingComparator(a, b, orderBy) {
+function descendingComparator (a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1
   }
@@ -66,7 +74,7 @@ function descendingComparator(a, b, orderBy) {
   return 0
 }
 
-function getComparator(order, orderBy) {
+function getComparator (order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -74,7 +82,7 @@ function getComparator(order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
+function stableSort (array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
@@ -112,13 +120,13 @@ const headCells = [
     id: 'ngaydangky',
     numeric: false,
     disablePadding: false,
-    label: 'Ngày đăng ký',
+    label: 'Ngày đăng ký'
   },
   {
     id: 'ngayhethan',
     numeric: false,
     disablePadding: false,
-    label: 'Ngày hết hạn',
+    label: 'Ngày hết hạn'
   },
   {
     id: 'chucNang',
@@ -129,7 +137,7 @@ const headCells = [
   }
 ]
 
-function EnhancedTableHead(props) {
+function EnhancedTableHead (props) {
   const {
     onSelectAllClick,
     order,
@@ -169,7 +177,6 @@ function EnhancedTableHead(props) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
-
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -249,13 +256,11 @@ const EnhancedTableToolbar = props => {
   )
 }
 
-
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 }
 
-export default function TableQl(props) {
-
+export default function TableQl (props) {
   const [order, setOrder] = React.useState('asc')
   const [rows, setRows] = React.useState([])
   const [typee, setTypee] = React.useState(props.type)
@@ -264,11 +269,14 @@ export default function TableQl(props) {
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [dense, setDense] = React.useState(false)
-  const [mainDataUser, setMainDataUser] = React.useState(props.data)
+  // const [mainDataUser, setMainDataUser] = React.useState(props.data)
+  const dispatch = useDispatch()
+  const mainDataUser = useSelector(state => state.userTool.dataUser)
 
   const [rowsPerPage, setRowsPerPage] = React.useState(25)
 
   const [date, setDate] = React.useState('')
+
 
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
@@ -283,6 +291,7 @@ export default function TableQl(props) {
   const [chucVu, setChucVu] = React.useState('');
   const [noiLamViec, setNoiLamViec] = React.useState('');
   const [ngayHetHan, setNgayHetHan] = React.useState('');
+
 
 
   React.useEffect(() => {
@@ -313,6 +322,10 @@ export default function TableQl(props) {
           var c = new Date(item.ngayhethan)
           return c < date
         })
+        props.onCountItem(arr.length)
+        setRows(arr)
+        break
+      default:
         props.onCountItem(arr.length)
         setRows(arr)
         break
@@ -365,6 +378,7 @@ export default function TableQl(props) {
 
   const handleChangeResDate = (e, id) => {
     setDate(e.target.value)
+
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
         let data = {
@@ -396,12 +410,14 @@ export default function TableQl(props) {
             toast.success('Sửa thành công')
           })
 
-      })
 
+      })
+    })
   }
 
   const handleChangeEndDate = (e, id) => {
     setDate(e.target.value)
+
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
         let data = {
@@ -433,32 +449,35 @@ export default function TableQl(props) {
             toast.success('Sửa thành công')
           })
 
-      })
 
+      })
+    })
   }
 
   const handleChangeDense = event => {
     setDense(event.target.checked)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = id => {
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       }
     }
-    fetch(`http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`, options)
+    fetch(
+      `http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`,
+      options
+    )
       .then(response => response.json())
-      .then((rs) => {
+      .then(rs => {
         console.log(rs, 'success')
         toast.success('Xóa thành công')
         getAllUser()
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err, 'error')
       })
-
   }
 
   const getAllUser = () => {
@@ -468,7 +487,8 @@ export default function TableQl(props) {
       .then(rs => {
         rs.map(item => {
           dataa.push(
-            createData(item.clId,
+            createData(
+              item.clId,
               item.clMaThietBi,
               item.clMaTool,
               item.clHoTen,
@@ -478,10 +498,13 @@ export default function TableQl(props) {
               item.clNoiLamViec,
               item.clNgayDangKy,
               item.clNgayHetHan
-            ))
-          setMainDataUser(dataa)
+            )
+          )
+          // setMainDataUser(dataa)
+          const action2 = changeData(dataa)
+          dispatch(action2)
         })
-      });
+      })
   }
 
 
@@ -569,6 +592,7 @@ export default function TableQl(props) {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+
 
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
@@ -700,3 +724,4 @@ export default function TableQl(props) {
     </Paper>
   )
 }
+
