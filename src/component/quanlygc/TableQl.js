@@ -21,10 +21,11 @@ import FilterListIcon from '@mui/icons-material/FilterList'
 import { visuallyHidden } from '@mui/utils'
 import { ajaxCallGet, ajaxCallPost, URL_API_GET } from './../../libs/base'
 import { toast } from 'wc-toast'
-import Edit from '../Edit'
+import FormEditUserTool from '../FormEditUserTool'
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import Stack from '@mui/material/Stack';
+import FormAddUserTool from '../FormAddUserTool'
 
 
 
@@ -87,11 +88,11 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: 'matb',
+    id: 'hoten',
     numeric: false,
-    disablePadding: true,
-    label: 'Mã thiết bị',
-    mWidth: "minWidth: '380px'"
+    disablePadding: false,
+    label: 'Họ và tên',
+    mWidth: "minWidth: '250px'"
   },
   {
     id: 'matool',
@@ -99,13 +100,6 @@ const headCells = [
     disablePadding: false,
     label: 'Mã Tool',
     mWidth: "minWidth: '120px'"
-  },
-  {
-    id: 'hoten',
-    numeric: false,
-    disablePadding: false,
-    label: 'Họ và tên',
-    mWidth: "minWidth: '250px'"
   },
   {
     id: 'sdt',
@@ -125,27 +119,6 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Ngày hết hạn',
-  },
-  {
-    id: 'gmail',
-    numeric: false,
-    disablePadding: false,
-    label: 'Gmail',
-    mWidth: "minWidth: '260px'"
-  },
-  {
-    id: 'chucvu',
-    numeric: false,
-    disablePadding: false,
-    label: 'Chức vụ',
-    mWidth: "minWidth: '120px'"
-  },
-  {
-    id: 'noilamviec',
-    numeric: false,
-    disablePadding: false,
-    label: 'Nơi làm việc',
-    mWidth: "minWidth: '120px'"
   },
   {
     id: 'chucNang',
@@ -271,6 +244,7 @@ const EnhancedTableToolbar = props => {
           </IconButton>
         </Tooltip>
       )}
+
     </Toolbar>
   )
 }
@@ -296,10 +270,23 @@ export default function TableQl(props) {
 
   const [date, setDate] = React.useState('')
 
+  const [open, setOpen] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+
+  const [userId, setUserId] = React.useState('')
+
+  const [fullName, setFullName] = React.useState('');
+  const [mail, setMail] = React.useState('');
+  const [tenSanPham, setTenSanPham] = React.useState('');
+  const [maTool, setMaTool] = React.useState([]);
+  const [soDienThoai, setSoDienThoai] = React.useState('');
+  const [chucVu, setChucVu] = React.useState('');
+  const [noiLamViec, setNoiLamViec] = React.useState('');
+  const [ngayHetHan, setNgayHetHan] = React.useState('');
+
 
   React.useEffect(() => {
     let arr = mainDataUser
-    console.log(mainDataUser)
     let date = new Date()
     switch (typee) {
       case 1:
@@ -380,7 +367,6 @@ export default function TableQl(props) {
     setDate(e.target.value)
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
-        console.log(rs)
         let data = {
           "clId": id,
           "clMaThietBi": rs.clMaThietBi,
@@ -407,7 +393,6 @@ export default function TableQl(props) {
         }
         ajaxCallPost('user-tool', data)
           .then(rs => {
-            console.log(rs)
             toast.success('Sửa thành công')
           })
 
@@ -419,7 +404,6 @@ export default function TableQl(props) {
     setDate(e.target.value)
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
-        console.log(rs)
         let data = {
           "clId": id,
           "clMaThietBi": rs.clMaThietBi,
@@ -446,7 +430,6 @@ export default function TableQl(props) {
         }
         ajaxCallPost('user-tool', data)
           .then(rs => {
-            console.log(rs)
             toast.success('Sửa thành công')
           })
 
@@ -501,6 +484,86 @@ export default function TableQl(props) {
       });
   }
 
+
+  const handleClickOpen = (id) => {
+    setUserId(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleClickOpenEdit = (id) => {
+    setUserId(id);
+    setOpenEdit(true);
+    loadUserTool(id);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+
+  // Edit USer TOol
+  const loadUserTool = (id) => {
+    ajaxCallGet(`user-tool/${id}`)
+      .then(rs => {
+        console.log(rs.clMaTool);
+        setFullName(rs.clHoTen);
+        setMail(rs.clGmail)
+        setTenSanPham(rs.clTenSanPham)
+        setMaTool([rs.clMaTool])
+        setSoDienThoai(rs.clSdt)
+        setChucVu(rs.clChucVu)
+        setNoiLamViec(rs.clNoiLamViec)
+        setNgayHetHan(rs.clNgayHetHan)
+      })
+  }
+
+  console.log(userId)
+  const handleSubmit = () => {
+    ajaxCallGet(`user-tool/${userId}`)
+      .then(rs => {
+        console.log(rs)
+        let data = {
+          "clId": userId,
+          "clMaThietBi": rs.clMaThietBi,
+          "clMaTool": maTool.toString(),
+          "clTenSanPham": tenSanPham,
+          "clHoTen": fullName,
+          "clSdt": soDienThoai,
+          "clGmail": mail,
+          "clChucVu": chucVu,
+          "clNoiLamViec": noiLamViec,
+          "clNgayDangKy": rs.clNgayDangKy,
+          "clNgayHetHan": ngayHetHan,
+          "clCheDo": rs.clCheDo,
+          "clMatKhau": rs.clMatKhau,
+          "clPhanMemChoPhep": rs.clPhanMemChoPhep,
+          "clWebCanChan": rs.clWebCanChan,
+          "clWebChoChay": rs.clWebChoChay,
+          "clPmDaChan": rs.clPmDaChan,
+          "clWebDaChan": rs.clWebDaChan,
+          "clTrangThai": rs.clTrangThai,
+          "clLichSuWeb": rs.clLichSuWeb,
+          "clThoiGianBat": rs.clThoiGianBat,
+          "clThoiGianTat": rs.clThoiGianTat,
+        }
+
+        ajaxCallPost('user-tool', data)
+          .then(rs => {
+            console.log(rs);
+            toast.success('Sửa phiếu thành công')
+            handleCloseEdit()
+            getAllUser()
+          })
+          .catch(err => (console.log("error: ", err)))
+      })
+
+
+  }
+
   const isSelected = name => selected.indexOf(name) !== -1
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -509,6 +572,7 @@ export default function TableQl(props) {
 
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
+      <Button variant="outlined" onClick={handleClickOpen}>Add</Button>
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
@@ -553,20 +617,11 @@ export default function TableQl(props) {
                       />
                     </TableCell>
                     <TableCell
-                      component='th'
-                      id={labelId}
-                      scope='row'
-                      style={{ 'whiteSpace': 'nowrap' }}
-                      padding='none'
-                    >
-                      {row.mathietbi}
-                    </TableCell>
-                    <TableCell align='center'>{row.matool}</TableCell>
-                    <TableCell
                       style={{ 'whiteSpace': 'nowrap' }}
                     >
                       {row.hovaten}
                     </TableCell>
+                    <TableCell align='center'>{row.matool}</TableCell>
                     <TableCell>{row.sdt}</TableCell>
                     <TableCell align='center'>
                       <input
@@ -582,17 +637,12 @@ export default function TableQl(props) {
                         defaultValue={row.ngayhethan}
                       />
                     </TableCell>
-                    <TableCell align='center'>{row.gmail}</TableCell>
-                    <TableCell>{row.chucvu}</TableCell>
-                    <TableCell>{row.noilamviec}</TableCell>
                     <TableCell align='center'>
                       <Stack direction="row" spacing={2}>
                         <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
                           Delete
                         </Button>
-                        <Link to={`/edit/${row.id}`}>
-                          <Button variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
-                        </Link>
+                        <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
                       </Stack>
                     </TableCell>
 
@@ -621,6 +671,32 @@ export default function TableQl(props) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
 
+      <FormAddUserTool
+        open={open}
+        handleClose={handleClose}
+      />
+      <FormEditUserTool
+        id={userId}
+        open={openEdit}
+        handleClose={handleCloseEdit}
+        fullName={fullName}
+        mail={mail}
+        tenSanPham={tenSanPham}
+        maTool={maTool}
+        soDienThoai={soDienThoai}
+        chucVu={chucVu}
+        noiLamViec={noiLamViec}
+        ngayHetHan={ngayHetHan}
+        setFullName={setFullName}
+        setMail={setMail}
+        setTenSanPham={setTenSanPham}
+        setMaTool={setMaTool}
+        setSoDienThoai={setSoDienThoai}
+        setChucVu={setChucVu}
+        setNoiLamViec={setNoiLamViec}
+        setNgayHetHan={setNgayHetHan}
+        handleSubmit={handleSubmit}
+      />
     </Paper>
   )
 }

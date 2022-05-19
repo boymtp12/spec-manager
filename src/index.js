@@ -6,7 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Login from './component/Login'
 import Register from './component/Register'
-import Edit from './component/Edit'
+import FormEditUserTool from './component/FormEditUserTool'
+import TableUserAdmin from './component/quanlygc/TableUserAdmin'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,7 +19,8 @@ root.render(
       <Route path='/' element={<App />}/>      
       <Route path='/login' element={<Login />}/>      
       <Route path='/register' element={<Register />}/>      
-      <Route path='/edit/:id' element={<Edit />}/>      
+      <Route path='/edit/:id' element={<FormEditUserTool />}/>   
+      <Route path='/user-admin' element={<TableUserAdmin />}/>   
     </Routes>
     </BrowserRouter>
   </React.StrictMode>

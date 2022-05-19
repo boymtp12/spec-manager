@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ajaxCallGet } from '../libs/base';
+import { ajaxCallGet, setItemLocalStorage } from '../libs/base';
 import "./../css_main/css/login.css"
 import { toast } from 'wc-toast'
 import { Link } from 'react-router-dom'
@@ -14,14 +14,31 @@ const Login = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log({ number, password })
-        ajaxCallGet(`user-admin?queries=sdt=${number},pass=${password}`).then(rs=>{
-            console.log(rs);
-            if(rs.length == 1) {
+        ajaxCallGet(`user-admin?queries=sdt=${number},pass=${password}`).then(rs => {
+
+            if (rs.length == 1) {
+                handleGetQuyenByIdUser(rs[0].id);
                 toast.success('Đăng nhập thành công')
             } else {
                 toast.error('Tài khoản mật khẩu không chính xác')
             }
-        }).catch(err => {console.log(err)});
+        }).catch(err => { console.log(err) });
+    }
+
+    const handleGetQuyenByIdUser = (idUser) => {
+        let dataQuyen = [];
+        ajaxCallGet(`admin-has-quyen?queries=id.userAdminId=${idUser}`)
+            .then(rs => {
+                rs.map(item => {
+                    console.log(item.quyen.tenQuyen);
+                    if (item.quyen.tenQuyen) {
+                        dataQuyen = [...dataQuyen, item.quyen.tenQuyen];
+                    }
+                })
+                console.log(dataQuyen)
+                setItemLocalStorage('dataQuyen', dataQuyen);
+            })
+
     }
     return (
 
@@ -37,9 +54,9 @@ const Login = () => {
                         </span>
                         <div className="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                             <input
-                            value={number}
-                            onChange={e => setNumber(e.target.value)}
-                            className="input100" type="text" name="text" placeholder="Số điện thoại" />
+                                value={number}
+                                onChange={e => setNumber(e.target.value)}
+                                className="input100" type="text" name="text" placeholder="Số điện thoại" />
                             <span className="focus-input100" />
                             <span className="symbol-input100">
                                 <i className="fa fa-envelope" aria-hidden="true" />
@@ -47,9 +64,9 @@ const Login = () => {
                         </div>
                         <div className="wrap-input100 validate-input" data-validate="Password is required">
                             <input
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="input100" type="password" name="pass" placeholder="Mật khẩu" />
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                className="input100" type="password" name="pass" placeholder="Mật khẩu" />
                             <span className="focus-input100" />
                             <span className="symbol-input100">
                                 <i className="fa fa-lock" aria-hidden="true" />
@@ -57,9 +74,9 @@ const Login = () => {
                         </div>
                         <div className="container-login100-form-btn">
                             <button
-                            onClick={handleSubmit}
-                            className="login100-form-btn">
-                            Đăng nhập
+                                onBlur={handleSubmit}
+                                className="login100-form-btn">
+                                Đăng nhập
                             </button>
                         </div>
                         <div className="text-center p-t-12 mb-32">

@@ -5,10 +5,11 @@ import $ from 'jquery'
 import PropTypes from 'prop-types'
 import Typography from '@mui/material/Typography'
 import TableQl from './TableQl'
-import { ajaxCallGet, URL_API_GET } from '../../libs/base'
-import Edit from '../Edit'
+import { ajaxCallGet, setItemLocalStorage, URL_API_GET } from '../../libs/base'
+import FormEditUserTool from '../FormEditUserTool'
 import { Link } from 'react-router-dom'
 import "../../css_main/css/tabsQl.css"
+import Header from '../Header'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -76,13 +77,17 @@ export default function TabsQl() {
   const [autoLabel, setAutoLabel] = React.useState([])
   const [searchTerm, setSearchTerm] = React.useState("")
   const [time, setTime] = React.useState(0)
+
+  const [checked, setChecked] = React.useState([])
+  const [allTool, setAllTool] = React.useState([]);
+
   React.useEffect(() => {
     setCheck(Math.random())
   }, [mainDataUser])
   React.useEffect(() => {
     let dataa = []
     let label = []
-    ajaxCallGet(`user-tool?queries=clMaTool=GoodChild`).then(rs => {
+    ajaxCallGet(`user-tool?queries=clMaTool`).then(rs => {
       rs.map(item => {
         dataa.push(
           createData(item.clId,
@@ -105,6 +110,20 @@ export default function TabsQl() {
     })
   }, [])
 
+  React.useEffect(() => {
+    ajaxCallGet(`user-tool/find-all`)
+      .then(rs => rs.data.reduce((acu, item) => {
+        if (acu.indexOf(item.clMaTool) === -1) {
+          acu.push(item.clMaTool)
+        }
+        return acu;
+      }, []))
+      .then(acu => {
+        setItemLocalStorage('all-tool', acu)
+      })
+  }, [])
+
+
   const handleData = (type, data) => {
     if (data.length > 0) {
       return (
@@ -112,6 +131,7 @@ export default function TabsQl() {
       )
     }
   }
+
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -123,61 +143,81 @@ export default function TabsQl() {
     // console.log("jdjdjd");
 
     var inputCheck = e.target.value;
-      console.log(inputCheck);
-      let dataa = [];
-      let label = [];
-      fetch(URL_API_GET + `user-tool/find-like-sdt/?sdt=${inputCheck}`)
-        .then(response => response.json())
-        .then(rs => {
-          console.log(rs.data)
-          rs.data.map(item => {
-            dataa.push(createData(item.clId,
-              item.clMaThietBi,
-              item.clMaTool,
-              item.clHoTen,
-              item.clSdt,
-              item.clGmail,
-              item.clChucVu,
-              item.clNoiLamViec,
-              item.clNgayDangKy,
-              item.clNgayHetHan))
+    let dataa = [];
+    let label = [];
+    fetch(URL_API_GET + `user-tool/find-like-sdt/?sdt=${inputCheck}`)
+      .then(response => response.json())
+      .then(rs => {
+        rs.data.map(item => {
+          dataa.push(createData(item.clId,
+            item.clMaThietBi,
+            item.clMaTool,
+            item.clHoTen,
+            item.clSdt,
+            item.clGmail,
+            item.clChucVu,
+            item.clNoiLamViec,
+            item.clNgayDangKy,
+            item.clNgayHetHan))
 
-            label.push({ label: item.clSdt, year: item.clMaThietBi })
-            setAutoLabel(label)
-          })
-          console.log(dataa)
-          setMainDataUser(dataa)
-          setMainDataUser2(dataa)
+          label.push({ label: item.clSdt, year: item.clMaThietBi })
+          setAutoLabel(label)
         })
+        setMainDataUser(dataa)
+        setMainDataUser2(dataa)
+      })
     // }, 1000);
     // setTime(tm)
   }
 
-  console.log(mainDataUser);
-  console.log(mainDataUser2);
+  // const handleChangeInCheckbox = (id) => {
+  //   setChecked(prev => {
+  //     const isChecked = checked.includes(id);
+  //     if (isChecked) {
+  //       return checked.filter(item => {
+  //         return item !== id;
+  //       })
+  //     } else {
+  //       return [...prev, id];
+  //     }
+  //   });
+  //   // end Radio
+  // }
+
+  // console.log(checked)
+  // React.useEffect(() => {
+  //   let data = [];
+  //   ajaxCallGet(`user-tool?queries=clMaTool%3D${checked.toString()}`)
+  //     .then(rs => {
+  //       rs.map(item => {
+  //         data.push(createData(item.clId,
+  //           item.clMaThietBi,
+  //           item.clMaTool,
+  //           item.clHoTen,
+  //           item.clSdt,
+  //           item.clGmail,
+  //           item.clChucVu,
+  //           item.clNoiLamViec,
+  //           item.clNgayDangKy,
+  //           item.clNgayHetHan))
+  //       })
+  //       console.log(data);
+  //       setMainDataUser(data)
+  //       setMainDataUser2(data)
+  //     })
+
+  // },[checked])
 
   const renderData = () => {
     return (
       <div className='w-100'>
-        <div className='header mt-2 d-flex justify-content-between'>
-          <div>
-            <i className="logo-icon fab fa-accusoft"></i>
-            <span className='logo-header mb-0'>GoodChild</span>
-          </div>
-          <div>
-            <TextField
-              style={{ marginRight: '32px' }}
-              id='outlined-basic'
-              onChange={inputHandler}
-              label='Tìm kiếm'
-              variant='outlined'
-            />
-            <Link className="text-log" to='/login'>Đăng nhập</Link >
-            <div className="line"></div>
-            <Link className="text-register" to='/register'>Đăng ký</Link >
-          </div>
-
-        </div>
+        <Header
+          inputHandler={inputHandler}
+          // handleChangeInCheckbox={handleChangeInCheckbox}
+          // checked={checked}
+          // setChecked={setChecked}
+          // allTool={allTool}
+        />
         <Box
           sx={{ width: '80%' }}
           className='body border rounded box-shadow-xl'
