@@ -221,8 +221,7 @@ export async function ajaxCallPost (url, dataUser) {
 /*put data*/
 export async function ajaxCallPut (url, dataUser) {
   let rs = null
-  if (url.includes('?')) url = url.concat('&token=' + TOKENHEADER_VALUE)
-  else url = url.concat('?token=' + TOKENHEADER_VALUE)
+  
   await $.ajax({
     type: 'PUT',
     data: JSON.stringify(dataUser),

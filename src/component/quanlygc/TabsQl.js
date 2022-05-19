@@ -6,11 +6,16 @@ import $ from 'jquery'
 import PropTypes from 'prop-types'
 import Typography from '@mui/material/Typography'
 import TableQl from './TableQl'
-import { ajaxCallGet, URL_API_GET } from '../../libs/base'
-import Edit from '../Edit'
+import { ajaxCallGet, setItemLocalStorage, URL_API_GET } from '../../libs/base'
+import FormEditUserTool from '../FormEditUserTool'
 import { Link } from 'react-router-dom'
+
+import "../../css_main/css/tabsQl.css"
+import Header from '../Header'
+
 import '../../css_main/css/tabsQl.css'
 import { changeData } from '../../reducer_action/DataUserToolReducerAction'
+
 
 function TabPanel (props) {
   const { children, value, index, ...other } = props
@@ -83,6 +88,11 @@ export default function TabsQl () {
   const [searchTerm, setSearchTerm] = React.useState('')
   const [time, setTime] = React.useState(0)
 
+
+  const [checked, setChecked] = React.useState([])
+  const [allTool, setAllTool] = React.useState([]);
+
+
   React.useEffect(() => {
     // renderData()
   }, [mainDataUser])
@@ -90,9 +100,11 @@ export default function TabsQl () {
   React.useEffect(() => {
     let dataa = []
     let label = []
-    ajaxCallGet(`user-tool?queries=clMaTool=GoodChild`).then(async rs => {
+
+    ajaxCallGet(`user-tool?queries=clMaTool`).then(async rs => {
       for (let x in rs) {
         let item = rs[x]
+
         dataa.push(
           createData(
             item.clId,
@@ -116,18 +128,22 @@ export default function TabsQl () {
       renderData()
     })
   }, [])
-  //   handleChange: function (e) {
-  //     // 1. Make a shallow copy of the items
-  //     let items = [...this.state.items];
-  //     // 2. Make a shallow copy of the item you want to mutate
-  //     let item = {...items[1]};
-  //     // 3. Replace the property you're intested in
-  //     item.name = 'newName';
-  //     // 4. Put it back into our array. N.B. we are mutating the array here, but that's why we made a copy first
-  //     items[1] = item;
-  //     // 5. Set the state to our new copy
-  //     this.setState({items});
-  // }
+
+  React.useEffect(() => {
+    ajaxCallGet(`user-tool/find-all`)
+      .then(rs => rs.data.reduce((acu, item) => {
+        if (acu.indexOf(item.clMaTool) === -1) {
+          acu.push(item.clMaTool)
+        }
+        return acu;
+      }, []))
+      .then(acu => {
+        setItemLocalStorage('all-tool', acu)
+      })
+  }, [])
+
+
+
   const handleData = (type, data) => {
     if (data.length > 0) {
       console.log(data)
@@ -136,12 +152,14 @@ export default function TabsQl () {
       )
     }
   }
+
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
 
   const inputHandler = e => {
     // console.log("kdkdkd");
+
     clearTimeout(time)
     let tm = setTimeout(async () => {
       var inputCheck = e.target.value
@@ -163,6 +181,7 @@ export default function TabsQl () {
             item.clChucVu,
             item.clNoiLamViec,
             item.clNgayDangKy,
+
             item.clNgayHetHan
           )
         )
@@ -176,32 +195,57 @@ export default function TabsQl () {
     setTime(tm)
   }
 
+  // const handleChangeInCheckbox = (id) => {
+  //   setChecked(prev => {
+  //     const isChecked = checked.includes(id);
+  //     if (isChecked) {
+  //       return checked.filter(item => {
+  //         return item !== id;
+  //       })
+  //     } else {
+  //       return [...prev, id];
+  //     }
+  //   });
+  //   // end Radio
+  // }
+
+  // console.log(checked)
+  // React.useEffect(() => {
+  //   let data = [];
+  //   ajaxCallGet(`user-tool?queries=clMaTool%3D${checked.toString()}`)
+  //     .then(rs => {
+  //       rs.map(item => {
+  //         data.push(createData(item.clId,
+  //           item.clMaThietBi,
+  //           item.clMaTool,
+  //           item.clHoTen,
+  //           item.clSdt,
+  //           item.clGmail,
+  //           item.clChucVu,
+  //           item.clNoiLamViec,
+  //           item.clNgayDangKy,
+  //           item.clNgayHetHan))
+  //       })
+  //       console.log(data);
+  //       setMainDataUser(data)
+  //       setMainDataUser2(data)
+  //     })
+
+  // },[checked])
+
   const renderData = () => {
     let data = mainDataUser
     return (
       <div className='w-100'>
-        <div className='header mt-2 d-flex justify-content-between'>
-          <div>
-            <i className='logo-icon fab fa-accusoft'></i>
-            <span className='logo-header mb-0'>GoodChild</span>
-          </div>
-          <div>
-            <TextField
-              style={{ marginRight: '32px' }}
-              id='outlined-basic'
-              onChange={inputHandler}
-              label='Tìm kiếm'
-              variant='outlined'
-            />
-            <Link className='text-log' to='/login'>
-              Đăng nhập
-            </Link>
-            <div className='line'></div>
-            <Link className='text-register' to='/register'>
-              Đăng ký
-            </Link>
-          </div>
-        </div>
+
+        <Header
+          inputHandler={inputHandler}
+          // handleChangeInCheckbox={handleChangeInCheckbox}
+          // checked={checked}
+          // setChecked={setChecked}
+          // allTool={allTool}
+        />
+
         <Box
           sx={{ width: '80%' }}
           className='body border rounded box-shadow-xl'
