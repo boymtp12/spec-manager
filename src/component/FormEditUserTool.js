@@ -51,10 +51,6 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
         },
     };
 
-
-    const names = getItemLocalStorage("all-tool");
-
-
     function getStyles(name, maTool, theme) {
         return {
             fontWeight:
@@ -77,7 +73,7 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
     };
 
     // End MultipleSelect
-
+    const names = getItemLocalStorage('all-tool')
     
 
     return (
