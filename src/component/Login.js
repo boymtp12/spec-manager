@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ajaxCallGet, setItemLocalStorage } from '../libs/base';
 import "./../css_main/css/login.css"
 import { toast } from 'wc-toast'
-import { Link } from 'react-router-dom'
+import { Link , Navigate} from 'react-router-dom'
 
 
 
@@ -10,12 +10,11 @@ import { Link } from 'react-router-dom'
 const Login = () => {
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [isLogout, setIsLogout] = useState(false)
 
     const handleSubmit = (event) => {
-        event.preventDefault();
         console.log({ number, password })
         ajaxCallGet(`user-admin?queries=sdt=${number},pass=${password}`).then(rs => {
-
             if (rs.length == 1) {
                 handleGetQuyenByIdUser(rs[0].id);
                 toast.success('Đăng nhập thành công')
@@ -37,6 +36,7 @@ const Login = () => {
                 })
                 console.log(dataQuyen)
                 setItemLocalStorage('dataQuyen', dataQuyen);
+                setIsLogout(true);
             })
 
     }
@@ -48,7 +48,7 @@ const Login = () => {
                     <div className="login100-pic js-tilt" data-tilt>
                         <img src="https://media.istockphoto.com/vectors/login-icon-vector-id996724196" alt="IMG" />
                     </div>
-                    <form className="login100-form validate-form" method="post">
+                    <div className="login100-form validate-form" >
                         <span className="login100-form-title">
                             Member Login
                         </span>
@@ -73,11 +73,12 @@ const Login = () => {
                             </span>
                         </div>
                         <div className="container-login100-form-btn">
-                            <button
-                                onBlur={handleSubmit}
+
+                            <button onClick={handleSubmit} 
                                 className="login100-form-btn">
                                 Đăng nhập
                             </button>
+
                         </div>
                         <div className="text-center p-t-12 mb-32">
                             <span className="txt1">
@@ -93,9 +94,10 @@ const Login = () => {
                                 <i className="fas fa-long-arrow-alt-right" aria-hidden="true"></i>
                             </Link>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
+            {!isLogout ? '' : <Navigate to='/' />}
         </div>
     );
 }

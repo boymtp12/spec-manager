@@ -19,7 +19,7 @@ import Tooltip from '@mui/material/Tooltip'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { visuallyHidden } from '@mui/utils'
-import { ajaxCallGet, ajaxCallPost, URL_API_GET } from './../../libs/base'
+import { ajaxCallGet, ajaxCallPost, URL_API_GET, createData, ajaxCallPut, sweetAlert2, getItemLocalStorage, setItemLocalStorage } from './../../libs/base'
 import { toast } from 'wc-toast'
 
 import FormEditUserTool from '../FormEditUserTool'
@@ -28,43 +28,14 @@ import { Link } from 'react-router-dom'
 import Stack from '@mui/material/Stack';
 import FormAddUserTool from '../FormAddUserTool'
 
-import Edit from '../Edit'
-import Button from '@mui/material/Button'
-import { Link } from 'react-router-dom'
-import Stack from '@mui/material/Stack'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeData } from '../../reducer_action/DataUserToolReducerAction'
 
 
 const userToolContext = React.createContext()
 
-function createData (
-  id,
-  mathietbi,
-  matool,
-  hovaten,
-  sdt,
-  gmail,
-  chucvu,
-  noilamviec,
-  ngaydangky,
-  ngayhethan
-) {
-  return {
-    id,
-    mathietbi,
-    matool,
-    hovaten,
-    sdt,
-    chucvu,
-    gmail,
-    noilamviec,
-    ngaydangky,
-    ngayhethan
-  }
-}
 
-function descendingComparator (a, b, orderBy) {
+function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1
   }
@@ -74,7 +45,7 @@ function descendingComparator (a, b, orderBy) {
   return 0
 }
 
-function getComparator (order, orderBy) {
+function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -82,7 +53,7 @@ function getComparator (order, orderBy) {
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-function stableSort (array, comparator) {
+function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index])
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0])
@@ -137,7 +108,7 @@ const headCells = [
   }
 ]
 
-function EnhancedTableHead (props) {
+function EnhancedTableHead(props) {
   const {
     onSelectAllClick,
     order,
@@ -260,7 +231,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 }
 
-export default function TableQl (props) {
+export default function TableQl(props) {
   const [order, setOrder] = React.useState('asc')
   const [rows, setRows] = React.useState([])
   const [typee, setTypee] = React.useState(props.type)
@@ -292,7 +263,35 @@ export default function TableQl (props) {
   const [noiLamViec, setNoiLamViec] = React.useState('');
   const [ngayHetHan, setNgayHetHan] = React.useState('');
 
+  const phanQuyen = getItemLocalStorage('dataQuyen');
 
+  const getAllUserByQuyen = () => {
+    let dataa = []
+    fetch(URL_API_GET + `user-tool?queries=clMaTool=${phanQuyen.join(',')}`)
+      .then(rs => rs.json())
+      .then(rs => {
+        console.log('áldfjasdflals')
+        rs.data.map(item => {
+          dataa.push(
+            createData(
+              item.clId,
+              item.clMaThietBi,
+              item.clMaTool,
+              item.clHoTen,
+              item.clSdt,
+              item.clGmail,
+              item.clChucVu,
+              item.clNoiLamViec,
+              item.clNgayDangKy,
+              item.clNgayHetHan
+            )
+          )
+          // setMainDataUser(dataa)
+          const action2 = changeData(dataa)
+          dispatch(action2)
+        })
+      })
+  }
 
   React.useEffect(() => {
     let arr = mainDataUser
@@ -412,7 +411,7 @@ export default function TableQl (props) {
 
 
       })
-    })
+
   }
 
   const handleChangeEndDate = (e, id) => {
@@ -451,41 +450,48 @@ export default function TableQl (props) {
 
 
       })
-    })
+
   }
 
   const handleChangeDense = event => {
     setDense(event.target.checked)
   }
 
-  const handleDelete = id => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+  const handleDelete = async (id) => {
+    const text = "Bạn có thực sự muốn xóa người này?";
+    let confirm = await sweetAlert2(text)
+    if (confirm) {
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
+      fetch(
+        `http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`,
+        options
+      )
+        .then(response => response.json())
+        .then(rs => {
+          console.log(rs, 'success')
+          toast.success('Xóa thành công')
+          getAllUser()
+        })
+        .catch(err => {
+          console.log(err, 'error')
+        })
+    } else {
+      toast.success("Thank u")
     }
-    fetch(
-      `http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`,
-      options
-    )
-      .then(response => response.json())
-      .then(rs => {
-        console.log(rs, 'success')
-        toast.success('Xóa thành công')
-        getAllUser()
-      })
-      .catch(err => {
-        console.log(err, 'error')
-      })
+
   }
 
   const getAllUser = () => {
     let dataa = []
-    fetch(URL_API_GET + 'user-tool?queries=clMaTool=GoodChild')
+    fetch(URL_API_GET + 'user-tool/find-all')
       .then(rs => rs.json())
       .then(rs => {
-        rs.map(item => {
+        rs.data.map(item => {
           dataa.push(
             createData(
               item.clId,
@@ -528,6 +534,8 @@ export default function TableQl (props) {
   };
 
 
+
+
   // Edit USer TOol
   const loadUserTool = (id) => {
     ajaxCallGet(`user-tool/${id}`)
@@ -544,7 +552,6 @@ export default function TableQl (props) {
       })
   }
 
-  console.log(userId)
   const handleSubmit = () => {
     ajaxCallGet(`user-tool/${userId}`)
       .then(rs => {
@@ -574,7 +581,7 @@ export default function TableQl (props) {
           "clThoiGianTat": rs.clThoiGianTat,
         }
 
-        ajaxCallPost('user-tool', data)
+        ajaxCallPut('user-tool', data)
           .then(rs => {
             console.log(rs);
             toast.success('Sửa phiếu thành công')

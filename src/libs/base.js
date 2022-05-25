@@ -1,11 +1,12 @@
 import $ from 'jquery'
+import Swal from 'sweetalert2'
 
 var url = window.location.href.split('/')
 // let URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[3] + "/"
 // if (url[3].length == 0) {
 //     URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[4] + "/"
 // }
-const URL_HTTP = 'http://localhost:9668/'
+const URL_HTTP = 'http://localhost:9667/'
 // const URL_HTTP = 'https://spec.edu.vn/etool/'
 const TOKENHEADER_VALUE = getCookie('Authorization')
 export const URL_API_GET = URL_HTTP + 'api/v1/private-get/'
@@ -19,7 +20,31 @@ export function delayy () {
     timer = setTimeout(callback, ms)
   }
 }
-
+export function createData(
+  id,
+  mathietbi,
+  matool,
+  hovaten,
+  sdt,
+  gmail,
+  chucvu,
+  noilamviec,
+  ngaydangky,
+  ngayhethan
+) {
+  return {
+    id,
+    mathietbi,
+    matool,
+    hovaten,
+    sdt,
+    chucvu,
+    gmail,
+    noilamviec,
+    ngaydangky,
+    ngayhethan
+  }
+}
 export function nonAccentVietnamese (str) {
   str = str.toLowerCase()
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a')
@@ -117,6 +142,32 @@ export function alertInfo (text, time = 1000) {
   )
 }
 
+export async function sweetAlert2(title) {
+  const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+  })
+  let rs = await swalWithBootstrapButtons.fire({
+      title: title,
+      text: "Bạn sẽ không thể khôi phục lại điều này!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Xóa nó!',
+      cancelButtonText: 'Hủy bỏ!',
+      reverseButtons: true
+  }).then((result) => {
+      if (result.isConfirmed) {
+          return true;
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+          return false;
+      }
+  })
+  return rs
+}
+
 export function alertWarning (text, time = 1000) {
   $.notify(
     {
@@ -159,13 +210,12 @@ export function alertDanger (text, time = 1000) {
 /*get data*/
 export async function ajaxCallGet (url) {
   let rs = null
-  if (url.includes('?')) url = url.concat('&token=' + TOKENHEADER_VALUE)
-  else url = url.concat('?token=' + TOKENHEADER_VALUE)
+  
   await $.ajax({
     type: 'GET',
     dataType: 'json',
     url: URL_API_GET + url,
-    timeout: 10000,
+
     success: function (result) {
       rs = result
     },
@@ -179,8 +229,7 @@ export async function ajaxCallGet (url) {
 /*upload file, image....*/
 export async function ajaxCallUploadFile (url, file) {
   let data
-  if (url.includes('?')) url = url.concat('&token=' + TOKENHEADER_VALUE)
-  else url = url.concat('?token=' + TOKENHEADER_VALUE)
+  
   await $.ajax({
     type: 'POST',
     url: 'https://spec.edu.vn/qlbh/api/v1/private-edit/' + url,

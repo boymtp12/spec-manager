@@ -6,7 +6,7 @@ import $ from 'jquery'
 import PropTypes from 'prop-types'
 import Typography from '@mui/material/Typography'
 import TableQl from './TableQl'
-import { ajaxCallGet, setItemLocalStorage, URL_API_GET } from '../../libs/base'
+import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData, getItemLocalStorage } from '../../libs/base'
 import FormEditUserTool from '../FormEditUserTool'
 import { Link } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ import '../../css_main/css/tabsQl.css'
 import { changeData } from '../../reducer_action/DataUserToolReducerAction'
 
 
-function TabPanel (props) {
+function TabPanel(props) {
   const { children, value, index, ...other } = props
 
   return (
@@ -43,39 +43,15 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired
 }
 
-function a11yProps (index) {
+function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`
   }
 }
-function createData (
-  id,
-  mathietbi,
-  matool,
-  hovaten,
-  sdt,
-  gmail,
-  chucvu,
-  noilamviec,
-  ngaydangky,
-  ngayhethan
-) {
-  return {
-    id,
-    mathietbi,
-    matool,
-    hovaten,
-    sdt,
-    chucvu,
-    gmail,
-    noilamviec,
-    ngaydangky,
-    ngayhethan
-  }
-}
 
-export default function TabsQl () {
+
+export default function TabsQl() {
   const dispatch = useDispatch()
 
   const [value, setValue] = React.useState(0)
@@ -84,69 +60,106 @@ export default function TabsQl () {
   const mainDataUser = useSelector(state => state.userTool.dataUser)
   // const [mainDataUser, setMainDataUser] = React.useState()
 
-  const [autoLabel, setAutoLabel] = React.useState()
-  const [searchTerm, setSearchTerm] = React.useState('')
-  const [time, setTime] = React.useState(0)
-
 
   const [checked, setChecked] = React.useState([])
   const [allTool, setAllTool] = React.useState([]);
 
 
+  // Lấy hết mã tool ném vào local
   React.useEffect(() => {
-    // renderData()
-  }, [mainDataUser])
-
-  React.useEffect(() => {
-    let dataa = []
-    let label = []
-
-    ajaxCallGet(`user-tool?queries=clMaTool`).then(async rs => {
-      for (let x in rs) {
-        let item = rs[x]
-
-        dataa.push(
-          createData(
-            item.clId,
-            item.clMaThietBi,
-            item.clMaTool,
-            item.clHoTen,
-            item.clSdt,
-            item.clGmail,
-            item.clChucVu,
-            item.clNoiLamViec,
-            item.clNgayDangKy,
-            item.clNgayHetHan
-          )
-        )
-        label.push({ label: item.clSdt, year: item.clMaThietBi })
-        setAutoLabel(label)
-      }
-      // setMainDataUser(dataa)
-      const action2 = changeData(dataa)
-      await dispatch(action2)
-      renderData()
-    })
-  }, [])
-
-  React.useEffect(() => {
-    ajaxCallGet(`user-tool/find-all`)
-      .then(rs => rs.data.reduce((acu, item) => {
+    let acu = [];
+    ajaxCallGet(`user-tool/find-all`).then(rs => {
+      let myArray = rs.data.reduce((acu, item) => {
         if (acu.indexOf(item.clMaTool) === -1) {
           acu.push(item.clMaTool)
         }
         return acu;
-      }, []))
-      .then(acu => {
-        setItemLocalStorage('all-tool', acu)
-      })
+      }, [])
+      setItemLocalStorage('all-tool', myArray)
+    }).catch(err => {
+      console.log(err);
+    })
   }, [])
+  const phanQuyen = getItemLocalStorage('dataQuyen');
+
+
+  React.useEffect(() => {
+    if (phanQuyen === "Admin") {
+      let dataa = []
+      let label = []
+      ajaxCallGet(`user-tool/find-all`).then(async rs => {
+        console.log(rs)
+
+        for (let x in rs.data) {
+          let item = rs.data[x]
+          dataa.push(
+            createData(
+              item.clId,
+              item.clMaThietBi,
+              item.clMaTool,
+              item.clHoTen,
+              item.clSdt,
+              item.clGmail,
+              item.clChucVu,
+              item.clNoiLamViec,
+              item.clNgayDangKy,
+              item.clNgayHetHan
+            )
+          )
+
+        }
+        console.log(dataa);
+        // setMainDataUser(dataa)
+        const action2 = changeData(dataa)
+        await dispatch(action2)
+        renderData()
+      }).catch(err => {
+        console.log(err);
+      })
+    }else{
+      let dataa = []
+      let label = []
+      /// check đăng nhập trước rồi mới call api
+      ajaxCallGet(`user-tool?queries=clMaTool=${phanQuyen.join('')}`).then(async rs => {
+        console.log(rs)
+        for (let x in rs) {
+          let item = rs[x]
+          dataa.push(
+            createData(
+              item.clId,
+              item.clMaThietBi,
+              item.clMaTool,
+              item.clHoTen,
+              item.clSdt,
+              item.clGmail,
+              item.clChucVu,
+              item.clNoiLamViec,
+              item.clNgayDangKy,
+              item.clNgayHetHan
+            )
+          )
+  
+        }
+        console.log(dataa);
+        // setMainDataUser(dataa)
+        const action2 = changeData(dataa)
+        await dispatch(action2)
+        renderData()
+      }).catch(err => {
+        console.log(err);
+      })
+    }
+  }, [])
+
+ 
+  // }
+
 
 
 
   const handleData = (type, data) => {
     if (data.length > 0) {
-      console.log(data)
+
       return (
         <TableQl type={type} onCountItem={setAccountChinhThuc} data={data} />
       )
@@ -157,43 +170,7 @@ export default function TabsQl () {
     setValue(newValue)
   }
 
-  const inputHandler = e => {
-    // console.log("kdkdkd");
 
-    clearTimeout(time)
-    let tm = setTimeout(async () => {
-      var inputCheck = e.target.value
-      let dataa = []
-      let label = []
-      let rs = await fetch(
-        URL_API_GET + `user-tool/find-like-sdt?sdt=${inputCheck}`
-      ).then(response => response.json())
-      for (let x in rs.data) {
-        let item = rs.data[x]
-        dataa.push(
-          createData(
-            item.clId,
-            item.clMaThietBi,
-            item.clMaTool,
-            item.clHoTen,
-            item.clSdt,
-            item.clGmail,
-            item.clChucVu,
-            item.clNoiLamViec,
-            item.clNgayDangKy,
-
-            item.clNgayHetHan
-          )
-        )
-        label.push({ label: item.clSdt, year: item.clMaThietBi })
-        setAutoLabel(label)
-      }
-      // setMainDataUser([...dataa])
-      const action2 = changeData(dataa)
-      dispatch(action2)
-    }, 1000)
-    setTime(tm)
-  }
 
   // const handleChangeInCheckbox = (id) => {
   //   setChecked(prev => {
@@ -238,13 +215,7 @@ export default function TabsQl () {
     return (
       <div className='w-100'>
 
-        <Header
-          inputHandler={inputHandler}
-          // handleChangeInCheckbox={handleChangeInCheckbox}
-          // checked={checked}
-          // setChecked={setChecked}
-          // allTool={allTool}
-        />
+        
 
         <Box
           sx={{ width: '80%' }}

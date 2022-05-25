@@ -12,7 +12,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { Checkbox } from '@mui/material';
-import { getItemLocalStorage } from '../../libs/base';
+import { getItemLocalStorage, setItemLocalStorage } from '../../libs/base';
 import { useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -33,40 +33,18 @@ export default function EditFormUserAdmin({
     setChecked }) {
 
     const theme = useTheme();
-    const [maTool, setMaTool] = React.useState([]);
+    const [phanQuyen, setphanQuyen] = React.useState([]);
 
     const handleChangeInMultiple = (event) => {
         const {
             target: { value },
         } = event;
-        setMaTool(
+        setphanQuyen(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
         );
     };
-
-    const ITEM_HEIGHT = 48;
-    const ITEM_PADDING_TOP = 8;
-    const MenuProps = {
-        PaperProps: {
-            style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
-            },
-        },
-    };
-
-    const names = getItemLocalStorage('all-tool')
-
-    function getStyles(name, maTool, theme) {
-        return {
-            fontWeight:
-                maTool.indexOf(name) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-
+    console.log(phanQuyen)
 
     // CheckBox
 
@@ -81,8 +59,27 @@ export default function EditFormUserAdmin({
                 return [...prev, id];
             }
         });
-        // end Radio
         console.log(checked);
+    }
+
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+
+    function getStyles(name, phanQuyen, theme) {
+        return {
+            fontWeight:
+                phanQuyen.indexOf(name) === -1
+                    ? theme.typography.fontWeightRegular
+                    : theme.typography.fontWeightMedium,
+        };
     }
 
     const [values, setValues] = React.useState({
@@ -92,10 +89,18 @@ export default function EditFormUserAdmin({
         weightRange: '',
         showPassword: false,
     });
+    console.log(quyen)
+
+    const names = quyen;
+
 
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
+
+    const handleChangeId = (id) => {
+        console.log(id);
+    }
 
     const handleClickShowPassword = () => {
         setValues({
@@ -173,7 +178,7 @@ export default function EditFormUserAdmin({
                         label="Password"
                     />
                 </FormControl>
-                <FormControl sx={{ m: 1 }}>
+                {/* <FormControl sx={{ m: 1 }}>
                     <FormLabel id="demo-controlled-radio-buttons-group" sx={{ m: 0 }}>Phân quyền</FormLabel>
                     <RadioGroup
                         row
@@ -190,13 +195,13 @@ export default function EditFormUserAdmin({
                             )
                         })}
                     </RadioGroup>
-                </FormControl>
-                <FormControl sx={{ m: 1, width: 140 }}>
-                    <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
+                </FormControl> */}
+                <FormControl sx={{ m: 1, width: 250 }}>
+                    <InputLabel id="demo-multiple-name-label">Phân quyền</InputLabel>
                     <Select
                         multiple
                         displayEmpty
-                        value={maTool}
+                        value={phanQuyen}
                         onChange={handleChangeInMultiple}
                         input={<OutlinedInput />}
                         renderValue={(selected) => {
@@ -206,16 +211,16 @@ export default function EditFormUserAdmin({
                         MenuProps={MenuProps}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
-                        <MenuItem disabled value="">
-                            <em>Placeholder</em>
+                        <MenuItem value="" default>
+                            <em>Place holder</em>
                         </MenuItem>
                         {names.map((name) => (
                             <MenuItem
-                                key={name}
-                                value={name}
-                                style={getStyles(name, maTool, theme)}
+                                key={name.tenQuyen}
+                                value={name.tenQuyen}
+                                style={getStyles(name.tenQuyen, phanQuyen, theme)}
                             >
-                                {name}
+                                {name.tenQuyen}
                             </MenuItem>
                         ))}
                     </Select>

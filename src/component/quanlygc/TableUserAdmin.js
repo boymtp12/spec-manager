@@ -21,7 +21,7 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import { ajaxCallGet, ajaxCallPost, ajaxCallPut } from '../../libs/base';
+import { ajaxCallGet, ajaxCallPost, ajaxCallPut, sweetAlert2 } from '../../libs/base';
 import { Link } from 'react-router-dom';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, TextField } from '@mui/material';
 import Header from '../Header'
@@ -313,8 +313,11 @@ export default function TableUserAdmin() {
 
 
     // Muốn xóa được UserAdmin thì phải xóa quan hệ của nó với Quyền trước, vì thế ta gọi hàm handleDelete sau khi xóa được AdminHasQuyen
-    const handleDeleteAdminHasQuyen = (id) => {
-        ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
+    const handleDeleteAdminHasQuyen = async (id) => {
+        const text = "Bạn có thực sự muốn xóa, thao tác này không thể khôi phục!";
+        const confirm = await sweetAlert2(text);
+        if(confirm) {
+            ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
             .then(rs => {
                 console.log({ rs, id })
                 handleDelete(id);
@@ -322,6 +325,10 @@ export default function TableUserAdmin() {
             .catch(err => {
                 console.log("err: ", err);
             })
+        } else {
+            toast.success('Thank u')
+        }
+        
     }
 
     const handleDelete = (id) => {
@@ -449,8 +456,7 @@ export default function TableUserAdmin() {
 
     return (
         <div>
-            <Header
-            />
+            {/* <Header/> */}
             <Box sx={{ width: '1200px', margin: '110px auto' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
