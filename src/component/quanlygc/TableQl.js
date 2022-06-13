@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import PropTypes from 'prop-types'
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
@@ -17,19 +18,22 @@ import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import DeleteIcon from '@mui/icons-material/Delete'
-import FilterListIcon from '@mui/icons-material/FilterList'
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { visuallyHidden } from '@mui/utils'
-import { ajaxCallGet, ajaxCallPost, URL_API_GET, createData, ajaxCallPut, sweetAlert2, getItemLocalStorage, setItemLocalStorage } from './../../libs/base'
+import { ajaxCallGet, ajaxCallPost, URL_API_GET, createData, ajaxCallPut, sweetAlert2, getItemLocalStorage, setItemLocalStorage, getDayMonthYear } from './../../libs/base'
 import { toast } from 'wc-toast'
 
 import FormEditUserTool from '../FormEditUserTool'
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom'
 import Stack from '@mui/material/Stack';
 import FormAddUserTool from '../FormAddUserTool'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { changeData } from '../../reducer_action/DataUserToolReducerAction'
+import { changeData, changeTypeTabs } from '../../reducer_action/DataUserToolReducerAction'
+import FormEditUserToolGeneral from '../FormEditUserToolGeneral'
+import MenuFilter from '../MenuFilter'
+import Header from '../Header'
 
 
 const userToolContext = React.createContext()
@@ -122,6 +126,8 @@ function EnhancedTableHead(props) {
   }
 
   return (
+    <>
+    {/* <Header /> */}
     <TableHead style={{ background: '#f4f3f3' }}>
       <TableRow>
         <TableCell padding='checkbox'>
@@ -160,6 +166,7 @@ function EnhancedTableHead(props) {
         ))}
       </TableRow>
     </TableHead>
+    </>
   )
 }
 
@@ -172,69 +179,12 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired
 }
 
-const EnhancedTableToolbar = props => {
-  const { numSelected } = props
 
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: theme =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            )
-        })
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color='inherit'
-          variant='subtitle1'
-          component='div'
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant='h6'
-          id='tableTitle'
-          component='div'
-        >
-          Danh sách tài khoản
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title='Delete'>
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title='Filter list'>
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-
-    </Toolbar>
-  )
-}
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired
-}
 
 export default function TableQl(props) {
   const [order, setOrder] = React.useState('asc')
   const [rows, setRows] = React.useState([])
-  const [typee, setTypee] = React.useState(props.type)
+  const typee = useSelector(state => state.userTool.typeTabs)
 
   const [orderBy, setOrderBy] = React.useState('calories')
   const [selected, setSelected] = React.useState([])
@@ -251,6 +201,7 @@ export default function TableQl(props) {
 
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [openEditGeneral, setOpenEditGeneral] = React.useState(false);
 
   const [userId, setUserId] = React.useState('')
 
@@ -261,42 +212,99 @@ export default function TableQl(props) {
   const [soDienThoai, setSoDienThoai] = React.useState('');
   const [chucVu, setChucVu] = React.useState('');
   const [noiLamViec, setNoiLamViec] = React.useState('');
+  const [ngayDangKy, setNgayDangKy] = React.useState('');
   const [ngayHetHan, setNgayHetHan] = React.useState('');
 
-  const phanQuyen = getItemLocalStorage('dataQuyen');
+  const phanQuyen = getItemLocalStorage('dataQuyen').join('');
 
-  const getAllUserByQuyen = () => {
-    let dataa = []
-    fetch(URL_API_GET + `user-tool?queries=clMaTool=${phanQuyen.join(',')}`)
-      .then(rs => rs.json())
-      .then(rs => {
-        console.log('áldfjasdflals')
-        rs.data.map(item => {
-          dataa.push(
-            createData(
-              item.clId,
-              item.clMaThietBi,
-              item.clMaTool,
-              item.clHoTen,
-              item.clSdt,
-              item.clGmail,
-              item.clChucVu,
-              item.clNoiLamViec,
-              item.clNgayDangKy,
-              item.clNgayHetHan
-            )
-          )
-          // setMainDataUser(dataa)
-          const action2 = changeData(dataa)
-          dispatch(action2)
-        })
-      })
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openFilterList = Boolean(anchorEl);
+
+  const EnhancedTableToolbar = props => {
+    const { numSelected } = props
+    return (
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: theme =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              )
+          })
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            color='inherit'
+            variant='subtitle1'
+            component='div'
+          >
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            variant='h6'
+            id='tableTitle'
+            component='div'
+          >
+            Danh sách tài khoản
+          </Typography>
+        )}
+
+        {numSelected > 0 ? (
+          <React.Fragment>
+            <Tooltip title='Edit' onClick={handleClickOpenEditGeneral}>
+              <IconButton >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='Delete' onClick={handleDeleteGeneral}>
+              <IconButton>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+
+            <Tooltip title='Add User Tool' onClick={handleClickOpen}>
+              <IconButton>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            {/* <Tooltip title='Filter list'>
+            <IconButton>
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip> */}
+          </React.Fragment>
+        )}
+
+      </Toolbar>
+    )
   }
+  EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired
+  }
+  const handleClickFilterList = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseFilterList = () => {
+    setAnchorEl(null);
+  };
 
+  React.useEffect(() => {
+
+  }, [])
   React.useEffect(() => {
     let arr = mainDataUser
     let date = new Date()
-    switch (typee) {
+    switch (props.type) {
       case 1:
         arr = arr.filter(item => {
           var c = new Date(item.ngayhethan)
@@ -337,16 +345,131 @@ export default function TableQl(props) {
     setOrderBy(property)
   }
 
+  /**
+ * Đẩy dữ liệu sau khi đã chỉnh sửa nhiều user-tool cùng 1 lúc
+ *
+ * @param 
+ * @author HieuTN
+ */
+
+  const handleSubmitEditGeneral = async () => {
+    const idSelected = getItemLocalStorage('idSelected');
+    for (let i in idSelected) {
+      const idUser = idSelected[i];
+      let data = await ajaxCallGet(`user-tool/${idUser}`)
+        .then(rs => {
+          console.log(rs)
+          return {
+            "clId": idUser,
+            "clMaThietBi": rs.clMaThietBi,
+            "clMaTool": rs.clMaTool,
+            "clTenSanPham": rs.clTenSanPham,
+            "clHoTen": rs.clHoTen,
+            "clSdt": rs.clSdt,
+            "clGmail": rs.clGmail,
+            "clChucVu": chucVu === "" ? rs.clChucVu : chucVu,
+            "clNoiLamViec": noiLamViec === "" ? rs.clNoiLamViec : noiLamViec,
+            "clNgayDangKy": ngayDangKy === "" ? rs.clNgayDangKy : ngayDangKy,
+            "clNgayHetHan": ngayHetHan === "" ? rs.clNgayHetHan : ngayHetHan,
+            "clCheDo": rs.clCheDo,
+            "clMatKhau": rs.clMatKhau,
+            "clPhanMemChoPhep": rs.clPhanMemChoPhep,
+            "clWebCanChan": rs.clWebCanChan,
+            "clWebChoChay": rs.clWebChoChay,
+            "clPmDaChan": rs.clPmDaChan,
+            "clWebDaChan": rs.clWebDaChan,
+            "clTrangThai": rs.clTrangThai,
+            "clLichSuWeb": rs.clLichSuWeb,
+            "clThoiGianBat": rs.clThoiGianBat,
+            "clThoiGianTat": rs.clThoiGianTat,
+          }
+
+
+        })
+      await ajaxCallPut('user-tool', data)
+        .then(rs => {
+          console.log(rs);
+          setSelected([]);
+
+          handleCloseEditGeneral();
+        })
+        .catch(err => (console.log("error: ", err)))
+    }
+    if (phanQuyen === "Admin") {
+      getAllUser()
+    } else {
+      getAllUserByQuyen();
+    }
+    toast.success('Sửa thành công');
+    clearDataAfterSubmit();
+  }
+
+  const clearDataAfterSubmit = () => {
+    setChucVu('')
+    setNoiLamViec('')
+  }
+
+  /**
+* Hàm xóa dữ liệu nhiều người dùng cùng 1 lúc
+*
+* @param 
+* @author HieuTN
+*/
+  const handleDeleteGeneral = async () => {
+    const idSelected = getItemLocalStorage('idSelected');
+    const text = "Bạn có thực sự muốn xóa những người này?";
+
+    let confirm = await sweetAlert2(text)
+    if (confirm) {
+      for (let i in idSelected) {
+        const id = idSelected[i];
+        ajaxCallPost(`user-tool/delete?id=${id}`)
+          .then(rs => {
+            setSelected([]);
+            if (phanQuyen === "Admin") {
+              getAllUser()
+            } else {
+              getAllUserByQuyen();
+            }
+          })
+          .catch(err => {
+            console.log("Error general", err);
+          })
+      }
+      toast.success("Xóa thành công !!!")
+    } else {
+      toast.success("Thank u")
+    }
+  }
+
+  React.useEffect(() => {
+    setItemLocalStorage("idSelected", selected)
+  }, [selected])
+
+  /**
+* Hàm chọn tất cả các user-tool cùng 1 lúc
+*
+* @param 
+* @author HieuTN
+*/
+
   const handleSelectAllClick = event => {
     if (event.target.checked) {
-      const newSelecteds = rows.map(n => n.mathietbi)
+      const newSelecteds = rows.map(n => n.id)
       setSelected(newSelecteds)
       return
     }
     setSelected([])
   }
 
-  const handleClick = (event, name) => {
+  /**
+* Hàm chọn từng user-tool 1
+*
+* @param 
+* @author HieuTN
+*/
+
+  const handleClickCheck = (event, name) => {
     const selectedIndex = selected.indexOf(name)
     let newSelected = []
 
@@ -375,9 +498,14 @@ export default function TableQl(props) {
     setPage(0)
   }
 
-  const handleChangeResDate = (e, id) => {
+  /**
+* Hàm sửa ngày đăng ký user-tool ngay lập tức
+*
+* @param 
+* @author HieuTN
+*/
+  const handleChangeNgayDangKy = (e, id) => {
     setDate(e.target.value)
-
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
         let data = {
@@ -408,13 +536,16 @@ export default function TableQl(props) {
           .then(rs => {
             toast.success('Sửa thành công')
           })
-
-
       })
-
   }
 
-  const handleChangeEndDate = (e, id) => {
+  /**
+* Hàm sửa ngày hết hạn của user-tool ngay lập tức
+*
+* @param 
+* @author HieuTN
+*/
+  const handleChangeNgayHetHan = (e, id) => {
     setDate(e.target.value)
 
     ajaxCallGet('user-tool' + '/' + id)
@@ -457,25 +588,26 @@ export default function TableQl(props) {
     setDense(event.target.checked)
   }
 
+  /**
+* Hàm xóa từng user-tool
+*
+* @param 
+* @author HieuTN
+*/
+
   const handleDelete = async (id) => {
     const text = "Bạn có thực sự muốn xóa người này?";
     let confirm = await sweetAlert2(text)
     if (confirm) {
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-      fetch(
-        `http://localhost:9667/api/v1/private-edit/user-tool/delete?id=${id}`,
-        options
-      )
-        .then(response => response.json())
+      ajaxCallPost(`user-tool/delete?id=${id}`)
         .then(rs => {
           console.log(rs, 'success')
           toast.success('Xóa thành công')
-          getAllUser()
+          if (phanQuyen === "Admin") {
+            getAllUser();
+          } else {
+            getAllUserByQuyen()
+          }
         })
         .catch(err => {
           console.log(err, 'error')
@@ -486,11 +618,60 @@ export default function TableQl(props) {
 
   }
 
+  /**
+* Lấy ra tất cả các user-tool có cùng mã tool với user-admin có quyền 
+* xem mã tool đấy và render ra (thường dùng cho admin khi search và user-admin có phanQuyen đó)
+*
+* @param 
+* @author HieuTN
+*/
+
+  const getAllUserByQuyen = () => {
+    let dataa = []
+    ajaxCallGet(`user-tool?queries=clMaTool=${phanQuyen}`)
+      .then(async rs => {
+        console.log('get All by quyen')
+        rs.map(item => {
+          console.log('test 1')
+          dataa.push(
+            createData(
+              item.clId,
+              item.clMaThietBi,
+              item.clMaTool,
+              item.clHoTen,
+              item.clSdt,
+              item.clGmail,
+              item.clChucVu,
+              item.clNoiLamViec,
+              item.clNgayDangKy,
+              item.clNgayHetHan
+            )
+          )
+          // setMainDataUser(dataa)
+
+        })
+        console.log(dataa)
+        const action3 = changeTypeTabs(1);
+        await dispatch(action3)
+
+        const action2 = changeData(dataa)
+        await dispatch(action2)
+      })
+  }
+
+  /**
+* Hàm lấy ra tất cả các user-tool
+* dùng cho người có quyền cao nhất 
+*
+* @param 
+* @author HieuTN
+*/
+
   const getAllUser = () => {
     let dataa = []
-    fetch(URL_API_GET + 'user-tool/find-all')
-      .then(rs => rs.json())
+    ajaxCallGet('user-tool/find-all')
       .then(rs => {
+        console.log("get all admin")
         rs.data.map(item => {
           dataa.push(
             createData(
@@ -507,6 +688,23 @@ export default function TableQl(props) {
             )
           )
           // setMainDataUser(dataa)
+          // const action3 = changeTypeTabs(1);
+          // dispatch(action3)
+          // const action2 = changeData([createData(
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null ,
+          //   null 
+          // )])
+          // dispatch(action2)
+          const action4 = changeTypeTabs(1);
+          dispatch(action4)
           const action2 = changeData(dataa)
           dispatch(action2)
         })
@@ -514,14 +712,34 @@ export default function TableQl(props) {
   }
 
 
+  /**
+* Mở ra dialog thêm user-tool
+*
+* @param 
+* @author HieuTN
+*/
   const handleClickOpen = (id) => {
     setUserId(id);
     setOpen(true);
   };
 
+  /**
+* Đóng dialog thêm user-tool
+*
+* @param 
+* @author HieuTN
+*/
+
   const handleClose = () => {
     setOpen(false);
   };
+
+  /**
+* Mở ra dialog sửa user-tool
+*
+* @param 
+* @author HieuTN
+*/
 
   const handleClickOpenEdit = (id) => {
     setUserId(id);
@@ -529,18 +747,53 @@ export default function TableQl(props) {
     loadUserTool(id);
   };
 
+  /**
+   * Đóng dialog sửa user-tool
+   *
+   * @param 
+   * @author HieuTN
+   */
+
   const handleCloseEdit = () => {
     setOpenEdit(false);
   };
 
+  /**
+* Mở dialog sửa nhiều user-tool cùng 1 lúc
+*
+* @param 
+* @author HieuTN
+*/
+
+  const handleClickOpenEditGeneral = () => {
+    setOpenEditGeneral(true);
+  }
 
 
+  /**
+* Mở dialog sửa nhiều user-tool cùng 1 lúc
+*
+* @param 
+* @author HieuTN
+*/
+
+  const handleCloseEditGeneral = () => {
+    setOpenEditGeneral(false);
+  };
+
+
+
+  /**
+* Lấy dữ liệu user-tool mỗi lần ta nhấn sửa
+*
+* @param 
+* @author HieuTN
+*/
 
   // Edit USer TOol
   const loadUserTool = (id) => {
     ajaxCallGet(`user-tool/${id}`)
       .then(rs => {
-        console.log(rs.clMaTool);
         setFullName(rs.clHoTen);
         setMail(rs.clGmail)
         setTenSanPham(rs.clTenSanPham)
@@ -552,6 +805,12 @@ export default function TableQl(props) {
       })
   }
 
+  /**
+* Submit sửa
+*
+* @param 
+* @author HieuTN
+*/
   const handleSubmit = () => {
     ajaxCallGet(`user-tool/${userId}`)
       .then(rs => {
@@ -586,7 +845,11 @@ export default function TableQl(props) {
             console.log(rs);
             toast.success('Sửa phiếu thành công')
             handleCloseEdit()
-            getAllUser()
+            if (phanQuyen === "Admin") {
+              getAllUser();
+            } else {
+              getAllUserByQuyen()
+            }
           })
           .catch(err => (console.log("error: ", err)))
       })
@@ -594,16 +857,21 @@ export default function TableQl(props) {
 
   }
 
-  const isSelected = name => selected.indexOf(name) !== -1
+  const isSelected = name => selected.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
 
+
+
+
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
-      <Button variant="outlined" onClick={handleClickOpen}>Add</Button>
+      {/* <Button variant="outlined" onClick={handleClickOpen}>Add</Button> */}
+      {/* <Button variant="outlined" onClick={handleClickOpenEditGeneral}>Edit General</Button> */}
+      {phanQuyen !== "Admin" || <MenuFilter getAllUser={getAllUser} />}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
@@ -622,64 +890,65 @@ export default function TableQl(props) {
           <TableBody>
             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-            {stableSort(rows, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.mathietbi)
-                const labelId = `enhanced-table-checkbox-${index}`
-
-                return (
-                  <TableRow
-                    hover
-                    // onClick={event => handleClick(event, row.mathietbi)}
-                    role='checkbox'
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.mathietbi}
-                    selected={isItemSelected}
-                  >
-                    <TableCell padding='checkbox'>
-                      <Checkbox
-                        color='primary'
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      style={{ 'whiteSpace': 'nowrap' }}
+            {
+              stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id)
+                  const labelId = `enhanced-table-checkbox-${index}`
+                  return (
+                    <TableRow
+                      hover
+                      role='checkbox'
+                      // onClick={event => handleClickCheck(event, row.mathietbi)}
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.mathietbi + index}
+                      selected={isItemSelected}
                     >
-                      {row.hovaten}
-                    </TableCell>
-                    <TableCell align='center'>{row.matool}</TableCell>
-                    <TableCell>{row.sdt}</TableCell>
-                    <TableCell align='center'>
-                      <input
-                        type='date'
-                        onChange={(e) => handleChangeResDate(e, row.id)}
-                        defaultValue={row.ngaydangky}
-                      />
-                    </TableCell>
-                    <TableCell align='center'>
-                      <input
-                        type='date'
-                        onChange={(e) => handleChangeEndDate(e, row.id)}
-                        defaultValue={row.ngayhethan}
-                      />
-                    </TableCell>
-                    <TableCell align='center'>
-                      <Stack direction="row" spacing={2}>
-                        <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
-                          Delete
-                        </Button>
-                        <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
-                      </Stack>
-                    </TableCell>
+                      <TableCell padding='checkbox'>
+                        <Checkbox
+                          onClick={event => handleClickCheck(event, row.id)}
+                          color='primary'
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        style={{ 'whiteSpace': 'nowrap' }}
+                      >
+                        {row.hovaten}
+                      </TableCell>
+                      <TableCell align='center'>{row.matool}</TableCell>
+                      <TableCell>{row.sdt}</TableCell>
+                      <TableCell align='center'>
+                        <input
+                          type='date'
+                          onChange={(e) => handleChangeNgayDangKy(e, row.id)}
+                          defaultValue={row.ngaydangky}
+                        />
+                      </TableCell>
+                      <TableCell align='center'>
+                        <input
+                          type='date'
+                          onChange={(e) => handleChangeNgayHetHan(e, row.id)}
+                          defaultValue={row.ngayhethan}
+                        />
+                      </TableCell>
+                      <TableCell align='center'>
+                        <Stack direction="row" spacing={2}>
+                          <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
+                            Delete
+                          </Button>
+                          <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
+                        </Stack>
+                      </TableCell>
 
-                  </TableRow>
-                )
-              })}
+                    </TableRow>
+                  )
+                })}
             {emptyRows > 0 && (
               <TableRow
                 style={{
@@ -705,6 +974,8 @@ export default function TableQl(props) {
       <FormAddUserTool
         open={open}
         handleClose={handleClose}
+        getAllUserByQuyen={getAllUserByQuyen}
+        getAllUser={getAllUser}
       />
       <FormEditUserTool
         id={userId}
@@ -728,6 +999,19 @@ export default function TableQl(props) {
         setNgayHetHan={setNgayHetHan}
         handleSubmit={handleSubmit}
       />
+      <FormEditUserToolGeneral
+        id={userId}
+        open={openEditGeneral}
+        handleClose={handleCloseEditGeneral}
+        chucVu={chucVu}
+        noiLamViec={noiLamViec}
+        ngayDangKy={ngayDangKy}
+        ngayHetHan={ngayHetHan}
+        setChucVu={setChucVu}
+        setNoiLamViec={setNoiLamViec}
+        setNgayDangKy={setNgayDangKy}
+        setNgayHetHan={setNgayHetHan}
+        handleSubmit={handleSubmitEditGeneral} />
     </Paper>
   )
 }

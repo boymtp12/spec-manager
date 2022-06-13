@@ -15,18 +15,32 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import Tooltip from '@mui/material/Tooltip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import AddIcon from '@mui/icons-material/Add';
 import { visuallyHidden } from '@mui/utils';
 import { ajaxCallGet, ajaxCallPost, ajaxCallPut, sweetAlert2 } from '../../libs/base';
 import { Link } from 'react-router-dom';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, Tab, Tabs, TextField } from '@mui/material';
 import Header from '../Header'
 import EditFormUserAdmin from './EditFormUserAdmin';
 import { toast } from 'wc-toast';
+import { EditLocationAltSharp } from '@mui/icons-material';
+import FormAddUserAdmin from '../FormAddUserAdmin';
+import FormAddQuyen from '../FormAddQuyen';
+import FormListQuyen from '../FormListQuyen'
+import ListIcon from '@mui/icons-material/List';
+
+/**
+* Tạo data render
+*
+* @param 
+* @author HieuTN
+*/
 
 function createData(id, name, sdt, address, email, pass) {
     return {
@@ -38,7 +52,6 @@ function createData(id, name, sdt, address, email, pass) {
         pass,
     };
 }
-
 
 
 // const rows = [
@@ -122,42 +135,46 @@ function EnhancedTableHead(props) {
     };
 
     return (
-        <TableHead>
-            <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        color="primary"
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={rowCount > 0 && numSelected === rowCount}
-                        onChange={onSelectAllClick}
-                        inputProps={{
-                            'aria-label': 'select all desserts',
-                        }}
-                    />
-                </TableCell>
-                {headCells.map((headCell) => (
-                    <TableCell
-                        key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
-                        padding={headCell.disablePadding ? 'none' : 'normal'}
-                        sortDirection={orderBy === headCell.id ? order : false}
-                    >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell.id)}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
+        <React.Fragment>
+            <Header />
+            <TableHead>
+                <TableRow>
+                    <TableCell padding="checkbox">
+                        <Checkbox
+                            color="primary"
+                            indeterminate={numSelected > 0 && numSelected < rowCount}
+                            checked={rowCount > 0 && numSelected === rowCount}
+                            onChange={onSelectAllClick}
+                            inputProps={{
+                                'aria-label': 'select all desserts',
+                            }}
+                        />
                     </TableCell>
-                ))}
-            </TableRow>
-        </TableHead>
+                    {headCells.map((headCell) => (
+                        <TableCell
+                            key={headCell.id}
+                            align={headCell.numeric ? 'right' : 'left'}
+                            padding={headCell.disablePadding ? 'none' : 'normal'}
+                            sortDirection={orderBy === headCell.id ? order : false}
+                        >
+                            <TableSortLabel
+                                active={orderBy === headCell.id}
+                                direction={orderBy === headCell.id ? order : 'asc'}
+                                onClick={createSortHandler(headCell.id)}
+                            >
+                                {headCell.label}
+                                {orderBy === headCell.id ? (
+                                    <Box component="span" sx={visuallyHidden}>
+                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </Box>
+                                ) : null}
+                            </TableSortLabel>
+                        </TableCell>
+                    ))}
+                </TableRow>
+            </TableHead>
+        </React.Fragment>
+
     );
 }
 
@@ -168,61 +185,6 @@ EnhancedTableHead.propTypes = {
     order: PropTypes.oneOf(['asc', 'desc']).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
-};
-
-const EnhancedTableToolbar = (props) => {
-    const { numSelected } = props;
-
-    return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    Danh sách Nhân viên
-                </Typography>
-            )}
-
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton>
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
-    );
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
 };
 
 export default function TableUserAdmin() {
@@ -246,31 +208,98 @@ export default function TableUserAdmin() {
     const [open, setOpen] = React.useState(false);
     const [quyen, setQuyen] = React.useState([]);
 
+    const [openAdd, setOpenAdd] = React.useState(false)
+    const [openAddQuyen, setOpenAddQuyen] = React.useState(false)
+
+    const [openList, setOpenList] = React.useState(false);
+
     //
     const [checked, setChecked] = React.useState([]);
+    const [phanQuyen, setPhanQuyen] = React.useState([]);
 
 
-    const handleClickOpen = (id) => {
-        setOpen(true);
-        setUserId(id);
-        ajaxCallGet(`user-admin/${id}`)
-            .then(rs => {
-                console.log(rs);
-                setTen(rs.ten)
-                setSdt(rs.sdt)
-                setAddress(rs.address)
-                setEmail(rs.email)
-                setPass(rs.pass)
-            })
-        getQuyen(id);
-        setChecked('')
-        getUserAdminHasQuyen(id);
+    const EnhancedTableToolbar = (props) => {
+        const { numSelected } = props;
+
+        return (
+            <Toolbar
+                sx={{
+                    pl: { sm: 2 },
+                    pr: { xs: 1, sm: 1 },
+                    ...(numSelected > 0 && {
+                        bgcolor: (theme) =>
+                            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                    }),
+                }}
+            >
+                {numSelected > 0 ? (
+                    <Typography
+                        sx={{ flex: '1 1 100%' }}
+                        color="inherit"
+                        variant="subtitle1"
+                        component="div"
+                    >
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography
+                        sx={{ flex: '1 1 100%' }}
+                        variant="h6"
+                        id="tableTitle"
+                        component="div"
+                    >
+                        Danh sách Nhân viên
+                    </Typography>
+                )}
+
+                {numSelected > 0 ? (
+                    <React.Fragment>
+                        <Tooltip title='Delete' onClick={handleDeleteGeneral}>
+                            <IconButton>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </React.Fragment>
+                ) : (
+                    <>
+                        <Tooltip title='Danh sách các quyền' onClick={handleOpenList}>
+                            <IconButton>
+                                <ListIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title='Thêm Quyền' onClick={handleOpenAddQuyen}>
+                            <IconButton>
+                                <AddBoxIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Thêm User Admin" onClick={handleOpenAdd}>
+                            <IconButton>
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </>
+                )}
+            </Toolbar>
+        );
     };
+
+    EnhancedTableToolbar.propTypes = {
+        numSelected: PropTypes.number.isRequired,
+    };
+
+
+    /**
+     * Submit để xóa dữ liệu admin has quyen cũ 
+     * bị xóa đi và thêm admin has quyen mới vào
+     *
+     * @param 
+     * @author HieuTN
+     */
+
 
     const handleSubmitAdminHasQuyen = (id) => {
         ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
             .then(rs => {
-                console.log({ rs, id })
                 checked.forEach((idQuyen => {
                     ajaxCallPost(`admin-has-quyen/save-new?idUser=${id}&idQuyen=${idQuyen}`)
                         .then(rs => {
@@ -288,6 +317,14 @@ export default function TableUserAdmin() {
 
     }
 
+
+    /**
+* Submit sửa
+*
+* @param 
+* @author HieuTN
+*/
+
     const handleSubmit = () => {
         const data = {
             id: userId,
@@ -295,14 +332,11 @@ export default function TableUserAdmin() {
             sdt: sdt,
             address: address,
             email: email,
-            pass: pass
+            pass: pass,
         }
 
-        console.log(data)
         ajaxCallPut('user-admin', data)
             .then(rs => {
-                console.log(rs);
-                console.log("checked: ", checked);
                 toast.success('Sửa Thành công')
                 getAllUser();
                 handleSubmitAdminHasQuyen(userId);
@@ -312,24 +346,38 @@ export default function TableUserAdmin() {
     }
 
 
-    // Muốn xóa được UserAdmin thì phải xóa quan hệ của nó với Quyền trước, vì thế ta gọi hàm handleDelete sau khi xóa được AdminHasQuyen
+    /**
+* Muốn xóa được UserAdmin thì phải xóa quan hệ
+* của nó với Quyền trước, vì thế ta gọi hàm
+* handleDelete sau khi xóa được AdminHasQuyen
+*
+* @param 
+* @author HieuTN
+*/
     const handleDeleteAdminHasQuyen = async (id) => {
         const text = "Bạn có thực sự muốn xóa, thao tác này không thể khôi phục!";
         const confirm = await sweetAlert2(text);
-        if(confirm) {
+        if (confirm) {
             ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
-            .then(rs => {
-                console.log({ rs, id })
-                handleDelete(id);
-            })
-            .catch(err => {
-                console.log("err: ", err);
-            })
+                .then(rs => {
+                    console.log({ rs, id })
+                    handleDelete(id);
+                })
+                .catch(err => {
+                    console.log("err: ", err);
+                })
         } else {
             toast.success('Thank u')
         }
-        
+
     }
+
+    /**
+* Submit xóa
+*
+* @param 
+* @author HieuTN
+*/
 
     const handleDelete = (id) => {
         ajaxCallPost(`user-admin/delete?id=${id}`)
@@ -343,7 +391,11 @@ export default function TableUserAdmin() {
             })
     }
 
-    const getQuyen = (id) => {
+    const handleDeleteGeneral = () => {
+        toast.error('Chức năng này chưa được phát triển')
+    }
+
+    const getQuyen = () => {
         let data = [];
         ajaxCallGet(`quyen/find-all`)
             .then(rs => {
@@ -353,16 +405,39 @@ export default function TableUserAdmin() {
     }
 
     const getUserAdminHasQuyen = (id) => {
-        let data = [];
+        let dataId = [];
+        let dataTenQuyen = [];
         ajaxCallGet(`admin-has-quyen?queries=id.userAdminId=${id}`)
             .then(rs => {
                 rs.map((item) => {
-                    data.push(item.id.quyenId);
+                    dataId.push(item.id.quyenId);
+                    dataTenQuyen.push(item.quyen.tenQuyen)
                 })
-                setChecked(data);
+                console.log(dataId)
+                setChecked(dataId);
+                setPhanQuyen(dataTenQuyen)
+            })
+            .catch(err => {
+                console.log("err: ", err)
             })
     }
 
+    const handleClickOpen = (id) => {
+        setOpen(true);
+        setUserId(id);
+        ajaxCallGet(`user-admin/${id}`)
+            .then(rs => {
+                console.log(rs);
+                setTen(rs.ten)
+                setSdt(rs.sdt)
+                setAddress(rs.address)
+                setEmail(rs.email)
+                setPass(rs.pass)
+            })
+        getQuyen(id);
+        setChecked([])
+        getUserAdminHasQuyen(id);
+    };
 
     const getAllUser = () => {
         let data = [];
@@ -378,6 +453,33 @@ export default function TableUserAdmin() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleOpenAdd = () => {
+        setOpenAdd(true);
+    }
+
+    const handleCloseAdd = () => {
+        setOpenAdd(false);
+    }
+
+    const handleOpenList = () => {
+        setOpenList(true);
+        getQuyen();
+    }
+
+    const handleCloseList = () => {
+        setOpenList(false);
+    }
+
+    const handleOpenAddQuyen = () => {
+        setOpenAddQuyen(true);
+    }
+
+
+    const handleCloseAddQuyen = () => {
+        setOpenAddQuyen(false);
+    }
+
 
 
     const handleRequestSort = (event, property) => {
@@ -415,7 +517,7 @@ export default function TableUserAdmin() {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
+    const handleClickCheck = (event, name) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -455,134 +557,151 @@ export default function TableUserAdmin() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <div>
-            {/* <Header/> */}
-            <Box sx={{ width: '1200px', margin: '110px auto' }}>
-                <Paper sx={{ width: '100%', mb: 2 }}>
-                    <EnhancedTableToolbar numSelected={selected.length} />
-                    <TableContainer>
-                        <Table
-                            sx={{ minWidth: 750 }}
-                            aria-labelledby="tableTitle"
-                            size={dense ? 'small' : 'medium'}
-                        >
-                            <EnhancedTableHead
-                                numSelected={selected.length}
-                                order={order}
-                                orderBy={orderBy}
-                                onSelectAllClick={handleSelectAllClick}
-                                onRequestSort={handleRequestSort}
-                                rowCount={rows.length}
-                            />
-                            <TableBody>
-                                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+        <Box sx={{ width: '80%', margin: '110px auto' }}
+            className='body border rounded box-shadow-xl'
+        >
+            <Paper sx={{ width: '100%', mb: 2 }}>
+                <EnhancedTableToolbar numSelected={selected.length} />
+                <TableContainer>
+                    <Table
+                        sx={{ minWidth: 750 }}
+                        aria-labelledby="tableTitle"
+                        size={dense ? 'small' : 'medium'}
+                    >
+                        <EnhancedTableHead
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={handleSelectAllClick}
+                            onRequestSort={handleRequestSort}
+                            rowCount={rows.length}
+                        />
+                        <TableBody>
+                            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-                                {stableSort(rows, getComparator(order, orderBy))
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
-                                        const labelId = `enhanced-table-checkbox-${index}`;
+                            {stableSort(rows, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    const isItemSelected = isSelected(row.name);
+                                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                                        return (
-                                            <TableRow
-                                                hover
-                                                // onClick={(event) => handleClick(event, row.name)}
-                                                role="checkbox"
-                                                aria-checked={isItemSelected}
-                                                tabIndex={-1}
-                                                key={row.id}
-                                                selected={isItemSelected}
+                                    return (
+                                        <TableRow
+                                            hover
+                                            // onClick={(event) => handleClickCheck(event, row.name)}
+                                            role="checkbox"
+                                            aria-checked={isItemSelected}
+                                            tabIndex={-1}
+                                            key={row.id}
+                                            selected={isItemSelected}
+                                        >
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    onClick={(event) => handleClickCheck(event, row.name)}
+                                                    color="primary"
+                                                    checked={isItemSelected}
+                                                    inputProps={{
+                                                        'aria-labelledby': labelId,
+                                                    }}
+                                                />
+                                            </TableCell>
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                padding="none"
                                             >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        color="primary"
-                                                        checked={isItemSelected}
-                                                        inputProps={{
-                                                            'aria-labelledby': labelId,
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell
-                                                    component="th"
-                                                    id={labelId}
-                                                    scope="row"
-                                                    padding="none"
-                                                >
-                                                    {row.name}
-                                                </TableCell>
-                                                <TableCell align="right">{row.sdt}</TableCell>
-                                                <TableCell align="right">{row.address}</TableCell>
-                                                <TableCell align="right">{row.email}</TableCell>
-                                                <TableCell align="right">{row.pass}</TableCell>
-                                                <TableCell align='center'>
-                                                    <Stack sx={{ justifyContent: 'center' }} direction="row" spacing={2}>
-                                                        <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDeleteAdminHasQuyen(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
-                                                            Delete
-                                                        </Button>
-                                                        <Link to={``}>
-                                                            <Button onClick={() => handleClickOpen(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
-                                                        </Link>
-                                                    </Stack>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                {emptyRows > 0 && (
-                                    <TableRow
-                                        style={{
-                                            height: (dense ? 33 : 53) * emptyRows,
-                                        }}
-                                    >
-                                        <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Paper>
-                <FormControlLabel
-                    control={<Switch checked={dense} onChange={handleChangeDense} />}
-                    label="Dense padding"
+                                                {row.name}
+                                            </TableCell>
+                                            <TableCell align="right">{row.sdt}</TableCell>
+                                            <TableCell align="right">{row.address}</TableCell>
+                                            <TableCell align="right">{row.email}</TableCell>
+                                            <TableCell align="right">{row.pass}</TableCell>
+                                            <TableCell align='center'>
+                                                <Stack sx={{ justifyContent: 'center' }} direction="row" spacing={2}>
+                                                    <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDeleteAdminHasQuyen(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
+                                                        Delete
+                                                    </Button>
+                                                    <Link to={``}>
+                                                        <Button onClick={() => handleClickOpen(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
+                                                    </Link>
+                                                </Stack>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow
+                                    style={{
+                                        height: (dense ? 33 : 53) * emptyRows,
+                                    }}
+                                >
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
                 />
+            </Paper>
+            <FormControlLabel
+                control={<Switch checked={dense} onChange={handleChangeDense} />}
+                label="Dense padding"
+            />
 
-                {/* dialog edit open */}
-                <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Edit Form</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            <EditFormUserAdmin
-                                ten={ten}
-                                sdt={sdt}
-                                address={address}
-                                email={email}
-                                pass={pass}
-                                quyen={quyen}
-                                checked={checked}
-                                setTen={setTen}
-                                setSdt={setSdt}
-                                setAddress={setAddress}
-                                setEmail={setEmail}
-                                setPass={setPass}
-                                setChecked={setChecked}
-                            />
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleSubmit}>Submit</Button>
-                    </DialogActions>
-                </Dialog>
-            </Box>
-        </div>
+            {/* dialog edit open */}
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Edit Form</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <EditFormUserAdmin
+                            ten={ten}
+                            sdt={sdt}
+                            address={address}
+                            email={email}
+                            pass={pass}
+                            quyen={quyen}
+                            checked={checked}
+                            phanQuyen={phanQuyen}
+                            setTen={setTen}
+                            setSdt={setSdt}
+                            setAddress={setAddress}
+                            setEmail={setEmail}
+                            setPass={setPass}
+                            setChecked={setChecked}
+                            setPhanQuyen={setPhanQuyen}
+                        />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleSubmit}>Submit</Button>
+                </DialogActions>
+            </Dialog>
+
+            <FormAddUserAdmin
+                open={openAdd}
+                handleClose={handleCloseAdd}
+                getAllUser={getAllUser}
+            />
+            <FormAddQuyen
+                open={openAddQuyen}
+                handleClose={handleCloseAddQuyen} />
+            <FormListQuyen
+                open={openList}
+                handleClose={handleCloseList}
+                allQuyen={quyen}
+                setAllQuyen={setQuyen}
+            />
+        </Box>
 
     );
 }

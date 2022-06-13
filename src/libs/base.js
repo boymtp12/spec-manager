@@ -6,14 +6,27 @@ var url = window.location.href.split('/')
 // if (url[3].length == 0) {
 //     URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[4] + "/"
 // }
+export const URL_MAIN = 'http://localhost:3000/'
+// export const URL_MAIN = 'https://spec.edu.vn/etool/'
+
 const URL_HTTP = 'http://localhost:9667/'
 // const URL_HTTP = 'https://spec.edu.vn/etool/'
 const TOKENHEADER_VALUE = getCookie('Authorization')
 export const URL_API_GET = URL_HTTP + 'api/v1/private-get/'
 const URL_API_EDIT = URL_HTTP + 'api/v1/private-edit/'
-$(function () {})
+$(function () { })
 
-export function delayy () {
+
+export function getDayMonthYear() {
+  const d = new Date();
+  let year = d.getFullYear();
+  let month = d.getMonth() + 1;
+  let day = d.getDate();
+  const date = `${day}-${month}-${year}`;
+  return date;
+}
+
+export function delayy() {
   var timer = 0
   return function (callback, ms) {
     clearTimeout(timer)
@@ -45,7 +58,7 @@ export function createData(
     ngayhethan
   }
 }
-export function nonAccentVietnamese (str) {
+export function nonAccentVietnamese(str) {
   str = str.toLowerCase()
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a')
   str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e')
@@ -61,7 +74,7 @@ export function nonAccentVietnamese (str) {
 }
 
 // get cookie
-export function getCookie (name) {
+export function getCookie(name) {
   try {
     let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
     if (match) {
@@ -75,7 +88,7 @@ export function getCookie (name) {
 }
 
 //copy to clipboard
-export function copyToClipboard (id) {
+export function copyToClipboard(id) {
   console.log(id)
   let copyText = document.getElementById(id)
   console.log(copyText)
@@ -92,7 +105,7 @@ export function copyToClipboard (id) {
 }
 
 /*Đăng xuất ra khỏi tk*/
-export function logOut () {
+export function logOut() {
   document.cookie = `Authorization=${TOKENHEADER_VALUE};max-age=` + 0
   localStorage.removeItem('user')
   sessionStorage.removeItem('token')
@@ -104,7 +117,7 @@ export function logOut () {
 /*notify để custom alert */
 //alert notify
 //***************alter
-export function alertSuccess (text, time = 1000) {
+export function alertSuccess(text, time = 1000) {
   $.notify(
     {
       icon: 'far fa-check-circle',
@@ -123,7 +136,7 @@ export function alertSuccess (text, time = 1000) {
   )
 }
 
-export function alertInfo (text, time = 1000) {
+export function alertInfo(text, time = 1000) {
   $.notify(
     {
       icon: 'fas fa-info-circle',
@@ -144,31 +157,31 @@ export function alertInfo (text, time = 1000) {
 
 export async function sweetAlert2(title) {
   const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-      },
-      buttonsStyling: false
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
   })
   let rs = await swalWithBootstrapButtons.fire({
-      title: title,
-      text: "Bạn sẽ không thể khôi phục lại điều này!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Xóa nó!',
-      cancelButtonText: 'Hủy bỏ!',
-      reverseButtons: true
+    title: title,
+    text: "Bạn sẽ không thể khôi phục lại điều này!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Xóa nó!',
+    cancelButtonText: 'Hủy bỏ!',
+    reverseButtons: true
   }).then((result) => {
-      if (result.isConfirmed) {
-          return true;
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-          return false;
-      }
+    if (result.isConfirmed) {
+      return true;
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      return false;
+    }
   })
   return rs
 }
 
-export function alertWarning (text, time = 1000) {
+export function alertWarning(text, time = 1000) {
   $.notify(
     {
       icon: 'fas fa-exclamation',
@@ -187,7 +200,7 @@ export function alertWarning (text, time = 1000) {
   )
 }
 
-export function alertDanger (text, time = 1000) {
+export function alertDanger(text, time = 1000) {
   $.notify(
     {
       icon: 'fas fa-exclamation-triangle',
@@ -208,9 +221,9 @@ export function alertDanger (text, time = 1000) {
 }
 
 /*get data*/
-export async function ajaxCallGet (url) {
+export async function ajaxCallGet(url) {
   let rs = null
-  
+
   await $.ajax({
     type: 'GET',
     dataType: 'json',
@@ -227,9 +240,9 @@ export async function ajaxCallGet (url) {
 }
 
 /*upload file, image....*/
-export async function ajaxCallUploadFile (url, file) {
+export async function ajaxCallUploadFile(url, file) {
   let data
-  
+
   await $.ajax({
     type: 'POST',
     url: 'https://spec.edu.vn/qlbh/api/v1/private-edit/' + url,
@@ -249,7 +262,7 @@ export async function ajaxCallUploadFile (url, file) {
 }
 
 /*post data*/
-export async function ajaxCallPost (url, dataUser) {
+export async function ajaxCallPost(url, dataUser) {
   let rs = null
   await $.ajax({
     type: 'POST',
@@ -268,9 +281,9 @@ export async function ajaxCallPost (url, dataUser) {
 }
 
 /*put data*/
-export async function ajaxCallPut (url, dataUser) {
+export async function ajaxCallPut(url, dataUser) {
   let rs = null
-  
+
   await $.ajax({
     type: 'PUT',
     data: JSON.stringify(dataUser),
@@ -288,23 +301,23 @@ export async function ajaxCallPut (url, dataUser) {
 }
 
 /*set key-val để lưu vào local storage*/
-export function setItemLocalStorage (key, val) {
+export function setItemLocalStorage(key, val) {
   localStorage.setItem(key, JSON.stringify(val))
 } /*get key-val để lưu vào local storage*/
-export function getItemLocalStorage (key) {
+export function getItemLocalStorage(key) {
   return JSON.parse(localStorage.getItem(key))
 }
 
 /*set key-val để lưu vào local storage*/
-export function setItemSessionStorage (key, val) {
+export function setItemSessionStorage(key, val) {
   sessionStorage.setItem(key, JSON.stringify(val))
 } /*get key-val để lưu vào local storage*/
-export function getItemSessionStorage (key) {
+export function getItemSessionStorage(key) {
   return JSON.parse(sessionStorage.getItem(key))
 }
 
 //format input type number
-export function formatNumber (nStr, decSeperate, groupSeperate) {
+export function formatNumber(nStr, decSeperate, groupSeperate) {
   try {
     nStr += ''
     let x = nStr.split(decSeperate)
@@ -322,12 +335,12 @@ export function formatNumber (nStr, decSeperate, groupSeperate) {
 }
 
 // trả ngày của tháng và năm
-export function daysInMonth (year, month) {
+export function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate()
 }
 
 //format input type number
-export function formatFees (nStr, decSeperate, groupSeperate) {
+export function formatFees(nStr, decSeperate, groupSeperate) {
   try {
     nStr += ''
     let arr = nStr.split(decSeperate)

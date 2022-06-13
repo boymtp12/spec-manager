@@ -1,5 +1,6 @@
 const initialState = {
-  dataUser: [{}]
+  dataUser: [{}],
+  typeTabs: 1
 }
 const DataUserToolReducer = (state = initialState, action) => {
 
@@ -8,6 +9,12 @@ const DataUserToolReducer = (state = initialState, action) => {
       return {
         ...state,
         dataUser: action.dataUser
+      }
+    }
+    case 'CHANGE_TYPE': {
+      return {
+        ...state,
+        typeTabs: action.typeTabs
       }
     }
 

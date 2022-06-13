@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import { ajaxCallGet, setItemLocalStorage } from '../libs/base';
+import { ajaxCallGet, getItemLocalStorage, setItemLocalStorage, URL_MAIN } from '../libs/base';
 import "./../css_main/css/login.css"
 import { toast } from 'wc-toast'
-import { Link , Navigate} from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { changeData, changeTypeTabs } from '../reducer_action/DataUserToolReducerAction'
+
 
 
 
 
 const Login = () => {
+    let history = useNavigate();
+    const dispatch = useDispatch();
     const [number, setNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [isLogout, setIsLogout] = useState(false)
+
+    React.useEffect(() => {
+        let acu = [];
+        ajaxCallGet(`user-tool/find-all`).then(rs => {
+            let myArray = rs.data.reduce((acu, item) => {
+                if (acu.indexOf(item.clMaTool) === -1) {
+                    acu.push(item.clMaTool)
+                }
+                return acu;
+            }, [])
+            setItemLocalStorage('all-tool', myArray)
+        }).catch(err => {
+            console.log(err);
+        })
+    }, [])
 
     const handleSubmit = (event) => {
         console.log({ number, password })
@@ -18,10 +37,13 @@ const Login = () => {
             if (rs.length == 1) {
                 handleGetQuyenByIdUser(rs[0].id);
                 toast.success('Đăng nhập thành công')
+                window.location=URL_MAIN;
+                history("/")
             } else {
                 toast.error('Tài khoản mật khẩu không chính xác')
             }
-        }).catch(err => { console.log(err) });
+        })
+            .catch(err => { console.log(err) });
     }
 
     const handleGetQuyenByIdUser = (idUser) => {
@@ -36,12 +58,10 @@ const Login = () => {
                 })
                 console.log(dataQuyen)
                 setItemLocalStorage('dataQuyen', dataQuyen);
-                setIsLogout(true);
             })
 
     }
     return (
-
         <div className="limiter">
             <div className="container-login100">
                 <div className="wrap-login100">
@@ -74,7 +94,7 @@ const Login = () => {
                         </div>
                         <div className="container-login100-form-btn">
 
-                            <button onClick={handleSubmit} 
+                            <button onClick={handleSubmit}
                                 className="login100-form-btn">
                                 Đăng nhập
                             </button>
@@ -97,10 +117,8 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            {!isLogout ? '' : <Navigate to='/' />}
         </div>
     );
 }
-
 
 export default Login
