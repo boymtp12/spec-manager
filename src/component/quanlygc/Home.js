@@ -1,20 +1,18 @@
 import * as React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Autocomplete, Badge, Tab, Tabs, TextField } from '@mui/material'
+import { Badge, Tab, Tabs } from '@mui/material'
 import Box from '@mui/material/Box'
-import $ from 'jquery'
 import PropTypes from 'prop-types'
 import Typography from '@mui/material/Typography'
 import TableQl from './TableQl'
 import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData, getItemLocalStorage } from '../../libs/base'
-import FormEditUserTool from '../FormEditUserTool'
-import { Link } from 'react-router-dom'
 
-import "../../css_main/css/tabsQl.css"
+import "../../css_main/css/home.css"
 import Header from '../Header'
 
-import '../../css_main/css/tabsQl.css'
-import { changeData } from '../../reducer_action/DataUserToolReducerAction'
+import '../../css_main/css/home.css'
+import { changeData, changeTypeTabs } from '../../reducer_action/DataUserToolReducerAction'
+import { phanQuyen } from '../Login'
 
 
 function TabPanel(props) {
@@ -51,7 +49,7 @@ function a11yProps(index) {
 }
 
 
-export default function TabsQl() {
+export default function Home({phanQuyen}) {
   const dispatch = useDispatch()
 
   const [value, setValue] = React.useState(0)
@@ -61,30 +59,13 @@ export default function TabsQl() {
   // const [mainDataUser, setMainDataUser] = React.useState()
 
 
-  const [checked, setChecked] = React.useState([])
-  const [allTool, setAllTool] = React.useState([]);
-
-
   // Lấy hết mã tool ném vào local
-  React.useEffect(() => {
-    let acu = [];
-    ajaxCallGet(`user-tool/find-all`).then(rs => {
-      let myArray = rs.data.reduce((acu, item) => {
-        if (acu.indexOf(item.clMaTool) === -1) {
-          acu.push(item.clMaTool)
-        }
-        return acu;
-      }, [])
-      setItemLocalStorage('all-tool', myArray)
-    }).catch(err => {
-      console.log(err);
-    })
-  }, [])
-  const phanQuyen = getItemLocalStorage('dataQuyen');
-
+  
 
   React.useEffect(() => {
-    if (phanQuyen === "Admin") {
+
+    if (phanQuyen.join('') === "Admin") {
+      console.log('admin')
       let dataa = []
       let label = []
       ajaxCallGet(`user-tool/find-all`).then(async rs => {
@@ -108,19 +89,23 @@ export default function TabsQl() {
           )
 
         }
-        console.log(dataa);
         // setMainDataUser(dataa)
+        const action3 = changeTypeTabs(3);
+        await dispatch(action3)
         const action2 = changeData(dataa)
         await dispatch(action2)
         renderData()
-      }).catch(err => {
-        console.log(err);
       })
-    }else{
+        .catch(err => {
+          console.log(err);
+
+        })
+    } else {
+      console.log('ECC CCC')
       let dataa = []
       let label = []
       /// check đăng nhập trước rồi mới call api
-      ajaxCallGet(`user-tool?queries=clMaTool=${phanQuyen.join('')}`).then(async rs => {
+      ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}`).then(async rs => {
         console.log(rs)
         for (let x in rs) {
           let item = rs[x]
@@ -138,10 +123,11 @@ export default function TabsQl() {
               item.clNgayHetHan
             )
           )
-  
+
         }
-        console.log(dataa);
         // setMainDataUser(dataa)
+        const action3 = changeTypeTabs(3);
+        await dispatch(action3)
         const action2 = changeData(dataa)
         await dispatch(action2)
         renderData()
@@ -151,10 +137,8 @@ export default function TabsQl() {
     }
   }, [])
 
- 
+
   // }
-
-
 
 
   const handleData = (type, data) => {
@@ -170,53 +154,12 @@ export default function TabsQl() {
     setValue(newValue)
   }
 
-
-
-  // const handleChangeInCheckbox = (id) => {
-  //   setChecked(prev => {
-  //     const isChecked = checked.includes(id);
-  //     if (isChecked) {
-  //       return checked.filter(item => {
-  //         return item !== id;
-  //       })
-  //     } else {
-  //       return [...prev, id];
-  //     }
-  //   });
-  //   // end Radio
-  // }
-
-  // console.log(checked)
-  // React.useEffect(() => {
-  //   let data = [];
-  //   ajaxCallGet(`user-tool?queries=clMaTool%3D${checked.toString()}`)
-  //     .then(rs => {
-  //       rs.map(item => {
-  //         data.push(createData(item.clId,
-  //           item.clMaThietBi,
-  //           item.clMaTool,
-  //           item.clHoTen,
-  //           item.clSdt,
-  //           item.clGmail,
-  //           item.clChucVu,
-  //           item.clNoiLamViec,
-  //           item.clNgayDangKy,
-  //           item.clNgayHetHan))
-  //       })
-  //       console.log(data);
-  //       setMainDataUser(data)
-  //       setMainDataUser2(data)
-  //     })
-
-  // },[checked])
-
   const renderData = () => {
     let data = mainDataUser
+    console.log('render first')
     return (
       <div className='w-100'>
-
-        
-
+        <Header />
         <Box
           sx={{ width: '80%' }}
           className='body border rounded box-shadow-xl'
@@ -255,7 +198,7 @@ export default function TabsQl() {
       return renderData()
     } else {
       const action2 = changeData([])
-      dispatch(action2)
+      // dispatch(action2)
     }
   } catch (err) {
     const action2 = changeData([])

@@ -5,18 +5,19 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
-import { TextFieldsTwoTone, Visibility, VisibilityOff } from '@mui/icons-material';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import {Visibility, VisibilityOff } from '@mui/icons-material';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import { Checkbox } from '@mui/material';
-import { getItemLocalStorage, setItemLocalStorage } from '../../libs/base';
+import { ajaxCallGet, getItemLocalStorage, setItemLocalStorage } from '../../libs/base';
 import { useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
+/**
+ * Insert text at cursor position.
+ *
+ * @param {string} ...pass, {array} checked phanQuyen
+ * @author HieuTN
+ */
 export default function EditFormUserAdmin({
     ten,
     sdt,
@@ -25,42 +26,40 @@ export default function EditFormUserAdmin({
     pass,
     quyen,
     checked,
+    phanQuyen,
     setTen,
     setSdt,
     setAddress,
     setEmail,
     setPass,
-    setChecked }) {
+    setChecked,
+    setPhanQuyen }) {
 
     const theme = useTheme();
-    const [phanQuyen, setphanQuyen] = React.useState([]);
 
     const handleChangeInMultiple = (event) => {
         const {
             target: { value },
         } = event;
-        setphanQuyen(
+        setPhanQuyen(
             // On autofill we get a stringified value.
             typeof value === 'string' ? value.split(',') : value,
-        );
+        );        
     };
-    console.log(phanQuyen)
 
-    // CheckBox
-
-    const handleChangeInCheckbox = (id) => {
-        setChecked(prev => {
-            const isChecked = checked.includes(id);
-            if (isChecked) {
-                return checked.filter(item => {
-                    return item !== id;
+    React.useEffect(() => {
+        let dataIdQuyen = [];
+        let dataTenQuyen = [];
+        phanQuyen.forEach(item => {
+            ajaxCallGet(`quyen?queries=tenQuyen=${item}`)
+                .then(rs => {
+                    rs.map(rs => {
+                        dataIdQuyen.push(rs.id)
+                    })
                 })
-            } else {
-                return [...prev, id];
-            }
-        });
-        console.log(checked);
-    }
+                setChecked(dataIdQuyen)
+        })
+    },[phanQuyen])
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -89,7 +88,6 @@ export default function EditFormUserAdmin({
         weightRange: '',
         showPassword: false,
     });
-    console.log(quyen)
 
     const names = quyen;
 
@@ -97,11 +95,7 @@ export default function EditFormUserAdmin({
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
     };
-
-    const handleChangeId = (id) => {
-        console.log(id);
-    }
-
+    
     const handleClickShowPassword = () => {
         setValues({
             ...values,
@@ -215,13 +209,13 @@ export default function EditFormUserAdmin({
                             <em>Place holder</em>
                         </MenuItem>
                         {names.map((name) => (
-                            <MenuItem
-                                key={name.tenQuyen}
-                                value={name.tenQuyen}
-                                style={getStyles(name.tenQuyen, phanQuyen, theme)}
-                            >
-                                {name.tenQuyen}
-                            </MenuItem>
+                                <MenuItem
+                                    key={name.tenQuyen}
+                                    value={name.tenQuyen}
+                                    style={getStyles(name.tenQuyen, phanQuyen, theme)}
+                                >
+                                    {name.tenQuyen}
+                                </MenuItem>
                         ))}
                     </Select>
                 </FormControl>

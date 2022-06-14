@@ -127,10 +127,10 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
                                 }}
                             />
                             <TextField
-                                label="Số điện thoại"
+                                label="Tên sản phẩm"
                                 id="outlined-start-adornment"
-                                value={soDienThoai}
-                                onChange={(e) => setSoDienThoai(e.target.value)}
+                                value={tenSanPham}
+                                onChange={(e) => setTenSanPham(e.target.value)}
                                 sx={{ m: 1, width: '250px' }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start"><i className="fas fa-briefcase"></i></InputAdornment>,
@@ -154,7 +154,7 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
                                 sx={{ m: 1, width: '250px' }}
                                 type="date"
                             />
-                            <FormControl sx={{ m: 1, width: 160 }}>
+                            <FormControl sx={{ m: 1, width: 250 }}>
                                 <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
                                 <Select
                                     labelId="demo-multiple-name-label"

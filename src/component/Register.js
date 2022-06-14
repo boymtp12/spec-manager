@@ -10,10 +10,11 @@ import React, { useEffect, useState } from 'react';
 import "./../css_main/css/register.css"
 import { ajaxCallPost } from '../libs/base';
 import { toast } from 'wc-toast'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 
 const Register = () => {
+    const history = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -36,7 +37,8 @@ const Register = () => {
             ajaxCallPost('user-admin/save-new', userData)
                 .then(rs => {
                     toast.success("Đăng ký thành công")
-                    window.location.assign("http://localhost:3000/login")
+                    // window.location.assign("/login")
+                    history("/login")
                 })
         }
     }
