@@ -136,7 +136,6 @@ export default function Home({ phanQuyen }) {
     } else if (phanQuyen.length !== 1) {
       let dataCurrent = [];
       phanQuyen.map(quyen => {
-        console.log("nhieu vclllllllllllllllll")
         let dataa1 = [];
         ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
           .then(async rs => {

@@ -21,6 +21,8 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import MenuAppBar from './MenuAppBar';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 
 
@@ -163,7 +165,7 @@ const Header = () => {
             label='Tìm kiếm'
             variant='outlined'
           />
-          <span className="text-log">{phanQuyen}</span >
+          <MenuAppBar />
           <div className="line" style={{ display: "none" }}></div>
           <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>{phanQuyen === "Admin" && "User Admin"}</Link >
           <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
@@ -184,7 +186,7 @@ const Header = () => {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                <AccountCircle sx={{ width: 32, height: 32 }} />
               </IconButton>
             </Tooltip>
           </Box>

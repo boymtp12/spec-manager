@@ -391,16 +391,16 @@ export default function TableQl(props) {
         .then(rs => {
           console.log(rs);
           setSelected([]);
-
           handleCloseEditGeneral();
+          if (phanQuyen === "Admin") {
+            getAllUser()
+          } else {
+            getAllUserByQuyen();
+          }
         })
         .catch(err => (console.log("error: ", err)))
     }
-    if (phanQuyen === "Admin") {
-      getAllUser()
-    } else {
-      getAllUserByQuyen();
-    }
+
     toast.success('Sửa thành công');
     clearDataAfterSubmit();
   }
@@ -682,7 +682,6 @@ export default function TableQl(props) {
               ))
             })
             dataCurrent = [...dataCurrent, ...dataa1];
-            console.log("sdklfaskdfals: ", dataCurrent)
             const action3 = changeTypeTabs(1);
             await dispatch(action3)
 
@@ -718,7 +717,6 @@ export default function TableQl(props) {
             ))
           })
           dataCurrent = [...dataCurrent, ...dataa1];
-          console.log("sdklfaskdfals: ", dataCurrent)
           const action3 = changeTypeTabs(1);
           await dispatch(action3)
 
