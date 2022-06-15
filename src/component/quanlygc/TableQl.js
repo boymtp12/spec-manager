@@ -127,45 +127,45 @@ function EnhancedTableHead(props) {
 
   return (
     <>
-    {/* <Header /> */}
-    <TableHead style={{ background: '#f4f3f3' }}>
-      <TableRow>
-        <TableCell padding='checkbox'>
-          <Checkbox
-            color='primary'
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-          />
-        </TableCell>
-        {headCells.map(headCell => (
-          <TableCell
-            key={headCell.id}
-            align={'center'}
-            style={{ whiteSpace: 'nowrap' }}
-            minWidth={headCell.mWidth}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component='span' sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+      {/* <Header /> */}
+      <TableHead style={{ background: '#f4f3f3' }}>
+        <TableRow>
+          <TableCell padding='checkbox'>
+            <Checkbox
+              color='primary'
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={rowCount > 0 && numSelected === rowCount}
+              onChange={onSelectAllClick}
+              inputProps={{
+                'aria-label': 'select all desserts'
+              }}
+            />
           </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
+          {headCells.map(headCell => (
+            <TableCell
+              key={headCell.id}
+              align={'center'}
+              style={{ whiteSpace: 'nowrap' }}
+              minWidth={headCell.mWidth}
+              padding={headCell.disablePadding ? 'none' : 'normal'}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component='span' sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
     </>
   )
 }
@@ -214,6 +214,7 @@ export default function TableQl(props) {
   const [noiLamViec, setNoiLamViec] = React.useState('');
   const [ngayDangKy, setNgayDangKy] = React.useState('');
   const [ngayHetHan, setNgayHetHan] = React.useState('');
+  const [dataUserTool, setDataUserTool] = React.useState([]);
 
   const phanQuyen = getItemLocalStorage('dataQuyen').join('');
 
@@ -626,15 +627,84 @@ export default function TableQl(props) {
 * @author HieuTN
 */
 
+
   const getAllUserByQuyen = () => {
-    let dataa = []
-    ajaxCallGet(`user-tool?queries=clMaTool=${phanQuyen}`)
-      .then(async rs => {
-        console.log('get All by quyen')
-        rs.map(item => {
-          console.log('test 1')
-          dataa.push(
-            createData(
+    const quyenArr = getItemLocalStorage('dataQuyen');
+    if (quyenArr.length === 1) {
+      let dataa = []
+      ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}`)
+        .then(async rs => {
+          console.log('get All by quyen')
+          rs.map(item => {
+            dataa.push(
+              createData(
+                item.clId,
+                item.clMaThietBi,
+                item.clMaTool,
+                item.clHoTen,
+                item.clSdt,
+                item.clGmail,
+                item.clChucVu,
+                item.clNoiLamViec,
+                item.clNgayDangKy,
+                item.clNgayHetHan
+              )
+            )
+            // setMainDataUser(dataa)
+
+          })
+          console.log(dataa)
+          const action3 = changeTypeTabs(1);
+          await dispatch(action3)
+
+          const action2 = changeData(dataa)
+          await dispatch(action2)
+        })
+    } else {
+      let dataCurrent = [];
+      quyenArr.map(quyen => {
+        let dataa1 = [];
+        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+          .then(async rs => {
+            console.log('getAllUserByNhieuQuyen');
+            rs.map(item => {
+              dataa1.push(createData(
+                item.clId,
+                item.clMaThietBi,
+                item.clMaTool,
+                item.clHoTen,
+                item.clSdt,
+                item.clGmail,
+                item.clChucVu,
+                item.clNoiLamViec,
+                item.clNgayDangKy,
+                item.clNgayHetHan
+              ))
+            })
+            dataCurrent = [...dataCurrent, ...dataa1];
+            console.log("sdklfaskdfals: ", dataCurrent)
+            const action3 = changeTypeTabs(1);
+            await dispatch(action3)
+
+            const action2 = changeData(dataCurrent)
+            await dispatch(action2)
+          })
+      })
+    }
+
+  }
+
+  const getAllUserByNhieuQuyen = () => {
+    const quyenArr = getItemLocalStorage('dataQuyen');
+    console.log(quyenArr.length);
+    let dataCurrent = [];
+    quyenArr.map(quyen => {
+      let dataa1 = [];
+      ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+        .then(async rs => {
+          console.log('getAllUserByNhieuQuyen');
+          rs.map(item => {
+            dataa1.push(createData(
               item.clId,
               item.clMaThietBi,
               item.clMaTool,
@@ -645,18 +715,17 @@ export default function TableQl(props) {
               item.clNoiLamViec,
               item.clNgayDangKy,
               item.clNgayHetHan
-            )
-          )
-          // setMainDataUser(dataa)
+            ))
+          })
+          dataCurrent = [...dataCurrent, ...dataa1];
+          console.log("sdklfaskdfals: ", dataCurrent)
+          const action3 = changeTypeTabs(1);
+          await dispatch(action3)
 
+          const action2 = changeData(dataCurrent)
+          await dispatch(action2)
         })
-        console.log(dataa)
-        const action3 = changeTypeTabs(1);
-        await dispatch(action3)
-
-        const action2 = changeData(dataa)
-        await dispatch(action2)
-      })
+    })
   }
 
   /**
@@ -722,6 +791,7 @@ export default function TableQl(props) {
     setUserId(id);
     setOpen(true);
   };
+
 
   /**
 * Đóng dialog thêm user-tool
@@ -1007,6 +1077,7 @@ export default function TableQl(props) {
         noiLamViec={noiLamViec}
         ngayDangKy={ngayDangKy}
         ngayHetHan={ngayHetHan}
+        dataUserTool={dataUserTool}
         setChucVu={setChucVu}
         setNoiLamViec={setNoiLamViec}
         setNgayDangKy={setNgayDangKy}

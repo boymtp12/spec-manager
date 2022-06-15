@@ -57,15 +57,12 @@ const Header = () => {
   const phanQuyen = getItemLocalStorage('dataQuyen').join('');
 
   const inputHandlerOfAdmin = e => {
-    console.log("kdkdkd");
     clearTimeout(time)
     let tm = setTimeout(async () => {
-      console.log("hshshsh");
       var inputCheck = e.target.value;
       let dataa = [];
 
       ajaxCallGet(`user-tool/find-like-sdt-all?sdt=${inputCheck}`).then(async rs => {
-        console.log(rs);
         if (rs.data[0] !== undefined) {
           for (let x in rs.data) {
             let item = rs.data[x]
@@ -101,15 +98,12 @@ const Header = () => {
 
 
   const inputHandlerOfQuyen = e => {
-    console.log("kdkdkd");
     clearTimeout(time)
     let tm = setTimeout(async () => {
-      console.log("hshshsh");
       var inputCheck = e.target.value;
       let dataa = [];
 
       ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen}`).then(async rs => {
-        console.log(rs);
         if (rs.data[0] !== undefined) {
           for (let x in rs.data) {
             let item = rs.data[x]

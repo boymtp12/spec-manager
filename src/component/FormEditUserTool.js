@@ -19,7 +19,7 @@ import Select from '@mui/material/Select';
 import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, TextField } from '@mui/material';
 
 
-const FormEditUserTool = ({ id, open, handleClose,fullName,
+const FormEditUserTool = ({ id, open, handleClose, fullName,
     mail,
     tenSanPham,
     maTool,
@@ -36,7 +36,7 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
     setNoiLamViec,
     setNgayHetHan,
     handleSubmit }) => {
-    
+
 
     // Start multipleSelect
 
@@ -50,6 +50,8 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
             },
         },
     };
+
+    const phanQuyen = getItemLocalStorage('dataQuyen');
 
     function getStyles(name, maTool, theme) {
         return {
@@ -74,7 +76,7 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
 
     // End MultipleSelect
     const names = getItemLocalStorage('all-tool')
-    
+
 
     return (
         <div>
@@ -154,7 +156,7 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
                                 sx={{ m: 1, width: '250px' }}
                                 type="date"
                             />
-                            <FormControl sx={{ m: 1, width: 250 }}>
+                            {phanQuyen.join('') === "Admin" ? <FormControl sx={{ m: 1, width: 250 }}>
                                 <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
                                 <Select
                                     labelId="demo-multiple-name-label"
@@ -175,7 +177,31 @@ const FormEditUserTool = ({ id, open, handleClose,fullName,
                                         </MenuItem>
                                     ))}
                                 </Select>
+                            </FormControl> :
+                                <FormControl sx={{ m: 1, width: 250 }}>
+                                <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
+                                <Select
+                                    labelId="demo-multiple-name-label"
+                                    id="demo-multiple-name"
+                                    multiple
+                                    value={maTool}
+                                    onChange={handleChangeInMultiple}
+                                    input={<OutlinedInput label="Name" />}
+                                    MenuProps={MenuProps}
+                                >
+                                    {phanQuyen.map((name) => (
+                                        <MenuItem
+                                            key={name}
+                                            value={name}
+                                            style={getStyles(name, maTool, theme)}
+                                        >
+                                            {name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
                             </FormControl>
+                            }
+
 
                         </div>
                     </Box>

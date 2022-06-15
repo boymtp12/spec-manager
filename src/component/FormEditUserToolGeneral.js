@@ -16,13 +16,14 @@ const FormEditUserToolGeneral = ({ id,
     noiLamViec,
     ngayDangKy,
     ngayHetHan,
+    dataUserTool,
     setChucVu,
     setNoiLamViec,
     setNgayDangKy,
     setNgayHetHan,
     handleSubmit }) => {
 
-    
+
 
     return (
         <div>

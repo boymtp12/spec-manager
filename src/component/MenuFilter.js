@@ -62,11 +62,12 @@ export default function MenuFilter() {
     };
 
     React.useEffect(() => {
+        console.log(tenTool);
         let toolData = [];
-        tenTool.forEach((tool, index) => {
-            ajaxCallGet(`user-tool?queries=clMaTool=${tool}`).then(async rss => {
-
-                rss.map((rs, index) => {
+        let allToolData = [];
+        if (tenTool.length === 0) {
+            ajaxCallGet(`user-tool/find-all`).then(async rss => {
+                rss.data.map((rs, index) => {
                     let infoUserTool = createData(rs.clId,
                         rs.clMaThietBi,
                         rs.clMaTool,
@@ -80,12 +81,39 @@ export default function MenuFilter() {
                     toolData.push(infoUserTool);
                 })
 
-                const action3 = changeTypeTabs(3);
+                const action3 = changeTypeTabs(1);
                 await dispatch(action3)
                 const action2 = changeData(toolData)
                 await dispatch(action2)
             })
-        })
+        } else {
+            tenTool.forEach((tool, index) => {
+                console.log(tenTool);
+                ajaxCallGet(`user-tool?queries=clMaTool=${tool}`).then(async rss => {
+
+                    rss.map((rs, index) => {
+                        let infoUserTool = createData(rs.clId,
+                            rs.clMaThietBi,
+                            rs.clMaTool,
+                            rs.clHoTen,
+                            rs.clSdt,
+                            rs.clGmail,
+                            rs.clChucVu,
+                            rs.clNoiLamViec,
+                            rs.clNgayDangKy,
+                            rs.clNgayHetHan)
+                        toolData.push(infoUserTool);
+                    })
+                    allToolData = [...allToolData, ...toolData];
+                    const action3 = changeTypeTabs(1);
+                    await dispatch(action3)
+                    const action2 = changeData(allToolData)
+                    await dispatch(action2)
+                })
+
+
+            })
+        }
     }, [tenTool])
 
     return (
