@@ -21,8 +21,8 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
     const [gmail, setGmail] = React.useState('')
     const [chucVu, setChucVu] = React.useState('')
     const [noiLamViec, setNoiLamViec] = React.useState('')
-    const [ngayHetHan, setNgayHetHan] = React.useState()
-    const [ngayDangKy, setNgayDangKy] = React.useState()
+    const [ngayHetHan, setNgayHetHan] = React.useState('')
+    const [ngayDangKy, setNgayDangKy] = React.useState('')
 
     // start multiple Select
     const ITEM_HEIGHT = 48;
@@ -57,53 +57,102 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
         );
     };
 
-    console.log(maTool);
 
     const names = getItemLocalStorage('all-tool')
 
 
+
     const handleSubmit = () => {
-        console.log({ maTool, ten, soDienThoai, gmail, chucVu, noiLamViec, ngayDangKy, ngayHetHan })
-        let data = {
-            "clMaThietBi": "",
-            "clMaTool": maTool.join(','),
-            "clTenSanPham": "",
-            "clHoTen": ten,
-            "clSdt": soDienThoai,
-            "clGmail": gmail,
-            "clChucVu": chucVu,
-            "clNoiLamViec": noiLamViec,
-            "clNgayDangKy": ngayDangKy,
-            "clNgayHetHan": ngayHetHan,
-            "clCheDo": "",
-            "clMatKhau": "",
-            "clPhanMemChoPhep": "",
-            "clWebCanChan": "",
-            "clWebChoChay": "",
-            "clPmDaChan": "",
-            "clWebDaChan": "",
-            "clTrangThai": "",
-            "clLichSuWeb": "",
-            "clThoiGianBat": "",
-            "clThoiGianTat": ""
-        }
-        ajaxCallPost(`user-tool`, data)
-            .then(rs => {
-                console.log(rs);
-                toast.success('Thêm người dùng thành công');
-                if (phanQuyen === "Admin") {
-                    getAllUser();
-                } else {
-                    getAllUserByQuyen()
+        if (phanQuyen.join('') === "Admin") {
+            maTool.forEach((tool, index) => {
+                let data = {
+                    "clMaThietBi": "",
+                    "clMaTool": tool,
+                    "clTenSanPham": "",
+                    "clHoTen": ten,
+                    "clSdt": soDienThoai,
+                    "clGmail": gmail,
+                    "clChucVu": chucVu,
+                    "clNoiLamViec": noiLamViec,
+                    "clNgayDangKy": ngayDangKy,
+                    "clNgayHetHan": ngayHetHan,
+                    "clCheDo": "",
+                    "clMatKhau": "",
+                    "clPhanMemChoPhep": "",
+                    "clWebCanChan": "",
+                    "clWebChoChay": "",
+                    "clPmDaChan": "",
+                    "clWebDaChan": "",
+                    "clTrangThai": "",
+                    "clLichSuWeb": "",
+                    "clThoiGianBat": "",
+                    "clThoiGianTat": ""
                 }
-                handleClose();
-                resetData();
+                ajaxCallPost(`user-tool`, data)
+                    .then(rs => {
+                        console.log(rs);
+                        handleClose();
+                        resetData();
+                        if (phanQuyen.join('') === "Admin") {
+                            getAllUser();
+                        } else {
+                            getAllUserByQuyen()
+                        }
+                    })
+                    .catch(err => {
+                        toast.error('Thêm người dùng thất bại')
+                        console.log(err);
+                        resetData();
+                    })
+
             })
-            .catch(err => {
-                toast.error('Thêm người dùng thất bại')
-                console.log(err);
-                resetData();
-            })
+            toast.success('Thêm người dùng thành công');
+
+        } else {
+            let data = {
+                "clMaThietBi": "",
+                "clMaTool": phanQuyen.join(''),
+                "clTenSanPham": "",
+                "clHoTen": ten,
+                "clSdt": soDienThoai,
+                "clGmail": gmail,
+                "clChucVu": chucVu,
+                "clNoiLamViec": noiLamViec,
+                "clNgayDangKy": ngayDangKy,
+                "clNgayHetHan": ngayHetHan,
+                "clCheDo": "",
+                "clMatKhau": "",
+                "clPhanMemChoPhep": "",
+                "clWebCanChan": "",
+                "clWebChoChay": "",
+                "clPmDaChan": "",
+                "clWebDaChan": "",
+                "clTrangThai": "",
+                "clLichSuWeb": "",
+                "clThoiGianBat": "",
+                "clThoiGianTat": ""
+            }
+            ajaxCallPost(`user-tool`, data)
+                .then(rs => {
+                    console.log(rs);
+                    handleClose();
+                    resetData();
+                    toast.success('Thêm người dùng thành công');
+                    if (phanQuyen.join('') === "Admin") {
+                        getAllUser();
+                    } else {
+                        getAllUserByQuyen()
+                    }
+                })
+                .catch(err => {
+                    toast.error('Thêm người dùng thất bại')
+                    console.log(err);
+                    resetData();
+                })
+        }
+
+
+
 
     }
 

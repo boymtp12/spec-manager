@@ -21,7 +21,7 @@ function App() {
           <Route path='/' element={phanQuyen ? <Home phanQuyen = {phanQuyen}/> : <Navigate to="/login" />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/user-admin' element={<TableUserAdmin />} />
+          <Route path='/user-admin' element={<TableUserAdmin /> } />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </Router>

@@ -21,6 +21,8 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import MenuAppBar from './MenuAppBar';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 
 
@@ -57,15 +59,12 @@ const Header = () => {
   const phanQuyen = getItemLocalStorage('dataQuyen').join('');
 
   const inputHandlerOfAdmin = e => {
-    console.log("kdkdkd");
     clearTimeout(time)
     let tm = setTimeout(async () => {
-      console.log("hshshsh");
       var inputCheck = e.target.value;
       let dataa = [];
 
       ajaxCallGet(`user-tool/find-like-sdt-all?sdt=${inputCheck}`).then(async rs => {
-        console.log(rs);
         if (rs.data[0] !== undefined) {
           for (let x in rs.data) {
             let item = rs.data[x]
@@ -101,15 +100,12 @@ const Header = () => {
 
 
   const inputHandlerOfQuyen = e => {
-    console.log("kdkdkd");
     clearTimeout(time)
     let tm = setTimeout(async () => {
-      console.log("hshshsh");
       var inputCheck = e.target.value;
       let dataa = [];
 
       ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen}`).then(async rs => {
-        console.log(rs);
         if (rs.data[0] !== undefined) {
           for (let x in rs.data) {
             let item = rs.data[x]
@@ -169,7 +165,7 @@ const Header = () => {
             label='Tìm kiếm'
             variant='outlined'
           />
-          <span className="text-log">{phanQuyen}</span >
+          <MenuAppBar />
           <div className="line" style={{ display: "none" }}></div>
           <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>{phanQuyen === "Admin" && "User Admin"}</Link >
           <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
@@ -190,7 +186,7 @@ const Header = () => {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                <AccountCircle sx={{ width: 32, height: 32 }} />
               </IconButton>
             </Tooltip>
           </Box>

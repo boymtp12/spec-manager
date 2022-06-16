@@ -49,7 +49,7 @@ function a11yProps(index) {
 }
 
 
-export default function Home({phanQuyen}) {
+export default function Home({ phanQuyen }) {
   const dispatch = useDispatch()
 
   const [value, setValue] = React.useState(0)
@@ -60,7 +60,7 @@ export default function Home({phanQuyen}) {
 
 
   // Lấy hết mã tool ném vào local
-  
+
 
   React.useEffect(() => {
 
@@ -100,8 +100,7 @@ export default function Home({phanQuyen}) {
           console.log(err);
 
         })
-    } else {
-      console.log('ECC CCC')
+    } else if (phanQuyen.length === 1 && phanQuyen.join('') !== 'Admin') {
       let dataa = []
       let label = []
       /// check đăng nhập trước rồi mới call api
@@ -134,11 +133,49 @@ export default function Home({phanQuyen}) {
       }).catch(err => {
         console.log(err);
       })
+    } else if (phanQuyen.length !== 1) {
+      let dataCurrent = [];
+      phanQuyen.map(quyen => {
+        let dataa1 = [];
+        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+          .then(async rs => {
+            console.log('getAllUserByNhieuQuyen');
+            rs.map(item => {
+              dataa1.push(createData(
+                item.clId,
+                item.clMaThietBi,
+                item.clMaTool,
+                item.clHoTen,
+                item.clSdt,
+                item.clGmail,
+                item.clChucVu,
+                item.clNoiLamViec,
+                item.clNgayDangKy,
+                item.clNgayHetHan
+              ))
+            })
+             dataCurrent = [...dataCurrent, ...dataa1];
+            // const action3 = changeTypeTabs(1);
+            // await dispatch(action3)
+            // const action2 = changeData(dataCurrent)
+            // await dispatch(action2)
+            // renderData()
+            await renderUserTool(dataCurrent);
+          })
+      })
     }
   }, [])
 
 
   // }
+
+  const renderUserTool = (dataCurrent) => {
+    const action3 = changeTypeTabs(1);
+    dispatch(action3)
+    const action2 = changeData(dataCurrent)
+    dispatch(action2)
+    renderData()
+  }
 
 
   const handleData = (type, data) => {
@@ -156,7 +193,6 @@ export default function Home({phanQuyen}) {
 
   const renderData = () => {
     let data = mainDataUser
-    console.log('render first')
     return (
       <div className='w-100'>
         <Header />
