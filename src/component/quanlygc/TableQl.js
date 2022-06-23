@@ -280,7 +280,7 @@ export default function TableQl(props) {
                 <ChangeHistoryIcon />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title='Add User Tool' onClick={handleClickOpen}>
               <IconButton>
                 <AddIcon />
@@ -1017,11 +1017,13 @@ export default function TableQl(props) {
                           defaultValue={row.ngayhethan}
                         />
                       </TableCell>
-                      <TableCell align='center'>
-                          <Button style={{ color: '#f3341e', border: '1px solid #f3341e', marginRight: '15px' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
+                      <TableCell>
+                        <Stack sx={{ justifyContent: 'center' }} direction="row" spacing={2}>
+                          <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
                             Xóa
                           </Button>
                           <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button>
+                        </Stack>
                       </TableCell>
 
                     </TableRow>
