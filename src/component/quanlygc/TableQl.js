@@ -32,8 +32,10 @@ import FormAddUserTool from '../FormAddUserTool'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeData, changeTypeTabs } from '../../reducer_action/DataUserToolReducerAction'
 import FormEditUserToolGeneral from '../FormEditUserToolGeneral'
+import FormActivateKey from '../FormActivateKey'
 import MenuFilter from '../MenuFilter'
 import Header from '../Header'
+import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 
 
 const userToolContext = React.createContext()
@@ -75,7 +77,7 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Họ và tên',
-    mWidth: "minWidth: '250px'"
+    mWidth: "minWidth: '200px'"
   },
   {
     id: 'matool',
@@ -202,6 +204,7 @@ export default function TableQl(props) {
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openEditGeneral, setOpenEditGeneral] = React.useState(false);
+  const [openActivate, setOpenActivate] = React.useState(false);
 
   const [userId, setUserId] = React.useState('')
 
@@ -272,12 +275,18 @@ export default function TableQl(props) {
           </React.Fragment>
         ) : (
           <React.Fragment>
-
+            <Tooltip title='Kích hoạt Key' onClick={handleClickOpenActivate}>
+              <IconButton>
+                <ChangeHistoryIcon />
+              </IconButton>
+            </Tooltip>
+            
             <Tooltip title='Add User Tool' onClick={handleClickOpen}>
               <IconButton>
                 <AddIcon />
               </IconButton>
             </Tooltip>
+
             {/* <Tooltip title='Filter list'>
             <IconButton>
               <FilterListIcon />
@@ -418,7 +427,7 @@ export default function TableQl(props) {
 */
   const handleDeleteGeneral = async () => {
     const idSelected = getItemLocalStorage('idSelected');
-    const text = "Bạn có thực sự muốn xóa những người này?";
+    const text = "Bạn có thực sự muốn xóa?";
 
     let confirm = await sweetAlert2(text)
     if (confirm) {
@@ -597,7 +606,7 @@ export default function TableQl(props) {
 */
 
   const handleDelete = async (id) => {
-    const text = "Bạn có thực sự muốn xóa người này?";
+    const text = "Bạn có thực sự muốn xóa?";
     let confirm = await sweetAlert2(text)
     if (confirm) {
       ajaxCallPost(`user-tool/delete?id=${id}`)
@@ -790,6 +799,9 @@ export default function TableQl(props) {
     setOpen(true);
   };
 
+  const handleClickOpenActivate = () => {
+    setOpenActivate(true)
+  }
 
   /**
 * Đóng dialog thêm user-tool
@@ -990,7 +1002,7 @@ export default function TableQl(props) {
                         {row.hovaten}
                       </TableCell>
                       <TableCell align='center'>{row.matool}</TableCell>
-                      <TableCell>{row.sdt}</TableCell>
+                      <TableCell align='center'>{row.sdt}</TableCell>
                       <TableCell align='center'>
                         <input
                           type='date'
@@ -1006,12 +1018,10 @@ export default function TableQl(props) {
                         />
                       </TableCell>
                       <TableCell align='center'>
-                        <Stack direction="row" spacing={2}>
-                          <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
-                            Delete
+                          <Button style={{ color: '#f3341e', border: '1px solid #f3341e', marginRight: '15px' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
+                            Xóa
                           </Button>
-                          <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
-                        </Stack>
+                          <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button>
                       </TableCell>
 
                     </TableRow>
@@ -1081,6 +1091,10 @@ export default function TableQl(props) {
         setNgayDangKy={setNgayDangKy}
         setNgayHetHan={setNgayHetHan}
         handleSubmit={handleSubmitEditGeneral} />
+      <FormActivateKey
+        openActivate={openActivate}
+        setOpenActivate={setOpenActivate}
+      />
     </Paper>
   )
 }

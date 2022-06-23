@@ -33,7 +33,7 @@ const FormEditUserToolGeneral = ({ id,
                     <DialogContentText>
 
                     </DialogContentText>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                         <div>
                             <TextField
                                 label="Chức vụ"

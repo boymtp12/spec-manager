@@ -60,7 +60,7 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                         <div>
                             <TextField
                                 label="Họ tên"
@@ -117,8 +117,8 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleClose}>Thoát</Button>
+                    <Button onClick={handleSubmit}>Hoàn thành</Button>
                 </DialogActions>
             </Dialog>
         </div>

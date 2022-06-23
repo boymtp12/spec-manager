@@ -27,13 +27,15 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box  sx={{ paddingTop: 2 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
     </div>
   )
 }
+
+// in Box
 
 TabPanel.propTypes = {
   children: PropTypes.node,
@@ -197,7 +199,7 @@ export default function Home({ phanQuyen }) {
       <div className='w-100'>
         <Header />
         <Box
-          sx={{ width: '80%' }}
+          sx={{ width: '90%', maxWidth: '1900px' }}
           className='body border rounded box-shadow-xl'
         >
           <Tabs

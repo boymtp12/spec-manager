@@ -48,7 +48,7 @@ export default function FormAddQuyen({ open, handleClose }) {
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                         <div>
                             <TextField
                                 label="Tên quyền"
@@ -74,8 +74,8 @@ export default function FormAddQuyen({ open, handleClose }) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleClose}>Thoát</Button>
+                    <Button onClick={handleSubmit}>Hoàn thành</Button>
                 </DialogActions>
             </Dialog>
         </div>
