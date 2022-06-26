@@ -167,7 +167,7 @@ const Header = () => {
           />
           <MenuAppBar />
           <div className="line" style={{ display: "none" }}></div>
-          <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>{phanQuyen === "Admin" && "User Admin"}</Link >
+          <Link className="text-register" style={{ marginRight: '34px', marginLeft: "16px" }} to='/user-admin'>{phanQuyen === "Admin" && "User Admin"}</Link >
           <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
         </div>
       </MediaQuery>

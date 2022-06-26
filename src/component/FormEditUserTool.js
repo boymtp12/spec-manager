@@ -86,7 +86,7 @@ const FormEditUserTool = ({ id, open, handleClose, fullName,
                     <DialogContentText>
 
                     </DialogContentText>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                         <div>
                             <TextField
                                 label="Tên người dùng"

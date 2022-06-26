@@ -153,6 +153,7 @@ function EnhancedTableHead(props) {
                     {headCells.map((headCell) => (
                         <TableCell
                             key={headCell.id}
+                            style={{ whiteSpace: 'nowrap', textAlign: 'center' }}
                             align={headCell.numeric ? 'right' : 'left'}
                             padding={headCell.disablePadding ? 'none' : 'normal'}
                             sortDirection={orderBy === headCell.id ? order : false}
@@ -355,7 +356,7 @@ export default function TableUserAdmin() {
 * @author HieuTN
 */
     const handleDeleteAdminHasQuyen = async (id) => {
-        const text = "Bạn có thực sự muốn xóa, thao tác này không thể khôi phục!";
+        const text = "Bạn có thực sự muốn xóa?";
         const confirm = await sweetAlert2(text);
         if (confirm) {
             ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
@@ -557,7 +558,7 @@ export default function TableUserAdmin() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     return (
-        <Box sx={{ width: '80%', margin: '110px auto' }}
+        <Box sx={{ width: '90%', maxWidth: '1900px', margin: '110px auto' }}
             className='body border rounded box-shadow-xl'
         >
             <Paper sx={{ width: '100%', mb: 2 }}>
@@ -606,6 +607,7 @@ export default function TableUserAdmin() {
                                                 />
                                             </TableCell>
                                             <TableCell
+                                                align="center"
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
@@ -613,17 +615,17 @@ export default function TableUserAdmin() {
                                             >
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell align="right">{row.sdt}</TableCell>
-                                            <TableCell align="right">{row.address}</TableCell>
-                                            <TableCell align="right">{row.email}</TableCell>
-                                            <TableCell align="right">{row.pass}</TableCell>
+                                            <TableCell >{row.sdt}</TableCell>
+                                            <TableCell align="center">{row.address}</TableCell>
+                                            <TableCell align="center">{row.email}</TableCell>
+                                            <TableCell align="center">{row.pass}</TableCell>
                                             <TableCell align='center'>
                                                 <Stack sx={{ justifyContent: 'center' }} direction="row" spacing={2}>
                                                     <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDeleteAdminHasQuyen(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
-                                                        Delete
+                                                        Xóa
                                                     </Button>
                                                     <Link to={``}>
-                                                        <Button onClick={() => handleClickOpen(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Edit</Button>
+                                                        <Button onClick={() => handleClickOpen(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button>
                                                     </Link>
                                                 </Stack>
                                             </TableCell>
@@ -659,7 +661,7 @@ export default function TableUserAdmin() {
 
             {/* dialog edit open */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Edit Form</DialogTitle>
+                <DialogTitle>Chỉnh sửa User Admin</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <EditFormUserAdmin
@@ -682,8 +684,8 @@ export default function TableUserAdmin() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleClose}>Thoát</Button>
+                    <Button onClick={handleSubmit}>Hoàn thành</Button>
                 </DialogActions>
             </Dialog>
 

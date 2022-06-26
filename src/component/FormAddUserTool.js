@@ -175,8 +175,8 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                        <div>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <>
                             {phanQuyen.join('') === "Admin" ? <FormControl sx={{ m: 1, width: 250 }}>
                                 <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
                                 <Select
@@ -288,13 +288,13 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                                 focused
                             />
 
-                        </div>
+                        </>
 
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleClose}>Thoát</Button>
+                    <Button onClick={handleSubmit}>Hoàn thành</Button>
                 </DialogActions>
             </Dialog>
         </div>

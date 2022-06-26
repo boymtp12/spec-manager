@@ -108,7 +108,7 @@ export default function EditFormUserAdmin({
     };
 
     return (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
             <div>
                 <TextField
                     label="Họ tên"
@@ -205,8 +205,8 @@ export default function EditFormUserAdmin({
                         MenuProps={MenuProps}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
-                        <MenuItem value="" default>
-                            <em>Place holder</em>
+                        <MenuItem value="" default disabled>
+                            <em>Mã Tool</em>
                         </MenuItem>
                         {names.map((name) => (
                                 <MenuItem

@@ -56,8 +56,7 @@ export default function FormDialog({ open, handleClose, allQuyen, setAllQuyen })
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Subscribe</Button>
+                    <Button onClick={handleClose}>Thoát</Button>
                 </DialogActions>
             </Dialog>
         </div>
@@ -68,25 +67,21 @@ const InteractiveList = ({ allQuyen, setAllQuyen }) => {
     const [dense, setDense] = React.useState(false);
     const [secondary, setSecondary] = React.useState(false);
 
-    
+
 
     const handleDeleteQuyen = async (id) => {
         const text = "Bạn có thực sự muốn xóa?";
-        const confirm = await sweetAlert2(text)
-        if(confirm) {
-            ajaxCallPost(`quyen/delete?id=${id}`)
-                .then(rs => {
-                    console.log(rs);
-                    toast.success('Xóa thành công!');
-                    getAllQuyen();
-                })
-                .catch(err => {
-                    console.log(err);
-                    toast.error('Xóa thất bại @@')
-                })
-        } else {
-            toast.success('Thank u :))')
-        }
+        ajaxCallPost(`quyen/delete?id=${id}`)
+            .then(rs => {
+                console.log(rs);
+                toast.success('Xóa thành công!');
+                getAllQuyen();
+            })
+            .catch(err => {
+                console.log(err);
+                toast.error('Xóa thất bại @@')
+            })
+
     }
 
     const getAllQuyen = () => {

@@ -34,7 +34,7 @@ export default function MenuAppBar() {
                         onClick={handleMenu}
                         color="inherit"
                     >
-                        <AccountCircle sx={{ width: 32, height: 32, marginRight: 2 }}/>
+                        <AccountCircle sx={{ width: 32, height: 32 }}/>
                     </IconButton>
                     <Menu
                         id="menu-appbar"
