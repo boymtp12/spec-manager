@@ -90,7 +90,7 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                 }
                 ajaxCallPost(`user-tool`, data)
                     .then(rs => {
-                        console.log(rs);
+                        // console.log(rs);
                         handleClose();
                         resetData();
                         if (phanQuyen.join('') === "Admin") {
@@ -134,7 +134,7 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
             }
             ajaxCallPost(`user-tool`, data)
                 .then(rs => {
-                    console.log(rs);
+                    // console.log(rs);
                     handleClose();
                     resetData();
                     toast.success('Thêm người dùng thành công');

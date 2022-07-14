@@ -67,11 +67,9 @@ export default function Home({ phanQuyen }) {
   React.useEffect(() => {
 
     if (phanQuyen.join('') === "Admin") {
-      console.log('admin')
       let dataa = []
       let label = []
       ajaxCallGet(`user-tool/find-all`).then(async rs => {
-        console.log(rs)
 
         for (let x in rs.data) {
           let item = rs.data[x]
@@ -94,7 +92,7 @@ export default function Home({ phanQuyen }) {
         // setMainDataUser(dataa)
         const action3 = changeTypeTabs(3);
         await dispatch(action3)
-        const action2 = changeData(dataa)
+        const action2 = changeData([...dataa])
         await dispatch(action2)
         renderData()
       })
@@ -107,7 +105,6 @@ export default function Home({ phanQuyen }) {
       let label = []
       /// check đăng nhập trước rồi mới call api
       ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}`).then(async rs => {
-        console.log(rs)
         for (let x in rs) {
           let item = rs[x]
           dataa.push(
@@ -129,7 +126,7 @@ export default function Home({ phanQuyen }) {
         // setMainDataUser(dataa)
         const action3 = changeTypeTabs(3);
         await dispatch(action3)
-        const action2 = changeData(dataa)
+        const action2 = changeData([...dataa])
         await dispatch(action2)
         renderData()
       }).catch(err => {
@@ -141,7 +138,6 @@ export default function Home({ phanQuyen }) {
         let dataa1 = [];
         ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
           .then(async rs => {
-            console.log('getAllUserByNhieuQuyen');
             rs.map(item => {
               dataa1.push(createData(
                 item.clId,
@@ -174,8 +170,7 @@ export default function Home({ phanQuyen }) {
   const renderUserTool = (dataCurrent) => {
     const action3 = changeTypeTabs(1);
     dispatch(action3)
-    const action2 = changeData(dataCurrent)
-    dispatch(action2)
+    dispatch(changeData([...dataCurrent]))
     renderData()
   }
 

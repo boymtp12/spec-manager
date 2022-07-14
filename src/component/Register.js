@@ -30,7 +30,6 @@ const Register = () => {
             'address': address,
             'pass': password
         }
-        console.log(userData)
         if (userData.ten == '' || userData.sdt== '' || userData.email== '' || userData.address== '' || userData.pass== '') {
             toast.error('Vui lòng điền đầy đủ thông tin')
         } else {

@@ -368,7 +368,6 @@ export default function TableQl(props) {
       const idUser = idSelected[i];
       let data = await ajaxCallGet(`user-tool/${idUser}`)
         .then(rs => {
-          console.log(rs)
           return {
             "clId": idUser,
             "clMaThietBi": rs.clMaThietBi,
@@ -398,7 +397,6 @@ export default function TableQl(props) {
         })
       await ajaxCallPut('user-tool', data)
         .then(rs => {
-          console.log(rs);
           setSelected([]);
           handleCloseEditGeneral();
           if (phanQuyen === "Admin") {
@@ -545,6 +543,11 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
+            if (phanQuyen === "Admin") {
+              getAllUser();
+            } else {
+              getAllUserByQuyen()
+            }
           })
       })
   }
@@ -587,9 +590,12 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
+            if (phanQuyen === "Admin") {
+              getAllUser();
+            } else {
+              getAllUserByQuyen()
+            }
           })
-
-
       })
 
   }
@@ -611,7 +617,6 @@ export default function TableQl(props) {
     if (confirm) {
       ajaxCallPost(`user-tool/delete?id=${id}`)
         .then(rs => {
-          console.log(rs, 'success')
           toast.success('Xóa thành công')
           if (phanQuyen === "Admin") {
             getAllUser();
@@ -643,7 +648,6 @@ export default function TableQl(props) {
       let dataa = []
       ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}`)
         .then(async rs => {
-          console.log('get All by quyen')
           rs.map(item => {
             dataa.push(
               createData(
@@ -662,11 +666,10 @@ export default function TableQl(props) {
             // setMainDataUser(dataa)
 
           })
-          console.log(dataa)
           const action3 = changeTypeTabs(1);
           await dispatch(action3)
 
-          const action2 = changeData(dataa)
+          const action2 = changeData([...dataa])
           await dispatch(action2)
         })
     } else {
@@ -675,7 +678,6 @@ export default function TableQl(props) {
         let dataa1 = [];
         ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
           .then(async rs => {
-            console.log('getAllUserByNhieuQuyen');
             rs.map(item => {
               dataa1.push(createData(
                 item.clId,
@@ -694,7 +696,7 @@ export default function TableQl(props) {
             const action3 = changeTypeTabs(1);
             await dispatch(action3)
 
-            const action2 = changeData(dataCurrent)
+            const action2 = changeData([...dataCurrent])
             await dispatch(action2)
           })
       })
@@ -704,13 +706,11 @@ export default function TableQl(props) {
 
   const getAllUserByNhieuQuyen = () => {
     const quyenArr = getItemLocalStorage('dataQuyen');
-    console.log(quyenArr.length);
     let dataCurrent = [];
     quyenArr.map(quyen => {
       let dataa1 = [];
       ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
         .then(async rs => {
-          console.log('getAllUserByNhieuQuyen');
           rs.map(item => {
             dataa1.push(createData(
               item.clId,
@@ -729,7 +729,7 @@ export default function TableQl(props) {
           const action3 = changeTypeTabs(1);
           await dispatch(action3)
 
-          const action2 = changeData(dataCurrent)
+          const action2 = changeData([...dataCurrent])
           await dispatch(action2)
         })
     })
@@ -747,7 +747,6 @@ export default function TableQl(props) {
     let dataa = []
     ajaxCallGet('user-tool/find-all')
       .then(rs => {
-        console.log("get all admin")
         rs.data.map(item => {
           dataa.push(
             createData(
@@ -781,7 +780,7 @@ export default function TableQl(props) {
           // dispatch(action2)
           const action4 = changeTypeTabs(1);
           dispatch(action4)
-          const action2 = changeData(dataa)
+          const action2 = changeData([...dataa])
           dispatch(action2)
         })
       })
@@ -894,7 +893,6 @@ export default function TableQl(props) {
   const handleSubmit = () => {
     ajaxCallGet(`user-tool/${userId}`)
       .then(rs => {
-        console.log(rs)
         let data = {
           "clId": userId,
           "clMaThietBi": rs.clMaThietBi,
@@ -922,7 +920,6 @@ export default function TableQl(props) {
 
         ajaxCallPut('user-tool', data)
           .then(rs => {
-            console.log(rs);
             toast.success('Sửa phiếu thành công')
             handleCloseEdit()
             if (phanQuyen === "Admin") {

@@ -304,9 +304,7 @@ export default function Demo () {
 
   const handleSelectAllClick = event => {
     if (event.target.checked) {
-      console.log(rows)
       const newSelecteds = rows.map(n => n.mathietbi)
-      console.log(newSelecteds)
       setSelected(newSelecteds)
       return
     }
