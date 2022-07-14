@@ -86,7 +86,7 @@ export default function MenuFilter() {
             })
         } else {
             tenTool.forEach((tool, index) => {
-                ajaxCallGet(`user-tool?queries=clMaTool=${tool}`).then(async rss => {
+                ajaxCallGet(`user-tool?queries=clMaTool=${tool}&sort=clId-desc`).then(async rss => {
 
                     rss.map((rs, index) => {
                         let infoUserTool = createData(rs.clId,

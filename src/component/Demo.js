@@ -351,7 +351,7 @@ export default function Demo () {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
   React.useEffect(() => {
-    ajaxCallGet('user-tool?queries=clMaTool=GoodChild').then(rs => {
+    ajaxCallGet('user-tool?queries=clMaTool=GoodChild&sort=clId-desc').then(rs => {
       let arr = []
       rs.map(item => {
         arr.push(

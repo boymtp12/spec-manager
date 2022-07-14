@@ -23,6 +23,11 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
     const [noiLamViec, setNoiLamViec] = React.useState('')
     const [ngayHetHan, setNgayHetHan] = React.useState('')
     const [ngayDangKy, setNgayDangKy] = React.useState('')
+    const [names, setNames] = React.useState(() => {
+        const localAllTool = getItemLocalStorage('all-tool')
+        return localAllTool;
+
+    })
 
     // start multiple Select
     const ITEM_HEIGHT = 48;
@@ -58,10 +63,6 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
     };
 
 
-    const names = getItemLocalStorage('all-tool')
-
-
-
     const handleSubmit = () => {
         if (phanQuyen.join('') === "Admin") {
             maTool.forEach((tool, index) => {
@@ -90,14 +91,9 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                 }
                 ajaxCallPost(`user-tool`, data)
                     .then(rs => {
-                        // console.log(rs);
                         handleClose();
                         resetData();
-                        if (phanQuyen.join('') === "Admin") {
-                            getAllUser();
-                        } else {
-                            getAllUserByQuyen()
-                        }
+                        getAllUser();
                     })
                     .catch(err => {
                         toast.error('Thêm người dùng thất bại')
@@ -109,52 +105,47 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
             toast.success('Thêm người dùng thành công');
 
         } else {
-            let data = {
-                "clMaThietBi": "",
-                "clMaTool": phanQuyen.join(''),
-                "clTenSanPham": "",
-                "clHoTen": ten,
-                "clSdt": soDienThoai,
-                "clGmail": gmail,
-                "clChucVu": chucVu,
-                "clNoiLamViec": noiLamViec,
-                "clNgayDangKy": ngayDangKy,
-                "clNgayHetHan": ngayHetHan,
-                "clCheDo": "",
-                "clMatKhau": "",
-                "clPhanMemChoPhep": "",
-                "clWebCanChan": "",
-                "clWebChoChay": "",
-                "clPmDaChan": "",
-                "clWebDaChan": "",
-                "clTrangThai": "",
-                "clLichSuWeb": "",
-                "clThoiGianBat": "",
-                "clThoiGianTat": ""
-            }
-            ajaxCallPost(`user-tool`, data)
-                .then(rs => {
-                    // console.log(rs);
-                    handleClose();
-                    resetData();
-                    toast.success('Thêm người dùng thành công');
-                    if (phanQuyen.join('') === "Admin") {
-                        getAllUser();
-                    } else {
+            for (let i in maTool) {
+                let data = {
+                    "clMaThietBi": "",
+                    "clMaTool": maTool[i],
+                    "clTenSanPham": "",
+                    "clHoTen": ten,
+                    "clSdt": soDienThoai,
+                    "clGmail": gmail,
+                    "clChucVu": chucVu,
+                    "clNoiLamViec": noiLamViec,
+                    "clNgayDangKy": ngayDangKy,
+                    "clNgayHetHan": ngayHetHan,
+                    "clCheDo": "",
+                    "clMatKhau": "",
+                    "clPhanMemChoPhep": "",
+                    "clWebCanChan": "",
+                    "clWebChoChay": "",
+                    "clPmDaChan": "",
+                    "clWebDaChan": "",
+                    "clTrangThai": "",
+                    "clLichSuWeb": "",
+                    "clThoiGianBat": "",
+                    "clThoiGianTat": ""
+                }
+                ajaxCallPost(`user-tool`, data)
+                    .then(rs => {
+                        // console.log(rs);
+                        handleClose();
+                        resetData();
                         getAllUserByQuyen()
-                    }
-                })
-                .catch(err => {
-                    toast.error('Thêm người dùng thất bại')
-                    console.log(err);
-                    resetData();
-                })
+                    })
+                    .catch(err => {
+                        toast.error('Thêm người dùng thất bại')
+                        console.log(err);
+                        resetData();
+                    })
+                }
+                toast.success('Thêm người dùng thành công');
         }
-
-
-
-
     }
+
 
 
     const resetData = () => {
@@ -198,17 +189,28 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                                         </MenuItem>
                                     ))}
                                 </Select>
-                            </FormControl> : <TextField
-                                title="Bạn chỉ được thêm 1 loại mã Tool mà bạn được Admin cấp quyền"
-                                label="Mã Tool"
-                                disabled
-                                id="outlined-start-adornment"
-                                value={phanQuyen.join('')}
-                                sx={{ m: 1, width: '250px' }}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start"><i className="fab fa-codepen"></i></InputAdornment>,
-                                }}
-                            />}
+                            </FormControl> : <FormControl sx={{ m: 1, width: 250 }}>
+                                <InputLabel id="demo-multiple-name-label">Mã tool</InputLabel>
+                                <Select
+                                    labelId="demo-multiple-name-label"
+                                    id="demo-multiple-name"
+                                    multiple
+                                    value={maTool === "" ? phanQuyen : maTool}
+                                    onChange={handleChangeInMultiple}
+                                    input={<OutlinedInput label="Name" />}
+                                    MenuProps={MenuProps}
+                                >
+                                    {phanQuyen.map((name) => (
+                                        <MenuItem
+                                            key={name}
+                                            value={name}
+                                            style={getStyles(name, maTool, theme)}
+                                        >
+                                            {name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>}
                             {/* <TextField
                                 title="Bạn chỉ được thêm 1 loại mã Tool mà bạn được Admin cấp quyền"
                                 label="Mã Tool"
