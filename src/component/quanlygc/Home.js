@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import PropTypes from 'prop-types'
 import Typography from '@mui/material/Typography'
 import TableQl from './TableQl'
-import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData, getItemLocalStorage } from '../../libs/base'
+import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData, getItemLocalStorage, URL_MAIN } from '../../libs/base'
 
 import "../../css_main/css/home.css"
 import Header from '../Header'
@@ -13,6 +13,7 @@ import Header from '../Header'
 import '../../css_main/css/home.css'
 import { changeData, changeTypeTabs } from '../../reducer_action/DataUserToolReducerAction'
 import { phanQuyen } from '../Login'
+import { useNavigate } from 'react-router-dom'
 
 
 function TabPanel(props) {
@@ -56,13 +57,11 @@ export default function Home({ phanQuyen }) {
 
   const [value, setValue] = React.useState(0)
   const [accountChinhThuc, setAccountChinhThuc] = React.useState(0)
-
   const mainDataUser = useSelector(state => state.userTool.dataUser)
   // const [mainDataUser, setMainDataUser] = React.useState()
 
 
   // Lấy hết mã tool ném vào local
-
 
   React.useEffect(() => {
 

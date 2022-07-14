@@ -56,7 +56,7 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const phanQuyen = getItemLocalStorage('dataQuyen').join('');
+  const phanQuyen = getItemLocalStorage('dataQuyen').join('') ?? [];
 
   const inputHandlerOfAdmin = e => {
     clearTimeout(time)
