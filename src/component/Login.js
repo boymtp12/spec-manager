@@ -39,10 +39,9 @@ const Login = () => {
 
 
   const handleSubmit = event => {
-    console.log({ number, password })
+    event.preventDefault()
     ajaxCallGet(`user-admin?queries=sdt=${number},pass=${password}`)
       .then(rs => {
-        console.log(rs)
         if (rs.length == 1) {
           handleGetQuyenByIdUser(rs[0].id)
           toast.success('Đăng nhập thành công')
@@ -61,12 +60,10 @@ const Login = () => {
     let dataQuyen = []
     ajaxCallGet(`admin-has-quyen?queries=id.userAdminId=${idUser}`).then(rs => {
       rs.map(item => {
-        console.log(item.quyen.tenQuyen)
         if (item.quyen.tenQuyen) {
           dataQuyen = [...dataQuyen, item.quyen.tenQuyen]
         }
       })
-      console.log(dataQuyen)
       setItemLocalStorage('dataQuyen', dataQuyen)
     })
   }
@@ -80,7 +77,7 @@ const Login = () => {
               alt='IMG'
             />
           </div>
-          <div className='login100-form validate-form'>
+          <form className='login100-form validate-form'  onSubmit={(e) => handleSubmit(e)}>
             <span className='login100-form-title'>Member Login</span>
             <div
               className='wrap-input100 validate-input'
@@ -117,7 +114,7 @@ const Login = () => {
               </span>
             </div>
             <div className='container-login100-form-btn'>
-              <button onClick={handleSubmit} className='login100-form-btn'>
+              <button type='submit' className='login100-form-btn'>
                 Đăng nhập
               </button>
             </div>
@@ -136,7 +133,7 @@ const Login = () => {
                 ></i>
               </Link>
             </div> */}
-          </div>
+          </form>
         </div>
       </div>
     </div>

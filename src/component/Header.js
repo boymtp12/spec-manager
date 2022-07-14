@@ -83,16 +83,15 @@ const Header = () => {
               )
             )
           }
-          console.log(dataa);
           // setMainDataUser(dataa)
-          const action2 = changeData(dataa)
+          const action2 = changeData([...dataa])
           await dispatch(action2)
           // renderData()
         } else {
           toast.error('Không có số điện thoại nào khớp @@')
         }
       }).catch(err => {
-        console.log(err);
+        // console.log(err);
       })
     }, 1000)
     setTime(tm)
@@ -124,9 +123,8 @@ const Header = () => {
               )
             )
           }
-          console.log(dataa);
           // setMainDataUser(dataa)
-          const action2 = changeData(dataa)
+          const action2 = changeData([...dataa])
           await dispatch(action2)
           // renderData()
         } else {

@@ -73,12 +73,12 @@ const InteractiveList = ({ allQuyen, setAllQuyen }) => {
         const text = "Bạn có thực sự muốn xóa?";
         ajaxCallPost(`quyen/delete?id=${id}`)
             .then(rs => {
-                console.log(rs);
+                // console.log(rs);
                 toast.success('Xóa thành công!');
                 getAllQuyen();
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 toast.error('Xóa thất bại @@')
             })
 
@@ -89,7 +89,7 @@ const InteractiveList = ({ allQuyen, setAllQuyen }) => {
         ajaxCallGet(`quyen/find-all`)
             .then(rs => {
                 rs.data.map(item => {
-                    console.log(item)
+                    // console.log(item)
                     dataa.push(item);
                 })
                 setAllQuyen(dataa);

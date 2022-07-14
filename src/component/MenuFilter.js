@@ -31,7 +31,6 @@ export default function MenuFilter() {
     };
 
     const handleChoseTool = (e) => {
-        console.log(e)
         setAnchorEl(null);
     }
 
@@ -62,7 +61,6 @@ export default function MenuFilter() {
     };
 
     React.useEffect(() => {
-        console.log(tenTool);
         let toolData = [];
         let allToolData = [];
         if (tenTool.length === 0) {
@@ -83,12 +81,11 @@ export default function MenuFilter() {
 
                 const action3 = changeTypeTabs(1);
                 await dispatch(action3)
-                const action2 = changeData(toolData)
+                const action2 = changeData([...toolData])
                 await dispatch(action2)
             })
         } else {
             tenTool.forEach((tool, index) => {
-                console.log(tenTool);
                 ajaxCallGet(`user-tool?queries=clMaTool=${tool}`).then(async rss => {
 
                     rss.map((rs, index) => {
@@ -107,7 +104,7 @@ export default function MenuFilter() {
                     allToolData = [...allToolData, ...toolData];
                     const action3 = changeTypeTabs(1);
                     await dispatch(action3)
-                    const action2 = changeData(allToolData)
+                    const action2 = changeData([...allToolData])
                     await dispatch(action2)
                 })
 

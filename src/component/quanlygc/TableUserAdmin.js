@@ -361,7 +361,6 @@ export default function TableUserAdmin() {
         if (confirm) {
             ajaxCallPost(`admin-has-quyen/delete?idUser=${id}`)
                 .then(rs => {
-                    console.log({ rs, id })
                     handleDelete(id);
                 })
                 .catch(err => {
@@ -383,7 +382,6 @@ export default function TableUserAdmin() {
     const handleDelete = (id) => {
         ajaxCallPost(`user-admin/delete?id=${id}`)
             .then(rs => {
-                console.log(rs)
                 toast.success('Xóa thành công')
                 getAllUser()
             })
@@ -414,7 +412,6 @@ export default function TableUserAdmin() {
                     dataId.push(item.id.quyenId);
                     dataTenQuyen.push(item.quyen.tenQuyen)
                 })
-                console.log(dataId)
                 setChecked(dataId);
                 setPhanQuyen(dataTenQuyen)
             })
@@ -428,7 +425,6 @@ export default function TableUserAdmin() {
         setUserId(id);
         ajaxCallGet(`user-admin/${id}`)
             .then(rs => {
-                console.log(rs);
                 setTen(rs.ten)
                 setSdt(rs.sdt)
                 setAddress(rs.address)
