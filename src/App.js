@@ -13,7 +13,7 @@ import NotFound from './component/NotFound'
 
 
 function App() {
-  const phanQuyen = getItemLocalStorage('dataQuyen')
+  const phanQuyen = getItemLocalStorage('dataQuyen');
   return (
     <Provider store={store}>
       <Router>
