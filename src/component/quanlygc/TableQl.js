@@ -646,7 +646,7 @@ export default function TableQl(props) {
     const quyenArr = getItemLocalStorage('dataQuyen');
     if (quyenArr.length === 1) {
       let dataa = []
-      ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}`)
+      ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}&sort=clId-desc`)
         .then(async rs => {
           rs.map(item => {
             dataa.push(
@@ -676,7 +676,7 @@ export default function TableQl(props) {
       let dataCurrent = [];
       quyenArr.map(quyen => {
         let dataa1 = [];
-        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
           .then(async rs => {
             rs.map(item => {
               dataa1.push(createData(
@@ -709,7 +709,7 @@ export default function TableQl(props) {
     let dataCurrent = [];
     quyenArr.map(quyen => {
       let dataa1 = [];
-      ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+      ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
         .then(async rs => {
           rs.map(item => {
             dataa1.push(createData(
@@ -892,47 +892,53 @@ export default function TableQl(props) {
 */
   const handleSubmit = () => {
     ajaxCallGet(`user-tool/${userId}`)
-      .then(rs => {
-        let data = {
-          "clId": userId,
-          "clMaThietBi": rs.clMaThietBi,
-          "clMaTool": maTool.toString(),
-          "clTenSanPham": tenSanPham,
-          "clHoTen": fullName,
-          "clSdt": soDienThoai,
-          "clGmail": mail,
-          "clChucVu": chucVu,
-          "clNoiLamViec": noiLamViec,
-          "clNgayDangKy": rs.clNgayDangKy,
-          "clNgayHetHan": ngayHetHan,
-          "clCheDo": rs.clCheDo,
-          "clMatKhau": rs.clMatKhau,
-          "clPhanMemChoPhep": rs.clPhanMemChoPhep,
-          "clWebCanChan": rs.clWebCanChan,
-          "clWebChoChay": rs.clWebChoChay,
-          "clPmDaChan": rs.clPmDaChan,
-          "clWebDaChan": rs.clWebDaChan,
-          "clTrangThai": rs.clTrangThai,
-          "clLichSuWeb": rs.clLichSuWeb,
-          "clThoiGianBat": rs.clThoiGianBat,
-          "clThoiGianTat": rs.clThoiGianTat,
-        }
-
-        ajaxCallPut('user-tool', data)
+      .then(rsGet => {
+        ajaxCallPost(`user-tool/delete?id=${userId}`)
           .then(rs => {
-            toast.success('Sửa phiếu thành công')
-            handleCloseEdit()
-            if (phanQuyen === "Admin") {
-              getAllUser();
-            } else {
-              getAllUserByQuyen()
+            for (let i in maTool) {
+              let data = {
+                "clMaThietBi": rsGet.clMaThietBi,
+                "clMaTool": maTool[i],
+                "clTenSanPham": tenSanPham,
+                "clHoTen": fullName,
+                "clSdt": soDienThoai,
+                "clGmail": mail,
+                "clChucVu": chucVu,
+                "clNoiLamViec": noiLamViec,
+                "clNgayDangKy": rsGet.clNgayDangKy,
+                "clNgayHetHan": ngayHetHan,
+                "clCheDo": rsGet.clCheDo,
+                "clMatKhau": rsGet.clMatKhau,
+                "clPhanMemChoPhep": rsGet.clPhanMemChoPhep,
+                "clWebCanChan": rsGet.clWebCanChan,
+                "clWebChoChay": rsGet.clWebChoChay,
+                "clPmDaChan": rsGet.clPmDaChan,
+                "clWebDaChan": rsGet.clWebDaChan,
+                "clTrangThai": rsGet.clTrangThai,
+                "clLichSuWeb": rsGet.clLichSuWeb,
+                "clThoiGianBat": rsGet.clThoiGianBat,
+                "clThoiGianTat": rsGet.clThoiGianTat,
+              }
+
+              ajaxCallPost('user-tool', data)
+                .then(rs => {
+                  toast.success('Sửa phiếu thành công')
+                  handleCloseEdit()
+                  if (phanQuyen === "Admin") {
+                    getAllUser();
+                  } else {
+                    getAllUserByQuyen()
+                  }
+                })
+                .catch(err => (console.log("error: ", err)))
+
+
             }
+
           })
-          .catch(err => (console.log("error: ", err)))
       })
-
-
   }
+
 
   const isSelected = name => selected.indexOf(name) !== -1;
 

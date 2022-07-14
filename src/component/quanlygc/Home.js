@@ -103,7 +103,7 @@ export default function Home({ phanQuyen }) {
       let dataa = []
       let label = []
       /// check đăng nhập trước rồi mới call api
-      ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}`).then(async rs => {
+      ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}&sort=clId-desc`).then(async rs => {
         for (let x in rs) {
           let item = rs[x]
           dataa.push(
@@ -135,7 +135,7 @@ export default function Home({ phanQuyen }) {
       let dataCurrent = [];
       phanQuyen.map(quyen => {
         let dataa1 = [];
-        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}`)
+        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
           .then(async rs => {
             rs.map(item => {
               dataa1.push(createData(

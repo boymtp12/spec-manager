@@ -76,8 +76,8 @@ const Header = () => {
                 item.clHoTen,
                 item.clSdt,
                 item.clGmail,
-                item.clChucVu, -
-              item.clNoiLamViec,
+                item.clChucVu,
+                item.clNoiLamViec,
                 item.clNgayDangKy,
                 item.clNgayHetHan
               )
