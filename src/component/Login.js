@@ -37,7 +37,6 @@ const Login = () => {
       })
   }, [])
 
-  console.log(URL_MAIN)
 
   const handleSubmit = event => {
     console.log({ number, password })
