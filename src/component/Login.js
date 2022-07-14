@@ -37,6 +37,7 @@ const Login = () => {
       })
   }, [])
 
+
   const handleSubmit = event => {
     console.log({ number, password })
     ajaxCallGet(`user-admin?queries=sdt=${number},pass=${password}`)
@@ -120,7 +121,7 @@ const Login = () => {
                 Đăng nhập
               </button>
             </div>
-            <div className='text-center p-t-12 mb-32'>
+            {/* <div className='text-center p-t-12 mb-32'>
               <span className='txt1'>Quên</span>
               <a className='txt2' href='#'>
                 tài khoản / mật khẩu?
@@ -134,7 +135,7 @@ const Login = () => {
                   aria-hidden='true'
                 ></i>
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
