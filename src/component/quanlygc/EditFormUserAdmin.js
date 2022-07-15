@@ -109,7 +109,7 @@ export default function EditFormUserAdmin({
 
     return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <div>
+            <>
                 <TextField
                     label="Họ tên"
                     id="outlined-start-adornment"
@@ -220,7 +220,7 @@ export default function EditFormUserAdmin({
                     </Select>
                 </FormControl>
 
-            </div>
+            </>
 
         </Box>
     );

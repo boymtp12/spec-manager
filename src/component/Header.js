@@ -56,7 +56,7 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const phanQuyen = getItemLocalStorage('dataQuyen').join('') ?? [];
+  const phanQuyen = getItemLocalStorage('dataQuyen');
 
   const inputHandlerOfAdmin = e => {
     clearTimeout(time)
@@ -103,36 +103,37 @@ const Header = () => {
     let tm = setTimeout(async () => {
       var inputCheck = e.target.value;
       let dataa = [];
-
-      ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen}`).then(async rs => {
-        if (rs.data[0] !== undefined) {
-          for (let x in rs.data) {
-            let item = rs.data[x]
-            dataa.push(
-              createData(
-                item.clId,
-                item.clMaThietBi,
-                item.clMaTool,
-                item.clHoTen,
-                item.clSdt,
-                item.clGmail,
-                item.clChucVu,
-                item.clNoiLamViec,
-                item.clNgayDangKy,
-                item.clNgayHetHan
+      for(let i in phanQuyen) {
+        ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen[i]}`).then(async rs => {
+          if (rs.data[0] !== undefined) {
+            for (let x in rs.data) {
+              let item = rs.data[x]
+              dataa.push(
+                createData(
+                  item.clId,
+                  item.clMaThietBi,
+                  item.clMaTool,
+                  item.clHoTen,
+                  item.clSdt,
+                  item.clGmail,
+                  item.clChucVu,
+                  item.clNoiLamViec,
+                  item.clNgayDangKy,
+                  item.clNgayHetHan
+                )
               )
-            )
+            }
+            // setMainDataUser(dataa)
+            const action2 = changeData([...dataa])
+            await dispatch(action2)
+            // renderData()
+          } else {
+            toast.error('Không có số điện thoại nào khớp @@')
           }
-          // setMainDataUser(dataa)
-          const action2 = changeData([...dataa])
-          await dispatch(action2)
-          // renderData()
-        } else {
-          toast.error('Không có số điện thoại nào khớp @@')
-        }
-      }).catch(err => {
-        console.log(err);
-      })
+        }).catch(err => {
+          console.log(err);
+        })
+      }
     }, 1000)
     setTime(tm)
   }
@@ -145,13 +146,13 @@ const Header = () => {
     history('/login')
   }
 
-  // if (phanQuyen === "Admin") {
+  // if (phanQuyen.join('') === "Admin") {
   return (
     <div className='header mt-2 d-flex justify-content-between align-items-center'>
       <Link to="/">
         <div>
           <img src="https://rdsic.edu.vn/img/logo.png" style={{ width: "150px" }} />
-          {/* <span className='logo-header mb-0'>{phanQuyen}</span> */}
+          {/* <span className='logo-header mb-0'>{phanQuyen.join('')}</span> */}
         </div>
       </Link>
       <MediaQuery minWidth={787}>
@@ -159,13 +160,13 @@ const Header = () => {
           <TextField
             style={{ marginRight: '32px' }}
             id='outlined-basic'
-            onChange={phanQuyen === "Admin" ? inputHandlerOfAdmin : inputHandlerOfQuyen}
+            onChange={phanQuyen.join('') === "Admin" ? inputHandlerOfAdmin : inputHandlerOfQuyen}
             label='Tìm kiếm'
             variant='outlined'
           />
           <MenuAppBar />
           <div className="line" style={{ display: "none" }}></div>
-          <Link className="text-register" style={{ marginRight: '34px', marginLeft: "16px" }} to='/user-admin'>{phanQuyen === "Admin" && "User Admin"}</Link >
+          <Link className="text-register" style={{ marginRight: '34px', marginLeft: "16px" }} to='/user-admin'>{phanQuyen.join('') === "Admin" && "User Admin"}</Link >
           <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
         </div>
       </MediaQuery>
@@ -225,13 +226,13 @@ const Header = () => {
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
             <MenuItem>
-              <Avatar /> {phanQuyen}
+              <Avatar /> {phanQuyen.join('')}
             </MenuItem>
             {/* <MenuItem>
               <Avatar /> My account
             </MenuItem> */}
             <Divider />
-            {phanQuyen === "Admin" && <MenuItem>
+            {phanQuyen.join('') === "Admin" && <MenuItem>
               <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>
                 <ListItemIcon>
                   <PersonAdd style={{ fontSize: "20px" }} />
@@ -254,7 +255,7 @@ const Header = () => {
 
     </div>
   )
-  // } else if (phanQuyen !== "Admin") {
+  // } else if (phanQuyen.join('') !== "Admin") {
   //   return (
   //     <div className='header mt-2 d-flex justify-content-between'>
   //       <Link to="/">
@@ -270,7 +271,7 @@ const Header = () => {
   //           label='Tìm kiếm'
   //           variant='outlined'
   //         />
-  //         <span className="text-log">{phanQuyen}</span >
+  //         <span className="text-log">{phanQuyen.join('')}</span >
   //         <div className="line" style={{ display: "none" }}></div>
   //         <Link onClick={handleLogOut} className="text-register" style={{ marginRight: '34px' }} to='/login'>Đăng xuất</Link >
   //       </div>

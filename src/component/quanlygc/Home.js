@@ -89,7 +89,7 @@ export default function Home({ phanQuyen }) {
 
         }
         // setMainDataUser(dataa)
-        const action3 = changeTypeTabs(3);
+        const action3 = changeTypeTabs(1);
         await dispatch(action3)
         const action2 = changeData([...dataa])
         await dispatch(action2)
@@ -123,7 +123,7 @@ export default function Home({ phanQuyen }) {
 
         }
         // setMainDataUser(dataa)
-        const action3 = changeTypeTabs(3);
+        const action3 = changeTypeTabs(1);
         await dispatch(action3)
         const action2 = changeData([...dataa])
         await dispatch(action2)
@@ -204,9 +204,9 @@ export default function Home({ phanQuyen }) {
             allowScrollButtonsMobile
             aria-label='scrollable force tabs example'
           >
+            <Tab label='Danh sách' {...a11yProps(0)} />
             <Tab label='Chính thức' {...a11yProps(0)}></Tab>
             <Tab label='Dùng thử' {...a11yProps(0)} />
-            <Tab label='Danh sách' {...a11yProps(0)} />
             <Tab label='Hết hạn' {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>

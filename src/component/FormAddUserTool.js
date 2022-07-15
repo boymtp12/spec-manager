@@ -291,7 +291,6 @@ export default function FormAddUserTool({ open, handleClose, getAllUserByQuyen, 
                             />
 
                         </>
-
                     </Box>
                 </DialogContent>
                 <DialogActions>
