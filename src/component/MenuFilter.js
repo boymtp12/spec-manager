@@ -15,8 +15,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Tooltip from '@mui/material/Tooltip'
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Button } from '@mui/material';
+import { toast } from 'wc-toast';
 
-export default function MenuFilter() {
+export default function MenuFilter({ tenTool, setTenTool }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const allTool = getItemLocalStorage('all-tool')
 
@@ -35,7 +36,6 @@ export default function MenuFilter() {
     }
 
     const [checked, setChecked] = React.useState([]);
-    const [tenTool, setTenTool] = React.useState([]);
 
     const handleToggle = (id, tool) => () => {
         const currentIndex = checked.indexOf(id);
@@ -59,6 +59,7 @@ export default function MenuFilter() {
         setChecked(newChecked);
         setTenTool(newTenTool)
     };
+
 
     React.useEffect(() => {
         let toolData = [];
@@ -101,11 +102,21 @@ export default function MenuFilter() {
                             rs.clNgayHetHan)
                         toolData.push(infoUserTool);
                     })
-                    allToolData = [...allToolData, ...toolData];
-                    const action3 = changeTypeTabs(1);
-                    await dispatch(action3)
-                    const action2 = changeData([...allToolData])
-                    await dispatch(action2)
+                    allToolData = [...toolData];
+
+                    if (allToolData.length !== 0) {
+                        const action3 = changeTypeTabs(1);
+                        await dispatch(action3)
+                        const action2 = changeData([...allToolData])
+                        await dispatch(action2)
+                    } else {
+                        toast.error(`${tool} không có dữ liệu!`)
+                    }
+
+                    // const action3 = changeTypeTabs(1);
+                    // await dispatch(action3)
+                    // const action2 = changeData([...allToolData])
+                    // await dispatch(action2)
                 })
 
 

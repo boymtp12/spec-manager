@@ -12,14 +12,7 @@ import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTit
 const FormEditUserToolGeneral = ({ id,
     open,
     handleClose,
-    chucVu,
-    noiLamViec,
-    ngayDangKy,
     ngayHetHan,
-    dataUserTool,
-    setChucVu,
-    setNoiLamViec,
-    setNgayDangKy,
     setNgayHetHan,
     handleSubmit }) => {
 
@@ -35,34 +28,6 @@ const FormEditUserToolGeneral = ({ id,
                     </DialogContentText>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                         <div>
-                            <TextField
-                                label="Chức vụ"
-                                id="outlined-start-adornment"
-                                value={chucVu}
-                                onChange={(e) => setChucVu(e.target.value)}
-                                sx={{ m: 1, width: '250px' }}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start"><i className="fas fa-envelope"></i></InputAdornment>,
-                                }}
-                            />
-                            <TextField
-                                label="Nơi làm việc"
-                                id="outlined-start-adornment"
-                                value={noiLamViec}
-                                onChange={e => setNoiLamViec(e.target.value)}
-                                sx={{ m: 1, width: '250px' }}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start"><i className="fas fa-building"></i></InputAdornment>,
-                                }}
-                            />
-                            <TextField
-                                label="Ngày đăng ký"
-                                value={ngayDangKy}
-                                onChange={(e) => setNgayDangKy(e.target.value)}
-                                sx={{ m: 1, width: '250px' }}
-                                type="date"
-                                focused
-                            />
                             <TextField
                                 label="Ngày hết hạn"
                                 value={ngayHetHan}

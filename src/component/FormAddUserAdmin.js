@@ -61,7 +61,7 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
                     <DialogContentText>
                     </DialogContentText>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                        <div>
+                        <>
                             <TextField
                                 label="Họ tên"
                                 id="outlined-start-adornment"
@@ -113,7 +113,7 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
                                 }}
                             />
 
-                        </div>
+                        </>
                     </Box>
                 </DialogContent>
                 <DialogActions>

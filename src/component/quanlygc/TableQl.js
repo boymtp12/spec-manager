@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import PropTypes from 'prop-types'
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
@@ -37,9 +36,7 @@ import MenuFilter from '../MenuFilter'
 import Header from '../Header'
 import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 
-
 const userToolContext = React.createContext()
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -219,7 +216,9 @@ export default function TableQl(props) {
   const [ngayHetHan, setNgayHetHan] = React.useState('');
   const [dataUserTool, setDataUserTool] = React.useState([]);
 
-  const phanQuyen = getItemLocalStorage('dataQuyen').join('');
+  const [tenTool, setTenTool] = React.useState([]);
+
+  const phanQuyen = getItemLocalStorage('dataQuyen');
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openFilterList = Boolean(anchorEl);
@@ -316,6 +315,10 @@ export default function TableQl(props) {
     let date = new Date()
     switch (props.type) {
       case 1:
+        setRows(arr)
+        break
+
+      case 2:
         arr = arr.filter(item => {
           var c = new Date(item.ngayhethan)
           return c > date
@@ -323,15 +326,12 @@ export default function TableQl(props) {
         props.onCountItem(arr.length)
         setRows(arr)
         break
-      case 2:
+      case 3:
         arr = arr.filter(item => {
           var c = new Date(item.ngayhethan)
           return c < date
         })
         props.onCountItem(arr.length)
-        setRows(arr)
-        break
-      case 3:
         setRows(arr)
         break
       case 4:
@@ -376,9 +376,9 @@ export default function TableQl(props) {
             "clHoTen": rs.clHoTen,
             "clSdt": rs.clSdt,
             "clGmail": rs.clGmail,
-            "clChucVu": chucVu === "" ? rs.clChucVu : chucVu,
-            "clNoiLamViec": noiLamViec === "" ? rs.clNoiLamViec : noiLamViec,
-            "clNgayDangKy": ngayDangKy === "" ? rs.clNgayDangKy : ngayDangKy,
+            "clChucVu": rs.clChucVu,
+            "clNoiLamViec": rs.clNoiLamViec,
+            "clNgayDangKy": rs.clNgayDangKy,
             "clNgayHetHan": ngayHetHan === "" ? rs.clNgayHetHan : ngayHetHan,
             "clCheDo": rs.clCheDo,
             "clMatKhau": rs.clMatKhau,
@@ -399,22 +399,18 @@ export default function TableQl(props) {
         .then(rs => {
           setSelected([]);
           handleCloseEditGeneral();
-          if (phanQuyen === "Admin") {
-            getAllUser()
+          if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+            getUserToolByFilter();
+          } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
+            getAllUser();
           } else {
-            getAllUserByQuyen();
+            getAllUserByQuyen()
           }
         })
         .catch(err => (console.log("error: ", err)))
     }
 
     toast.success('Sửa thành công');
-    clearDataAfterSubmit();
-  }
-
-  const clearDataAfterSubmit = () => {
-    setChucVu('')
-    setNoiLamViec('')
   }
 
   /**
@@ -434,10 +430,12 @@ export default function TableQl(props) {
         ajaxCallPost(`user-tool/delete?id=${id}`)
           .then(rs => {
             setSelected([]);
-            if (phanQuyen === "Admin") {
-              getAllUser()
+            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+              getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
+              getAllUser();
             } else {
-              getAllUserByQuyen();
+              getAllUserByQuyen()
             }
           })
           .catch(err => {
@@ -513,7 +511,8 @@ export default function TableQl(props) {
 * @author HieuTN
 */
   const handleChangeNgayDangKy = (e, id) => {
-    setDate(e.target.value)
+    console.log(e.target)
+    // setDate(e.target.value)
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
         let data = {
@@ -543,7 +542,9 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
-            if (phanQuyen === "Admin") {
+            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+              getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
               getAllUser();
             } else {
               getAllUserByQuyen()
@@ -559,7 +560,7 @@ export default function TableQl(props) {
 * @author HieuTN
 */
   const handleChangeNgayHetHan = (e, id) => {
-    setDate(e.target.value)
+    // setDate(e.target.value)
 
     ajaxCallGet('user-tool' + '/' + id)
       .then(rs => {
@@ -590,7 +591,9 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
-            if (phanQuyen === "Admin") {
+            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+              getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
               getAllUser();
             } else {
               getAllUserByQuyen()
@@ -618,7 +621,9 @@ export default function TableQl(props) {
       ajaxCallPost(`user-tool/delete?id=${id}`)
         .then(rs => {
           toast.success('Xóa thành công')
-          if (phanQuyen === "Admin") {
+          if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+            getUserToolByFilter();
+          } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
             getAllUser();
           } else {
             getAllUserByQuyen()
@@ -635,7 +640,7 @@ export default function TableQl(props) {
 
   /**
 * Lấy ra tất cả các user-tool có cùng mã tool với user-admin có quyền 
-* xem mã tool đấy và render ra (thường dùng cho admin khi search và user-admin có phanQuyen đó)
+* xem mã tool đấy và render ra (thường dùng cho admin khi search và user-admin có phanQuyen.join('') đó)
 *
 * @param 
 * @author HieuTN
@@ -747,7 +752,7 @@ export default function TableQl(props) {
     let dataa = []
     ajaxCallGet('user-tool/find-all')
       .then(rs => {
-        rs.data.map(item => {
+        rs.data.map(async item => {
           dataa.push(
             createData(
               item.clId,
@@ -759,7 +764,7 @@ export default function TableQl(props) {
               item.clChucVu,
               item.clNoiLamViec,
               item.clNgayDangKy,
-              item.clNgayHetHan
+              item.clNgayHetHan,
             )
           )
           // setMainDataUser(dataa)
@@ -779,9 +784,9 @@ export default function TableQl(props) {
           // )])
           // dispatch(action2)
           const action4 = changeTypeTabs(1);
-          dispatch(action4)
+          await dispatch(action4)
           const action2 = changeData([...dataa])
-          dispatch(action2)
+          await dispatch(action2)
         })
       })
   }
@@ -884,6 +889,36 @@ export default function TableQl(props) {
       })
   }
 
+  const getUserToolByFilter = () => {
+    let toolData = [];
+    let allToolData = [];
+    tenTool.forEach((tool, index) => {
+      ajaxCallGet(`user-tool?queries=clMaTool=${tool}&sort=clId-desc`).then(async rss => {
+
+        rss.map((rs, index) => {
+          let infoUserTool = createData(rs.clId,
+            rs.clMaThietBi,
+            rs.clMaTool,
+            rs.clHoTen,
+            rs.clSdt,
+            rs.clGmail,
+            rs.clChucVu,
+            rs.clNoiLamViec,
+            rs.clNgayDangKy,
+            rs.clNgayHetHan)
+          toolData.push(infoUserTool);
+        })
+        allToolData = [...toolData];
+        const action3 = changeTypeTabs(1);
+        await dispatch(action3)
+        const action2 = changeData([...allToolData])
+        await dispatch(action2)
+
+      })
+    })
+  }
+
+
   /**
 * Submit sửa
 *
@@ -924,7 +959,9 @@ export default function TableQl(props) {
                 .then(rs => {
                   toast.success('Sửa phiếu thành công')
                   handleCloseEdit()
-                  if (phanQuyen === "Admin") {
+                  if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+                    getUserToolByFilter();
+                  } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
                     getAllUser();
                   } else {
                     getAllUserByQuyen()
@@ -932,12 +969,12 @@ export default function TableQl(props) {
                 })
                 .catch(err => (console.log("error: ", err)))
 
-
             }
 
           })
       })
   }
+
 
 
   const isSelected = name => selected.indexOf(name) !== -1;
@@ -947,14 +984,11 @@ export default function TableQl(props) {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
 
-
-
-
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
       {/* <Button variant="outlined" onClick={handleClickOpen}>Add</Button> */}
       {/* <Button variant="outlined" onClick={handleClickOpenEditGeneral}>Edit General</Button> */}
-      {phanQuyen !== "Admin" || <MenuFilter getAllUser={getAllUser} />}
+      {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={tenTool} setTenTool={setTenTool} />}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
@@ -1008,15 +1042,17 @@ export default function TableQl(props) {
                       <TableCell align='center'>{row.sdt}</TableCell>
                       <TableCell align='center'>
                         <input
+                          value={row.ngaydangky}
                           type='date'
-                          onChange={(e) => handleChangeNgayDangKy(e, row.id)}
+                          // onChange={(e) => handleChangeNgayDangKy(e, row.id)}
                           defaultValue={row.ngaydangky}
                         />
                       </TableCell>
                       <TableCell align='center'>
                         <input
+                          value={row.ngayhethan}
                           type='date'
-                          onChange={(e) => handleChangeNgayHetHan(e, row.id)}
+                          // onChange={(e) => handleChangeNgayHetHan(e, row.id)}
                           defaultValue={row.ngayhethan}
                         />
                       </TableCell>
@@ -1086,14 +1122,7 @@ export default function TableQl(props) {
         id={userId}
         open={openEditGeneral}
         handleClose={handleCloseEditGeneral}
-        chucVu={chucVu}
-        noiLamViec={noiLamViec}
-        ngayDangKy={ngayDangKy}
         ngayHetHan={ngayHetHan}
-        dataUserTool={dataUserTool}
-        setChucVu={setChucVu}
-        setNoiLamViec={setNoiLamViec}
-        setNgayDangKy={setNgayDangKy}
         setNgayHetHan={setNgayHetHan}
         handleSubmit={handleSubmitEditGeneral} />
       <FormActivateKey

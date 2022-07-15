@@ -84,10 +84,9 @@ const FormEditUserTool = ({ id, open, handleClose, fullName,
                 <DialogTitle>Chỉnh sửa người dùng</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-
                     </DialogContentText>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                        <div>
+                        <>
                             <TextField
                                 label="Tên người dùng"
                                 id="outlined-start-adornment"
@@ -203,7 +202,7 @@ const FormEditUserTool = ({ id, open, handleClose, fullName,
                             }
 
 
-                        </div>
+                        </>
                     </Box>
                 </DialogContent>
                 <DialogActions>
