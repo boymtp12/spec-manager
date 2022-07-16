@@ -1,5 +1,7 @@
 body {
-  margin: 0;
+  padding-right: 0 !important;
+  overflow: auto !important;
+  padding-right: 17px;
   font-family: 'Poppins', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

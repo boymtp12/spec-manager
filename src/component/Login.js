@@ -48,6 +48,7 @@ const Login = () => {
       .then(rs => {
         if (rs.length == 1) {
           handleGetQuyenByIdUser(rs[0].id)
+          setItemLocalStorage('tenUserAdmin', rs[0].ten)
           setTimeout(() => {
             toast.success('Đăng nhập thành công')
             window.location = URL_MAIN
