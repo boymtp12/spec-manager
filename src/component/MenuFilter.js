@@ -159,7 +159,7 @@ export default function MenuFilter({ tenTool, setTenTool }) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                <List sx={{ width: '100%',display:'flex', overflow: 'auto', bgcolor: 'background.paper' }}>
                     {allTool.map((value, index) => {
                         const labelId = `checkbox-list-label-${value}`;
 
@@ -173,7 +173,7 @@ export default function MenuFilter({ tenTool, setTenTool }) {
                                 }
                                 disablePadding
                             >
-                                <ListItemButton role={undefined} onClick={handleToggle(index, value)} dense>
+                                <ListItemButton sx={{width: '220px'}} role={undefined} onClick={handleToggle(index, value)} dense>
                                     <ListItemIcon>
                                         <Checkbox
                                             edge="start"
