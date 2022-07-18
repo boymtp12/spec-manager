@@ -26,6 +26,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 
 
 
+
 const Header = () => {
   let history = useNavigate();
   const dispatch = useDispatch()
@@ -57,6 +58,9 @@ const Header = () => {
   };
 
   const phanQuyen = getItemLocalStorage('dataQuyen');
+  const localTenUserAdmin = getItemLocalStorage('tenUserAdmin');
+
+  console.log(localTenUserAdmin)
 
   const inputHandlerOfAdmin = e => {
     clearTimeout(time)
@@ -103,7 +107,7 @@ const Header = () => {
     let tm = setTimeout(async () => {
       var inputCheck = e.target.value;
       let dataa = [];
-      for(let i in phanQuyen) {
+      for (let i in phanQuyen) {
         ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen[i]}`).then(async rs => {
           if (rs.data[0] !== undefined) {
             for (let x in rs.data) {
@@ -166,6 +170,7 @@ const Header = () => {
           />
           <MenuAppBar />
           <div className="line" style={{ display: "none" }}></div>
+          <span style={{ fontSize: "14px", fontWeight:"500", color: '#d3821e', textDecoration: 'underline' }}>Hi: {localTenUserAdmin}</span>
           <Link className="text-register" style={{ marginRight: '34px', marginLeft: "16px" }} to='/user-admin'>{phanQuyen.join('') === "Admin" && "User Admin"}</Link >
           <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
         </div>
@@ -225,12 +230,12 @@ const Header = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
+            <MenuItem style={{ fontSize: "14px", fontWeight:"500", color: '#d3821e', textDecoration: 'underline' }}>
+              <Avatar /> {localTenUserAdmin}
+            </MenuItem>
             <MenuItem>
               <Avatar /> {phanQuyen.join('')}
             </MenuItem>
-            {/* <MenuItem>
-              <Avatar /> My account
-            </MenuItem> */}
             <Divider />
             {phanQuyen.join('') === "Admin" && <MenuItem>
               <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>
@@ -240,8 +245,10 @@ const Header = () => {
                 User Admin
               </Link >
             </MenuItem>
-
             }
+
+
+
 
             <MenuItem onClick={handleLogOut}>
               <ListItemIcon>
