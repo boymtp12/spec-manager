@@ -1,25 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import $ from 'jquery'
+import React, { useState } from 'react'
 import {
   ajaxCallGet,
-  getItemLocalStorage,
   setItemLocalStorage,
   URL_MAIN
 } from '../libs/base'
 import './../css_main/css/login.css'
 import { toast } from 'wc-toast'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import {
-  changeData,
-  changeTypeTabs
-} from '../reducer_action/DataUserToolReducerAction'
-import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { IMAGES } from '../libs/Const_Image'
 
 const Login = () => {
   let history = useNavigate()
-  const dispatch = useDispatch()
   const [number, setNumber] = useState('')
   const [password, setPassword] = useState('')
   const [check, setCheck] = useState(false)
@@ -82,12 +75,13 @@ const Login = () => {
           <div className='wrap-login100'>
             <div className='login100-pic js-tilt' data-tilt>
               <img
-                src='https://media.istockphoto.com/vectors/login-icon-vector-id996724196'
+                style={{marginTop: '60px'}}
+                src={IMAGES.LOGIN}
                 alt='IMG'
               />
             </div>
             <form className='login100-form validate-form' onSubmit={(e) => handleSubmit(e)}>
-              <span className='login100-form-title'>Member Login</span>
+              <span className='login100-form-title'>Đăng nhập tài khoản</span>
               <div
                 className='wrap-input100 validate-input'
                 data-validate='Valid email is required: ex@abc.xyz'

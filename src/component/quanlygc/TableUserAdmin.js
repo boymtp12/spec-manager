@@ -249,7 +249,7 @@ export default function TableUserAdmin() {
                         id="tableTitle"
                         component="div"
                     >
-                        Danh sách Nhân viên
+                        Danh sách tài khoản
                     </Typography>
                 )}
 
@@ -273,7 +273,7 @@ export default function TableUserAdmin() {
                                 <AddBoxIcon />
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="Thêm User Admin" onClick={handleOpenAdd}>
+                        <Tooltip title="Thêm tài khoản" onClick={handleOpenAdd}>
                             <IconButton>
                                 <AddIcon />
                             </IconButton>
@@ -591,6 +591,7 @@ export default function TableUserAdmin() {
                                             tabIndex={-1}
                                             key={row.id}
                                             selected={isItemSelected}
+                                            style={{ cursor: 'pointer' }}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -603,6 +604,7 @@ export default function TableUserAdmin() {
                                                 />
                                             </TableCell>
                                             <TableCell
+                                                onClick={() => handleClickOpen(row.id)}
                                                 align="center"
                                                 component="th"
                                                 id={labelId}
@@ -611,18 +613,30 @@ export default function TableUserAdmin() {
                                             >
                                                 {row.name}
                                             </TableCell>
-                                            <TableCell >{row.sdt}</TableCell>
-                                            <TableCell align="center">{row.address}</TableCell>
-                                            <TableCell align="center">{row.email}</TableCell>
-                                            <TableCell align="center">{row.pass}</TableCell>
+                                            <TableCell
+                                                align="center"
+                                                onClick={() => handleClickOpen(row.id)}
+                                            >{row.sdt}</TableCell>
+                                            <TableCell
+                                                align="center"
+                                                onClick={() => handleClickOpen(row.id)}
+                                            >{row.address}</TableCell>
+                                            <TableCell
+                                                align="center"
+                                                onClick={() => handleClickOpen(row.id)}
+                                            >{row.email}</TableCell>
+                                            <TableCell
+                                                align="center"
+                                                onClick={() => handleClickOpen(row.id)}
+                                            >{row.pass}</TableCell>
                                             <TableCell align='center'>
                                                 <Stack sx={{ justifyContent: 'center' }} direction="row" spacing={2}>
                                                     <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDeleteAdminHasQuyen(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
                                                         Xóa
                                                     </Button>
-                                                    <Link to={``}>
+                                                    {/* <Link to={``}>
                                                         <Button onClick={() => handleClickOpen(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button>
-                                                    </Link>
+                                                    </Link> */}
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>
@@ -657,7 +671,7 @@ export default function TableUserAdmin() {
 
             {/* dialog edit open */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Chỉnh sửa User Admin</DialogTitle>
+                <DialogTitle>Chỉnh sửa tài khoản</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <EditFormUserAdmin

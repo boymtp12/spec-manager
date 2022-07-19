@@ -6,7 +6,7 @@ var url = window.location.href.split('/')
 // if (url[3].length == 0) {
 //     URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[4] + "/"
 // }
-export const URL_MAIN = window.location.origin +'/'
+export const URL_MAIN = window.location.origin + '/'
 // export const URL_MAIN = 'https://spec.edu.vn/etool/'
 
 
@@ -21,74 +21,74 @@ export function tinhTong(chuoi) {
   let RANDOM_STRING_LENGTH = 8;
   let tong = 1;
   for (let j = 0; j < RANDOM_STRING_LENGTH; j++) {
-      if (chuoi[j]==="A") 
-          tong = tong * 1;
-      else if (chuoi[j]==="B")
-          tong = tong * 2;
-      else if (chuoi[j]==="C")
-          tong = tong * 3;
-      else if (chuoi[j]==="D")
-          tong = tong * 4;
-      else if (chuoi[j]==="E")
-          tong = tong * 5;
-      else if (chuoi[j]==="F")
-          tong = tong * 6;
-      else if (chuoi[j]==="G")
-          tong = tong * 7;
-      else if (chuoi[j]==="H")
-          tong = tong * 8;
-      else if (chuoi[j]==="I")
-          tong = tong * 9;
-      else if (chuoi[j]==="K")
-          tong = tong * 10;
-      else if (chuoi[j]==="L")
-          tong = tong * 11;
-      else if (chuoi[j]==="M")
-          tong = tong * 12;
-      else if (chuoi[j]==="N")
-          tong = tong * 13;
-      else if (chuoi[j]==="O")
-          tong = tong * 14;
-      else if (chuoi[j]==="P")
-          tong = tong * 15;
-      else if (chuoi[j]==="Q")
-          tong = tong * 16;
-      else if (chuoi[j]==="R")
-          tong = tong * 17;
-      else if (chuoi[j]==="S")
-          tong = tong * 18;
-      else if (chuoi[j]==="T")
-          tong = tong * 19;
-      else if (chuoi[j]==="U")
-          tong = tong * 20;
-      else if (chuoi[j]==="V")
-          tong = tong * 21;
-      else if (chuoi[j]==="W")
-          tong = tong * 22;
-      else if (chuoi[j]==="X")
-          tong = tong * 23;
-      else if (chuoi[j]==="Y")
-          tong = tong * 24;
-      else if (chuoi[j]==="Z")
-          tong = tong * 25;
-      else if (chuoi[j]==="1")
-          tong = tong * 1;
-      else if (chuoi[j]==="2")
-          tong = tong * 2;
-      else if (chuoi[j]==="3")
-          tong = tong * 3;
-      else if (chuoi[j]==="4")
-          tong = tong * 4;
-      else if (chuoi[j]==="5")
-          tong = tong * 5;
-      else if (chuoi[j]==="6")
-          tong = tong * 6;
-      else if (chuoi[j]==="7")
-          tong = tong * 7;
-      else if (chuoi[j]==="8")
-          tong = tong * 8;
-      else if (chuoi[j]==="9")
-          tong = tong * 9;
+    if (chuoi[j] === "A")
+      tong = tong * 1;
+    else if (chuoi[j] === "B")
+      tong = tong * 2;
+    else if (chuoi[j] === "C")
+      tong = tong * 3;
+    else if (chuoi[j] === "D")
+      tong = tong * 4;
+    else if (chuoi[j] === "E")
+      tong = tong * 5;
+    else if (chuoi[j] === "F")
+      tong = tong * 6;
+    else if (chuoi[j] === "G")
+      tong = tong * 7;
+    else if (chuoi[j] === "H")
+      tong = tong * 8;
+    else if (chuoi[j] === "I")
+      tong = tong * 9;
+    else if (chuoi[j] === "K")
+      tong = tong * 10;
+    else if (chuoi[j] === "L")
+      tong = tong * 11;
+    else if (chuoi[j] === "M")
+      tong = tong * 12;
+    else if (chuoi[j] === "N")
+      tong = tong * 13;
+    else if (chuoi[j] === "O")
+      tong = tong * 14;
+    else if (chuoi[j] === "P")
+      tong = tong * 15;
+    else if (chuoi[j] === "Q")
+      tong = tong * 16;
+    else if (chuoi[j] === "R")
+      tong = tong * 17;
+    else if (chuoi[j] === "S")
+      tong = tong * 18;
+    else if (chuoi[j] === "T")
+      tong = tong * 19;
+    else if (chuoi[j] === "U")
+      tong = tong * 20;
+    else if (chuoi[j] === "V")
+      tong = tong * 21;
+    else if (chuoi[j] === "W")
+      tong = tong * 22;
+    else if (chuoi[j] === "X")
+      tong = tong * 23;
+    else if (chuoi[j] === "Y")
+      tong = tong * 24;
+    else if (chuoi[j] === "Z")
+      tong = tong * 25;
+    else if (chuoi[j] === "1")
+      tong = tong * 1;
+    else if (chuoi[j] === "2")
+      tong = tong * 2;
+    else if (chuoi[j] === "3")
+      tong = tong * 3;
+    else if (chuoi[j] === "4")
+      tong = tong * 4;
+    else if (chuoi[j] === "5")
+      tong = tong * 5;
+    else if (chuoi[j] === "6")
+      tong = tong * 6;
+    else if (chuoi[j] === "7")
+      tong = tong * 7;
+    else if (chuoi[j] === "8")
+      tong = tong * 8;
+    else if (chuoi[j] === "9")
+      tong = tong * 9;
   }
   return tong;
 }

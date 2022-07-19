@@ -1530,9 +1530,9 @@
     "prop-types" "^15.7.2"
 
 "@mui/styled-engine@^5.6.1", "@mui/styled-engine@npm:@mui/styled-engine-sc@latest":
-  "integrity" "sha512-tQ4oResOj2ImcS7CH3GNdgJ95jM9uZZY8nV0ny27eZUYvCYkLwZvaEKGpf2LbnKjPTIzTo6zXPN0AgAA6sKGNw=="
-  "resolved" "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-5.7.0.tgz"
-  "version" "5.7.0"
+  "integrity" "sha512-46eRLWxjTF0d50Q1Q9tj96cgF41r7lesbXAy6kKocCdUfJ8rbIo36C4Ws8Pd7nfVsvaitTb7tmCbVQzDT3niJQ=="
+  "resolved" "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-5.8.0.tgz"
+  "version" "5.8.0"
   dependencies:
     "prop-types" "^15.8.1"
 
@@ -2746,6 +2746,13 @@
     "normalize-range" "^0.1.2"
     "picocolors" "^1.0.0"
     "postcss-value-parser" "^4.2.0"
+
+"autosuggest-highlight@^3.3.2":
+  "integrity" "sha512-tub4n8Y0nyk8wnTulk9N9clA5SjjWCVoUT56e/GHGCaf/qSx2zBxLElzE6hXsGbOj2ejmeMZDoqwIwQh5LshqQ=="
+  "resolved" "https://registry.npmjs.org/autosuggest-highlight/-/autosuggest-highlight-3.3.2.tgz"
+  "version" "3.3.2"
+  dependencies:
+    "remove-accents" "^0.4.2"
 
 "axe-core@^4.3.5":
   "integrity" "sha512-gd1kmb21kwNuWr6BQz8fv6GNECPBnUasepcoLbekws23NVBLODdsClRZ+bQ8+9Uomf3Sm3+Vwn0oYG9NvwnJCw=="
@@ -7824,6 +7831,11 @@
   "integrity" "sha1-VNvzd+UUQKypCkzSdGANP/LYiKk="
   "resolved" "https://registry.npmjs.org/relateurl/-/relateurl-0.2.7.tgz"
   "version" "0.2.7"
+
+"remove-accents@^0.4.2":
+  "integrity" "sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA=="
+  "resolved" "https://registry.npmjs.org/remove-accents/-/remove-accents-0.4.2.tgz"
+  "version" "0.4.2"
 
 "renderkid@^3.0.0":
   "integrity" "sha512-q/7VIQA8lmM1hF+jn+sFSPWGlMkSAeNYcPLmDQx2zzuiDfaLrOmumR8iaUKlenFgh0XRPIUeSPlH3A+AW3Z5pg=="

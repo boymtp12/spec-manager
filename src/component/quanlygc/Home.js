@@ -28,7 +28,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box  sx={{ paddingTop: 2 }}>
+        <Box sx={{ paddingTop: 2 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -55,23 +55,18 @@ function a11yProps(index) {
 export default function Home({ phanQuyen }) {
   const dispatch = useDispatch()
 
+  const [tenTool, setTenTool] = React.useState([]);
+
   const [value, setValue] = React.useState(0)
   const [accountChinhThuc, setAccountChinhThuc] = React.useState(0)
   const mainDataUser = useSelector(state => state.userTool.dataUser)
   // const [mainDataUser, setMainDataUser] = React.useState()
 
-
-  // Lấy hết mã tool ném vào local
-
-  React.useEffect(() => {
-
-    if (phanQuyen.join('') === "Admin") {
-      let dataa = []
-      let label = []
-      ajaxCallGet(`user-tool/find-all`).then(async rs => {
-
-        for (let x in rs.data) {
-          let item = rs.data[x]
+  const getAllUser = () => {
+    let dataa = []
+    ajaxCallGet('user-tool/find-all')
+      .then(rs => {
+        rs.data.map(async item => {
           dataa.push(
             createData(
               item.clId,
@@ -83,57 +78,51 @@ export default function Home({ phanQuyen }) {
               item.clChucVu,
               item.clNoiLamViec,
               item.clNgayDangKy,
-              item.clNgayHetHan
+              item.clNgayHetHan,
             )
           )
-
-        }
-        // setMainDataUser(dataa)
-        const action3 = changeTypeTabs(1);
-        await dispatch(action3)
-        const action2 = changeData([...dataa])
-        await dispatch(action2)
-        renderData()
-      })
-        .catch(err => {
-          console.log(err);
-
+          const action4 = changeTypeTabs(1);
+          await dispatch(action4)
+          const action2 = changeData([...dataa])
+          await dispatch(action2)
         })
-    } else if (phanQuyen.length === 1 && phanQuyen.join('') !== 'Admin') {
-      let dataa = []
-      let label = []
-      /// check đăng nhập trước rồi mới call api
-      ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}&sort=clId-desc`).then(async rs => {
-        for (let x in rs) {
-          let item = rs[x]
-          dataa.push(
-            createData(
-              item.clId,
-              item.clMaThietBi,
-              item.clMaTool,
-              item.clHoTen,
-              item.clSdt,
-              item.clGmail,
-              item.clChucVu,
-              item.clNoiLamViec,
-              item.clNgayDangKy,
-              item.clNgayHetHan
-            )
-          )
-
-        }
-        // setMainDataUser(dataa)
-        const action3 = changeTypeTabs(1);
-        await dispatch(action3)
-        const action2 = changeData([...dataa])
-        await dispatch(action2)
-        renderData()
-      }).catch(err => {
-        console.log(err);
       })
-    } else if (phanQuyen.length !== 1) {
+  }
+
+
+  const getAllUserByQuyen = () => {
+    const quyenArr = getItemLocalStorage('dataQuyen');
+    if (quyenArr.length === 1) {
+      let dataa = []
+      ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}&sort=clId-desc`)
+        .then(async rs => {
+          rs.map(item => {
+            dataa.push(
+              createData(
+                item.clId,
+                item.clMaThietBi,
+                item.clMaTool,
+                item.clHoTen,
+                item.clSdt,
+                item.clGmail,
+                item.clChucVu,
+                item.clNoiLamViec,
+                item.clNgayDangKy,
+                item.clNgayHetHan
+              )
+            )
+            // setMainDataUser(dataa)
+
+          })
+          const action3 = changeTypeTabs(1);
+          await dispatch(action3)
+
+          const action2 = changeData([...dataa])
+          await dispatch(action2)
+        })
+    } else {
       let dataCurrent = [];
-      phanQuyen.map(quyen => {
+      quyenArr.map(quyen => {
         let dataa1 = [];
         ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
           .then(async rs => {
@@ -151,34 +140,187 @@ export default function Home({ phanQuyen }) {
                 item.clNgayHetHan
               ))
             })
-             dataCurrent = [...dataCurrent, ...dataa1];
-            // const action3 = changeTypeTabs(1);
-            // await dispatch(action3)
-            // const action2 = changeData(dataCurrent)
-            // await dispatch(action2)
-            // renderData()
-            await renderUserTool(dataCurrent);
+            dataCurrent = [...dataCurrent, ...dataa1];
+            const action3 = changeTypeTabs(1);
+            await dispatch(action3)
+
+            const action2 = changeData([...dataCurrent])
+            await dispatch(action2)
           })
       })
     }
+
+  }
+
+  const getUserToolByFilter = () => {
+    let toolData = [];
+    let allToolData = [];
+    tenTool.forEach((tool, index) => {
+      ajaxCallGet(`user-tool?queries=clMaTool=${tool}&sort=clId-desc`).then(async rss => {
+
+        rss.map((rs, index) => {
+          let infoUserTool = createData(rs.clId,
+            rs.clMaThietBi,
+            rs.clMaTool,
+            rs.clHoTen,
+            rs.clSdt,
+            rs.clGmail,
+            rs.clChucVu,
+            rs.clNoiLamViec,
+            rs.clNgayDangKy,
+            rs.clNgayHetHan)
+          toolData.push(infoUserTool);
+        })
+        allToolData = [...toolData];
+        const action3 = changeTypeTabs(1);
+        await dispatch(action3)
+        const action2 = changeData([...allToolData])
+        await dispatch(action2)
+
+      })
+    })
+  }
+
+  // Lấy hết mã tool ném vào local
+
+  React.useEffect(() => {
+
+    if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+      getUserToolByFilter();
+    } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
+      getAllUser();
+    } else {
+      getAllUserByQuyen()
+    }
+    renderData()
+
+
   }, [])
 
+  // if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+  //   let dataa = []
+  //   let label = []
+  //   ajaxCallGet(`user-tool/find-all`).then(async rs => {
+
+  //     for (let x in rs.data) {
+  //       let item = rs.data[x]
+  //       dataa.push(
+  //         createData(
+  //           item.clId,
+  //           item.clMaThietBi,
+  //           item.clMaTool,
+  //           item.clHoTen,
+  //           item.clSdt,
+  //           item.clGmail,
+  //           item.clChucVu,
+  //           item.clNoiLamViec,
+  //           item.clNgayDangKy,
+  //           item.clNgayHetHan
+  //         )
+  //       )
+
+  //     }
+  //     // setMainDataUser(dataa)
+  //     const action3 = changeTypeTabs(1);
+  //     await dispatch(action3)
+  //     const action2 = changeData([...dataa])
+  //     await dispatch(action2)
+  //     renderData()
+  //   })
+  //     .catch(err => {
+  //       console.log(err);
+
+  //     })
+  // } else if (phanQuyen.length === 1 && phanQuyen.join('') !== 'Admin' && tenTool.length !== 0) {
+  //   let dataa = []
+  //   let label = []
+  //   /// check đăng nhập trước rồi mới call api
+  //   ajaxCallGet(`user-tool/find-by-matool?clMaTool=${phanQuyen.join('')}&sort=clId-desc`).then(async rs => {
+  //     for (let x in rs) {
+  //       let item = rs[x]
+  //       dataa.push(
+  //         createData(
+  //           item.clId,
+  //           item.clMaThietBi,
+  //           item.clMaTool,
+  //           item.clHoTen,
+  //           item.clSdt,
+  //           item.clGmail,
+  //           item.clChucVu,
+  //           item.clNoiLamViec,
+  //           item.clNgayDangKy,
+  //           item.clNgayHetHan
+  //         )
+  //       )
+
+  //     }
+  //     // setMainDataUser(dataa)
+  //     const action3 = changeTypeTabs(1);
+  //     await dispatch(action3)
+  //     const action2 = changeData([...dataa])
+  //     await dispatch(action2)
+  //     renderData()
+  //   }).catch(err => {
+  //     console.log(err);
+  //   })
+  // } else if (phanQuyen.length !== 1 && tenTool.length !== 0) {
+  //   let dataCurrent = [];
+  //   phanQuyen.map(quyen => {
+  //     let dataa1 = [];
+  //     ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
+  //       .then(async rs => {
+  //         rs.map(item => {
+  //           dataa1.push(createData(
+  //             item.clId,
+  //             item.clMaThietBi,
+  //             item.clMaTool,
+  //             item.clHoTen,
+  //             item.clSdt,
+  //             item.clGmail,
+  //             item.clChucVu,
+  //             item.clNoiLamViec,
+  //             item.clNgayDangKy,
+  //             item.clNgayHetHan
+  //           ))
+  //         })
+  //         dataCurrent = [...dataCurrent, ...dataa1];
+  //         // const action3 = changeTypeTabs(1);
+  //         // await dispatch(action3)
+  //         // const action2 = changeData(dataCurrent)
+  //         // await dispatch(action2)
+  //         // renderData()
+  //         await renderUserTool(dataCurrent);
+  //       })
+  //   })
+  // } else if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
+
+  // } else if (phanQuyen.join('') !== 'Admin' && tenTool.length !== 0) {
 
   // }
 
-  const renderUserTool = (dataCurrent) => {
-    const action3 = changeTypeTabs(1);
-    dispatch(action3)
-    dispatch(changeData([...dataCurrent]))
-    renderData()
-  }
+  // }
+
+  // const renderUserTool = (dataCurrent) => {
+  //   const action3 = changeTypeTabs(1);
+  //   dispatch(action3)
+  //   dispatch(changeData([...dataCurrent]))
+  //   renderData()
+  // }
 
 
   const handleData = (type, data) => {
     if (data.length > 0) {
 
       return (
-        <TableQl type={type} onCountItem={setAccountChinhThuc} data={data} />
+        <TableQl
+          tenTool={tenTool}
+          setTenTool={setTenTool}
+          getUserToolByFilter={getUserToolByFilter}
+          getAllUserByQuyen={getAllUserByQuyen}
+          getAllUser={getAllUser}
+          type={type}
+          onCountItem={setAccountChinhThuc}
+          data={data} />
       )
     }
   }

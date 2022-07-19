@@ -1,4 +1,5 @@
 import * as React from 'react'
+import $ from 'jquery'
 import PropTypes from 'prop-types'
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
@@ -33,8 +34,8 @@ import { changeData, changeTypeTabs } from '../../reducer_action/DataUserToolRed
 import FormEditUserToolGeneral from '../FormEditUserToolGeneral'
 import FormActivateKey from '../FormActivateKey'
 import MenuFilter from '../MenuFilter'
-import Header from '../Header'
-import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
 
 const userToolContext = React.createContext()
 
@@ -216,9 +217,9 @@ export default function TableQl(props) {
   const [ngayHetHan, setNgayHetHan] = React.useState('');
   const [dataUserTool, setDataUserTool] = React.useState([]);
 
-  const [tenTool, setTenTool] = React.useState([]);
-
   const phanQuyen = getItemLocalStorage('dataQuyen');
+
+  const [checkedFilter, setCheckedFilter] = React.useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openFilterList = Boolean(anchorEl);
@@ -276,11 +277,11 @@ export default function TableQl(props) {
           <React.Fragment>
             <Tooltip title='Kích hoạt Key' onClick={handleClickOpenActivate}>
               <IconButton>
-                <ChangeHistoryIcon />
+                <AddCircleOutlineIcon />
               </IconButton>
             </Tooltip>
 
-            <Tooltip title='Add User Tool' onClick={handleClickOpen}>
+            <Tooltip title='Thêm người dùng' onClick={handleClickOpen}>
               <IconButton>
                 <AddIcon />
               </IconButton>
@@ -399,12 +400,12 @@ export default function TableQl(props) {
         .then(rs => {
           setSelected([]);
           handleCloseEditGeneral();
-          if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-            getUserToolByFilter();
-          } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-            getAllUser();
+          if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+            props.getUserToolByFilter();
+          } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+            props.getAllUser();
           } else {
-            getAllUserByQuyen()
+            props.getAllUserByQuyen()
           }
         })
         .catch(err => (console.log("error: ", err)))
@@ -430,12 +431,12 @@ export default function TableQl(props) {
         ajaxCallPost(`user-tool/delete?id=${id}`)
           .then(rs => {
             setSelected([]);
-            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-              getUserToolByFilter();
-            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-              getAllUser();
+            if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+              props.getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+              props.getAllUser();
             } else {
-              getAllUserByQuyen()
+              props.getAllUserByQuyen()
             }
           })
           .catch(err => {
@@ -542,12 +543,12 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
-            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-              getUserToolByFilter();
-            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-              getAllUser();
+            if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+              props.getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+              props.getAllUser();
             } else {
-              getAllUserByQuyen()
+              props.getAllUserByQuyen()
             }
           })
       })
@@ -591,12 +592,12 @@ export default function TableQl(props) {
         ajaxCallPost('user-tool', data)
           .then(rs => {
             toast.success('Sửa thành công')
-            if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-              getUserToolByFilter();
-            } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-              getAllUser();
+            if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+              props.getUserToolByFilter();
+            } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+              props.getAllUser();
             } else {
-              getAllUserByQuyen()
+              props.getAllUserByQuyen()
             }
           })
       })
@@ -621,12 +622,12 @@ export default function TableQl(props) {
       ajaxCallPost(`user-tool/delete?id=${id}`)
         .then(rs => {
           toast.success('Xóa thành công')
-          if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-            getUserToolByFilter();
-          } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-            getAllUser();
+          if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+            props.getUserToolByFilter();
+          } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+            props.getAllUser();
           } else {
-            getAllUserByQuyen()
+            props.getAllUserByQuyen()
           }
         })
         .catch(err => {
@@ -647,67 +648,6 @@ export default function TableQl(props) {
 */
 
 
-  const getAllUserByQuyen = () => {
-    const quyenArr = getItemLocalStorage('dataQuyen');
-    if (quyenArr.length === 1) {
-      let dataa = []
-      ajaxCallGet(`user-tool?queries=clMaTool=${quyenArr.join('')}&sort=clId-desc`)
-        .then(async rs => {
-          rs.map(item => {
-            dataa.push(
-              createData(
-                item.clId,
-                item.clMaThietBi,
-                item.clMaTool,
-                item.clHoTen,
-                item.clSdt,
-                item.clGmail,
-                item.clChucVu,
-                item.clNoiLamViec,
-                item.clNgayDangKy,
-                item.clNgayHetHan
-              )
-            )
-            // setMainDataUser(dataa)
-
-          })
-          const action3 = changeTypeTabs(1);
-          await dispatch(action3)
-
-          const action2 = changeData([...dataa])
-          await dispatch(action2)
-        })
-    } else {
-      let dataCurrent = [];
-      quyenArr.map(quyen => {
-        let dataa1 = [];
-        ajaxCallGet(`user-tool?queries=clMaTool=${quyen}&sort=clId-desc`)
-          .then(async rs => {
-            rs.map(item => {
-              dataa1.push(createData(
-                item.clId,
-                item.clMaThietBi,
-                item.clMaTool,
-                item.clHoTen,
-                item.clSdt,
-                item.clGmail,
-                item.clChucVu,
-                item.clNoiLamViec,
-                item.clNgayDangKy,
-                item.clNgayHetHan
-              ))
-            })
-            dataCurrent = [...dataCurrent, ...dataa1];
-            const action3 = changeTypeTabs(1);
-            await dispatch(action3)
-
-            const action2 = changeData([...dataCurrent])
-            await dispatch(action2)
-          })
-      })
-    }
-
-  }
 
   const getAllUserByNhieuQuyen = () => {
     const quyenArr = getItemLocalStorage('dataQuyen');
@@ -739,58 +679,6 @@ export default function TableQl(props) {
         })
     })
   }
-
-  /**
-* Hàm lấy ra tất cả các user-tool
-* dùng cho người có quyền cao nhất 
-*
-* @param 
-* @author HieuTN
-*/
-
-  const getAllUser = () => {
-    let dataa = []
-    ajaxCallGet('user-tool/find-all')
-      .then(rs => {
-        rs.data.map(async item => {
-          dataa.push(
-            createData(
-              item.clId,
-              item.clMaThietBi,
-              item.clMaTool,
-              item.clHoTen,
-              item.clSdt,
-              item.clGmail,
-              item.clChucVu,
-              item.clNoiLamViec,
-              item.clNgayDangKy,
-              item.clNgayHetHan,
-            )
-          )
-          // setMainDataUser(dataa)
-          // const action3 = changeTypeTabs(1);
-          // dispatch(action3)
-          // const action2 = changeData([createData(
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null ,
-          //   null 
-          // )])
-          // dispatch(action2)
-          const action4 = changeTypeTabs(1);
-          await dispatch(action4)
-          const action2 = changeData([...dataa])
-          await dispatch(action2)
-        })
-      })
-  }
-
 
   /**
 * Mở ra dialog thêm user-tool
@@ -889,34 +777,34 @@ export default function TableQl(props) {
       })
   }
 
-  const getUserToolByFilter = () => {
-    let toolData = [];
-    let allToolData = [];
-    tenTool.forEach((tool, index) => {
-      ajaxCallGet(`user-tool?queries=clMaTool=${tool}&sort=clId-desc`).then(async rss => {
+  // const getUserToolByFilter = () => {
+  //   let toolData = [];
+  //   let allToolData = [];
+  //   props.tenTool.forEach((tool, index) => {
+  //     ajaxCallGet(`user-tool?queries=clMaTool=${tool}&sort=clId-desc`).then(async rss => {
 
-        rss.map((rs, index) => {
-          let infoUserTool = createData(rs.clId,
-            rs.clMaThietBi,
-            rs.clMaTool,
-            rs.clHoTen,
-            rs.clSdt,
-            rs.clGmail,
-            rs.clChucVu,
-            rs.clNoiLamViec,
-            rs.clNgayDangKy,
-            rs.clNgayHetHan)
-          toolData.push(infoUserTool);
-        })
-        allToolData = [...toolData];
-        const action3 = changeTypeTabs(1);
-        await dispatch(action3)
-        const action2 = changeData([...allToolData])
-        await dispatch(action2)
+  //       rss.map((rs, index) => {
+  //         let infoUserTool = createData(rs.clId,
+  //           rs.clMaThietBi,
+  //           rs.clMaTool,
+  //           rs.clHoTen,
+  //           rs.clSdt,
+  //           rs.clGmail,
+  //           rs.clChucVu,
+  //           rs.clNoiLamViec,
+  //           rs.clNgayDangKy,
+  //           rs.clNgayHetHan)
+  //         toolData.push(infoUserTool);
+  //       })
+  //       allToolData = [...toolData];
+  //       const action3 = changeTypeTabs(1);
+  //       await dispatch(action3)
+  //       const action2 = changeData([...allToolData])
+  //       await dispatch(action2)
 
-      })
-    })
-  }
+  //     })
+  //   })
+  // }
 
 
   /**
@@ -959,12 +847,12 @@ export default function TableQl(props) {
                 .then(rs => {
                   toast.success('Sửa phiếu thành công')
                   handleCloseEdit()
-                  if (phanQuyen.join('') === "Admin" && tenTool.length !== 0) {
-                    getUserToolByFilter();
-                  } else if (phanQuyen.join('') === "Admin" && tenTool.length === 0) {
-                    getAllUser();
+                  if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+                    props.getUserToolByFilter();
+                  } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+                    props.getAllUser();
                   } else {
-                    getAllUserByQuyen()
+                    props.getAllUserByQuyen()
                   }
                 })
                 .catch(err => (console.log("error: ", err)))
@@ -983,12 +871,11 @@ export default function TableQl(props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
-
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
       {/* <Button variant="outlined" onClick={handleClickOpen}>Add</Button> */}
       {/* <Button variant="outlined" onClick={handleClickOpenEditGeneral}>Edit General</Button> */}
-      {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={tenTool} setTenTool={setTenTool} />}
+      {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={props.tenTool} setTenTool={props.setTenTool} checked={checkedFilter} setChecked={setCheckedFilter} />}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
@@ -1017,11 +904,12 @@ export default function TableQl(props) {
                     <TableRow
                       hover
                       role='checkbox'
-                      // onClick={event => handleClickCheck(event, row.mathietbi)}
+                      // onClick={event => handleClickOpenEdit(row.id)}
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.mathietbi + index}
                       selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
                     >
                       <TableCell padding='checkbox'>
                         <Checkbox
@@ -1035,25 +923,42 @@ export default function TableQl(props) {
                       </TableCell>
                       <TableCell
                         style={{ 'whiteSpace': 'nowrap' }}
+                        onClick={event => handleClickOpenEdit(row.id)}
+
                       >
                         {row.hovaten}
                       </TableCell>
-                      <TableCell align='center'>{row.matool}</TableCell>
-                      <TableCell align='center'>{row.sdt}</TableCell>
-                      <TableCell align='center'>
+                      <TableCell
+                        align='center'
+                        onClick={event => handleClickOpenEdit(row.id)}
+
+                      >{row.matool}</TableCell>
+                      <TableCell
+                        align='center'
+                        onClick={event => handleClickOpenEdit(row.id)}
+                      >{row.sdt}</TableCell>
+                      <TableCell
+                        align='center'
+                        onClick={event => handleClickOpenEdit(row.id)}
+                      >
                         <input
                           value={row.ngaydangky}
                           type='date'
                           // onChange={(e) => handleChangeNgayDangKy(e, row.id)}
-                          defaultValue={row.ngaydangky}
+                          // defaultValue={row.ngaydangky}
+                          readOnly
                         />
                       </TableCell>
-                      <TableCell align='center'>
+                      <TableCell
+                        align='center'
+                        onClick={event => handleClickOpenEdit(row.id)}
+                      >
                         <input
                           value={row.ngayhethan}
                           type='date'
                           // onChange={(e) => handleChangeNgayHetHan(e, row.id)}
-                          defaultValue={row.ngayhethan}
+                          // defaultValue={row.ngayhethan}
+                          readOnly
                         />
                       </TableCell>
                       <TableCell>
@@ -1061,7 +966,7 @@ export default function TableQl(props) {
                           <Button style={{ color: '#f3341e', border: '1px solid #f3341e' }} onClick={() => handleDelete(row.id)} variant="outlined" startIcon={<DeleteIcon />}>
                             Xóa
                           </Button>
-                          <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button>
+                          {/* <Button onClick={() => handleClickOpenEdit(row.id)} variant="contained" endIcon={<i style={{ color: '#fff' }} className="fas fa-edit"></i>}>Sửa</Button> */}
                         </Stack>
                       </TableCell>
 
@@ -1093,8 +998,8 @@ export default function TableQl(props) {
       <FormAddUserTool
         open={open}
         handleClose={handleClose}
-        getAllUserByQuyen={getAllUserByQuyen}
-        getAllUser={getAllUser}
+        getAllUserByQuyen={props.getAllUserByQuyen}
+        getAllUser={props.getAllUser}
       />
       <FormEditUserTool
         id={userId}
