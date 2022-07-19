@@ -7,7 +7,6 @@ import * as React from 'react'
 import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData } from '../libs/base'
 import { changeData, changeTypeTabs } from '../reducer_action/DataUserToolReducerAction'
 import { toast } from 'wc-toast';
-import App from '.././logo.png'
 import MediaQuery, { useMediaQuery } from "react-responsive";
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -23,7 +22,7 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import MenuAppBar from './MenuAppBar';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-
+import { IMAGES } from '../libs/Const_Image';
 
 
 
@@ -59,8 +58,6 @@ const Header = () => {
 
   const phanQuyen = getItemLocalStorage('dataQuyen');
   const localTenUserAdmin = getItemLocalStorage('tenUserAdmin');
-
-  console.log(localTenUserAdmin)
 
   const inputHandlerOfAdmin = e => {
     clearTimeout(time)
@@ -155,136 +152,96 @@ const Header = () => {
     <div className='header mt-2 d-flex justify-content-between align-items-center'>
       <Link to="/">
         <div>
-          <img src="https://rdsic.edu.vn/img/logo.png" style={{ width: "150px" }} />
+          <img src={IMAGES.LOGO} style={{ width: "120px" }} />
           {/* <span className='logo-header mb-0'>{phanQuyen.join('')}</span> */}
         </div>
       </Link>
-      <MediaQuery minWidth={787}>
-        <div className="header-right">
+      <React.Fragment>
+        <Box sx={{display: 'flex', alignItems: 'center', textAlign: 'center' }}>
           <TextField
-            style={{ marginRight: '32px' }}
             id='outlined-basic'
             onChange={phanQuyen.join('') === "Admin" ? inputHandlerOfAdmin : inputHandlerOfQuyen}
             label='Tìm kiếm'
             variant='outlined'
+            style={{margin: '0px 16px'}}
           />
-          <MenuAppBar />
-          <div className="line" style={{ display: "none" }}></div>
-          <span style={{ fontSize: "14px", fontWeight:"500", color: '#d3821e', textDecoration: 'underline' }}>Hi: {localTenUserAdmin}</span>
-          <Link className="text-register" style={{ marginRight: '34px', marginLeft: "16px" }} to='/user-admin'>{phanQuyen.join('') === "Admin" && "User Admin"}</Link >
-          <Link className="text-register" onClick={handleLogOut} to='/login'>Đăng xuất</Link >
-        </div>
-      </MediaQuery>
-      {/* Responsive for mobile */}
-      {isMobile &&
-        <React.Fragment>
-          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-            {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
+          {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
                 <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
-            <Tooltip title="Account settings">
-              <IconButton
-                onClick={handleClick}
-                size="small"
-                sx={{ ml: 2 }}
-                aria-controls={open ? 'account-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-              >
-                <AccountCircle sx={{ width: 32, height: 32 }} />
-              </IconButton>
-            </Tooltip>
-          </Box>
-          <Menu
-            anchorEl={anchorEl}
-            id="account-menu"
-            open={open}
-            onClose={handleClose}
-            // onClick={handleClose}
-            PaperProps={{
-              elevation: 0,
-              sx: {
-                minWidth: '200px',
-                overflow: 'visible',
-                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                mt: 1.5,
-                '& .MuiAvatar-root': {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                '&:before': {
-                  content: '""',
-                  display: 'block',
-                  position: 'absolute',
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: 'background.paper',
-                  transform: 'translateY(-50%) rotate(45deg)',
-                  zIndex: 0,
-                },
+          <Tooltip title="Account settings">
+            <IconButton
+              onClick={handleClick}
+              size="small"
+              sx={{ ml: 2 }}
+              aria-controls={open ? 'account-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+            >
+              <AccountCircle sx={{ color: '#c36a2e', width: 32, height: 32 }} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          // onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              minWidth: '200px',
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
               },
-            }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem style={{ fontSize: "14px", fontWeight:"500", color: '#d3821e', textDecoration: 'underline' }}>
-              <Avatar /> {localTenUserAdmin}
-            </MenuItem>
-            <MenuItem>
-              <Avatar /> {phanQuyen.join('')}
-            </MenuItem>
-            <Divider />
-            {phanQuyen.join('') === "Admin" && <MenuItem>
-              <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>
-                <ListItemIcon>
-                  <PersonAdd style={{ fontSize: "20px" }} />
-                </ListItemIcon>
-                User Admin
-              </Link >
-            </MenuItem>
-            }
-
-
-
-
-            <MenuItem onClick={handleLogOut}>
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          <MenuItem style={{ fontSize: "14px", fontWeight: "500", color: '#d3821e' }}>
+            <Avatar /> {localTenUserAdmin}
+          </MenuItem>
+          <MenuItem>
+            <Avatar sx={{ fontSize: '15px' }} /> {phanQuyen.join('')}
+          </MenuItem>
+          <Divider />
+          {phanQuyen.join('') === "Admin" && <MenuItem>
+            <Link className="text-register" style={{ marginRight: '34px' }} to='/user-admin'>
               <ListItemIcon>
-                <Logout fontSize="small" />
+                <PersonAdd style={{ fontSize: "20px" }} />
               </ListItemIcon>
-              Logout
-            </MenuItem>
-          </Menu>
-        </React.Fragment>
-      }
-
+              Quản lý tài khoản
+            </Link >
+          </MenuItem>
+          }
+          <MenuItem onClick={handleLogOut}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Đăng xuất
+          </MenuItem>
+        </Menu>
+      </React.Fragment>
     </div>
   )
-  // } else if (phanQuyen.join('') !== "Admin") {
-  //   return (
-  //     <div className='header mt-2 d-flex justify-content-between'>
-  //       <Link to="/">
-  //         <div>
-  //           <i className="logo-icon fab fa-accusoft"></i>
-  //           <span className='logo-header mb-0'>GoodChild</span>
-  //         </div></Link>
-  //       <div>
-  //         <TextField
-  //           style={{ marginRight: '32px' }}
-  //           id='outlined-basic'
-  //           onChange={inputHandlerOfQuyen}
-  //           label='Tìm kiếm'
-  //           variant='outlined'
-  //         />
-  //         <span className="text-log">{phanQuyen.join('')}</span >
-  //         <div className="line" style={{ display: "none" }}></div>
-  //         <Link onClick={handleLogOut} className="text-register" style={{ marginRight: '34px' }} to='/login'>Đăng xuất</Link >
-  //       </div>
-  //     </div>
-  //   )
-  // }
 }
 
 export default Header;

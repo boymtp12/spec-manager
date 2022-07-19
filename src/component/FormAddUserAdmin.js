@@ -30,13 +30,13 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
         }
         ajaxCallPost(`user-admin/save-new`, userData)
             .then(rs => {
-                toast.success('Thêm User Admin thành công');
+                toast.success('Thêm tài khoản thành công');
                 handleClose();
                 getAllUser();
                 clearDataAfterSubmit();
             })
             .catch(err => {
-                toast.error('Thêm User Admin thất bại')
+                toast.error('Thêm tài khoản thất bại')
                 console.log(err);
                 clearDataAfterSubmit();
             })
@@ -56,7 +56,7 @@ export default function FormAddUserAdmin({ open, handleClose, getAllUser }) {
     return (
         <div>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Thêm User Admin</DialogTitle>
+                <DialogTitle>Thêm tài khoản</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>
