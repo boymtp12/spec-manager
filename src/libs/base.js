@@ -6,8 +6,8 @@ var url = window.location.href.split('/')
 // if (url[3].length == 0) {
 //     URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[4] + "/"
 // }
-// export const URL_MAIN = window.location.origin + '/'
-export const URL_MAIN = 'https://spec.edu.vn/etool/'
+export const URL_MAIN = window.location.origin + '/'
+// export const URL_MAIN = 'https://spec.edu.vn/etool/'
 
 
 //const URL_HTTP = 'http://localhost:9667/'
