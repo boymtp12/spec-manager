@@ -14,10 +14,10 @@ import FilterListIcon from '@mui/icons-material/FilterList'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Tooltip from '@mui/material/Tooltip'
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { toast } from 'wc-toast';
 
-export default function MenuFilter({ tenTool, setTenTool }) {
+export default function MenuFilter({ tenTool, setTenTool, checked, setChecked }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const allTool = getItemLocalStorage('all-tool')
 
@@ -35,7 +35,9 @@ export default function MenuFilter({ tenTool, setTenTool }) {
         setAnchorEl(null);
     }
 
-    const [checked, setChecked] = React.useState([]);
+
+
+    const [searchTerm, setSearchTerm] = React.useState('');
 
     const handleToggle = (id, tool) => () => {
         const currentIndex = checked.indexOf(id);
@@ -59,6 +61,12 @@ export default function MenuFilter({ tenTool, setTenTool }) {
         setChecked(newChecked);
         setTenTool(newTenTool)
     };
+
+
+    const handleChangeSearchInput = (e) => {
+        setSearchTerm(e.target.value);
+
+    }
 
 
     React.useEffect(() => {
@@ -127,7 +135,7 @@ export default function MenuFilter({ tenTool, setTenTool }) {
     return (
         <div>
             <Button
-                title='Filter list'
+                title='Lọc mã'
                 id="demo-customized-button"
                 aria-controls={open ? 'demo-customized-menu' : undefined}
                 aria-haspopup="true"
@@ -135,9 +143,11 @@ export default function MenuFilter({ tenTool, setTenTool }) {
                 variant="contained"
                 disableElevation
                 onClick={handleClick}
-                endIcon={<KeyboardArrowDownIcon />}
+                style={{marginLeft: '16px'}}
+                endIcon={<KeyboardArrowDownIcon />
+            }
             >
-                Filter List
+                Lọc mã
             </Button>
             {/* <Tooltip title='Filter list'>
                 <IconButton>
@@ -159,8 +169,19 @@ export default function MenuFilter({ tenTool, setTenTool }) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <List sx={{ width: '100%',display:'flex', overflow: 'auto', bgcolor: 'background.paper' }}>
-                    {allTool.map((value, index) => {
+
+                <List sx={{ minWidth: '350px', bgcolor: 'background.paper' }}>
+                    <TextField
+                        value={searchTerm}
+                        onChange={e => handleChangeSearchInput(e)}
+                        sx={{ marginLeft: '15px', width: '90%' }} id="outlined-basic" label="Tìm kiếm" variant="outlined" />
+                    {allTool.filter((val) => {
+                        if(searchTerm === "") {
+                            return val;
+                        } else if(val.toLowerCase().includes(searchTerm.toLowerCase())) {
+                            return val;
+                        }
+                    }).map((value, index) => {
                         const labelId = `checkbox-list-label-${value}`;
 
                         return (
@@ -173,11 +194,11 @@ export default function MenuFilter({ tenTool, setTenTool }) {
                                 }
                                 disablePadding
                             >
-                                <ListItemButton sx={{width: '220px'}} role={undefined} onClick={handleToggle(index, value)} dense>
+                                <ListItemButton role={undefined} onClick={handleToggle(index, value)} dense>
                                     <ListItemIcon>
                                         <Checkbox
                                             edge="start"
-                                            checked={checked.indexOf(index) !== -1}
+                                            checked={tenTool.includes(value)}
                                             tabIndex={-1}
                                             disableRipple
                                             inputProps={{ 'aria-labelledby': labelId }}
