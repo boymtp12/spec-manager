@@ -7,11 +7,11 @@ var url = window.location.href.split('/')
 //     URL_HTTP = url[0] + "/" + "/" + url[2] + "/" + url[4] + "/"
 // }
 // export const URL_MAIN = window.location.origin + '/'
-export const URL_MAIN = 'https://spec.edu.vn/etool/'
+export const URL_MAIN = 'https://spec.edu.vn/goodchilds/'
 
 
 //const URL_HTTP = 'http://localhost:9667/'
- const URL_HTTP = 'https://spec.edu.vn/goodchilds/'
+const URL_HTTP = 'https://spec.edu.vn/goodchilds/'
 
 const TOKENHEADER_VALUE = getCookie('Authorization')
 export const URL_API_GET = URL_HTTP + 'api/v1/private-get/'
