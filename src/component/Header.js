@@ -152,7 +152,7 @@ const Header = () => {
     <div className='header mt-2 d-flex justify-content-between align-items-center'>
       <Link to="/">
         <div>
-          <img src={IMAGES.LOGO} style={{ width: "120px" }} />
+          <img src={IMAGES.LOGIN} style={{ width: "120px" }} />
           {/* <span className='logo-header mb-0'>{phanQuyen.join('')}</span> */}
         </div>
       </Link>
