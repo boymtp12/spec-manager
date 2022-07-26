@@ -10,21 +10,23 @@ import IconButton from '@mui/material/IconButton';
 import { ajaxCallGet, createData, getItemLocalStorage } from '../libs/base';
 import { changeData, changeTypeTabs } from '../reducer_action/DataUserToolReducerAction';
 import { useDispatch } from 'react-redux';
-import FilterListIcon from '@mui/icons-material/FilterList'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Tooltip from '@mui/material/Tooltip'
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Button, TextField } from '@mui/material';
 import { toast } from 'wc-toast';
+import MediaQuery from "react-responsive";
+
 
 export default function MenuFilter({ tenTool, setTenTool, checked, setChecked }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const allTool = getItemLocalStorage('all-tool')
 
     const dispatch = useDispatch()
+    const itemList = React.useRef()
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
+
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
@@ -35,13 +37,16 @@ export default function MenuFilter({ tenTool, setTenTool, checked, setChecked })
         setAnchorEl(null);
     }
 
-
-
     const [searchTerm, setSearchTerm] = React.useState('');
+
+    const heightFilterList = 50 * Math.floor(allTool.length / 2);
+    const widhtFilterList = 500;
+
 
     const handleToggle = (id, tool) => () => {
         const currentIndex = checked.indexOf(id);
         const currentIndex2 = tenTool.indexOf(tool);
+
 
         const newChecked = [...checked];
         const newTenTool = [...tenTool];
@@ -143,9 +148,9 @@ export default function MenuFilter({ tenTool, setTenTool, checked, setChecked })
                 variant="contained"
                 disableElevation
                 onClick={handleClick}
-                style={{marginLeft: '16px'}}
+                style={{ marginLeft: '16px' }}
                 endIcon={<KeyboardArrowDownIcon />
-            }
+                }
             >
                 Lọc mã
             </Button>
@@ -170,46 +175,104 @@ export default function MenuFilter({ tenTool, setTenTool, checked, setChecked })
                 }}
             >
 
-                <List sx={{ minWidth: '350px', bgcolor: 'background.paper' }}>
-                    <TextField
-                        value={searchTerm}
-                        onChange={e => handleChangeSearchInput(e)}
-                        sx={{ marginLeft: '15px', width: '90%' }} id="outlined-basic" label="Tìm kiếm" variant="outlined" />
-                    {allTool.filter((val) => {
-                        if(searchTerm === "") {
-                            return val;
-                        } else if(val.toLowerCase().includes(searchTerm.toLowerCase())) {
-                            return val;
-                        }
-                    }).map((value, index) => {
-                        const labelId = `checkbox-list-label-${value}`;
 
-                        return (
-                            <ListItem
-                                key={index}
-                                secondaryAction={
-                                    <IconButton edge="end" aria-label="comments">
-                                        <AccountBoxIcon />
-                                    </IconButton>
-                                }
-                                disablePadding
-                            >
-                                <ListItemButton role={undefined} onClick={handleToggle(index, value)} dense>
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            edge="start"
-                                            checked={tenTool.includes(value)}
-                                            tabIndex={-1}
-                                            disableRipple
-                                            inputProps={{ 'aria-labelledby': labelId }}
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText id={labelId} primary={value} />
-                                </ListItemButton>
-                            </ListItem>
-                        );
-                    })}
-                </List>
+                <MediaQuery minWidth='600px'>
+                    <List sx={{ display: 'flex', maxHeight: `${heightFilterList + 60}px`, flexWrap: 'wrap', width: `${widhtFilterList}px`, bgcolor: 'background.paper' }} >
+                        <TextField
+                            value={searchTerm}
+                            onChange={e => handleChangeSearchInput(e)}
+                            sx={{ marginLeft: '15px', width: '95%' }} id="outlined-basic" label="Tìm kiếm" variant="outlined" />
+
+                        {allTool.filter((val) => {
+                            if (searchTerm === "") {
+                                return val;
+                            } else if (val.toLowerCase().includes(searchTerm.toLowerCase())) {
+                                return val;
+                            }
+                        }).map((value, index) => {
+
+                            const labelId = `checkbox-list-label-${value}`;
+
+
+                            return (
+                                <div>
+                                    <ListItem
+                                        sx={{ width: '250px' }}
+                                        key={index}
+                                        secondaryAction={
+                                            <IconButton edge="end" aria-label="comments">
+                                                <AccountBoxIcon />
+                                            </IconButton>
+                                        }
+                                        disablePadding
+                                    >
+                                        <ListItemButton ref={itemList} role={undefined} onClick={handleToggle(index, value)} dense>
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge="start"
+                                                    checked={tenTool.includes(value)}
+                                                    tabIndex={-1}
+                                                    disableRipple
+                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText id={labelId} primary={value} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </div>
+                            );
+                        })}
+                    </List>
+                </MediaQuery>
+                <MediaQuery maxWidth='599px'>
+                    <List sx={{ maxWidth: '350px', bgcolor: 'background.paper' }} >
+                        <TextField
+                            value={searchTerm}
+                            onChange={e => handleChangeSearchInput(e)}
+                            sx={{ marginLeft: '15px', width: '90%' }} id="outlined-basic" label="Tìm kiếm" variant="outlined" />
+
+                        {allTool.filter((val) => {
+                            if (searchTerm === "") {
+                                return val;
+                            } else if (val.toLowerCase().includes(searchTerm.toLowerCase())) {
+                                return val;
+                            }
+                        }).map((value, index) => {
+
+                            const labelId = `checkbox-list-label-${value}`;
+
+
+                            return (
+                                <div>
+                                    <ListItem
+                                        sx={{ width: '250px' }}
+                                        key={index}
+                                        secondaryAction={
+                                            <IconButton edge="end" aria-label="comments">
+                                                <AccountBoxIcon />
+                                            </IconButton>
+                                        }
+                                        disablePadding
+                                    >
+                                        <ListItemButton ref={itemList} role={undefined} onClick={handleToggle(index, value)} dense>
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge="start"
+                                                    checked={tenTool.includes(value)}
+                                                    tabIndex={-1}
+                                                    disableRipple
+                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText id={labelId} primary={value} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </div>
+                            );
+                        })}
+                    </List>
+                </MediaQuery>
+
             </Menu>
         </div>
     );
