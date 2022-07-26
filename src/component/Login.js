@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import Box from '@mui/material/Box';
 import { IMAGES } from '../libs/Const_Image'
+import MediaQuery from 'react-responsive'
 
 const Login = () => {
   let history = useNavigate()
@@ -70,18 +71,18 @@ const Login = () => {
   }
   return (
     <>
-      <div className='limiter' style={!check ? null : {opacity: 0.2}}>
+      <div className='limiter' style={!check ? null : { opacity: 0.2 }}>
         <div className='container-login100'>
           <div className='wrap-login100'>
             <div className='login100-pic js-tilt' data-tilt>
               <img
-                style={{marginTop: '60px'}}
+                style={{ marginTop: '0' }}
                 src={IMAGES.LOGIN}
                 alt='IMG'
               />
             </div>
             <form className='login100-form validate-form' onSubmit={(e) => handleSubmit(e)}>
-              <span className='login100-form-title'>Đăng nhập tài khoản</span>
+            <MediaQuery maxWidth={767}><span className='login100-form-title'><img src={IMAGES.LOGIN} style={{ width: "50%" }} /></span></MediaQuery>
               <div
                 className='wrap-input100 validate-input'
                 data-validate='Valid email is required: ex@abc.xyz'
