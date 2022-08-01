@@ -275,12 +275,6 @@ export default function TableQl(props) {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <Tooltip title='Kích hoạt Key' onClick={handleClickOpenActivate}>
-              <IconButton>
-                <AddCircleOutlineIcon />
-              </IconButton>
-            </Tooltip>
-
             <Tooltip title='Thêm người dùng' onClick={handleClickOpen}>
               <IconButton>
                 <AddIcon />
@@ -875,7 +869,7 @@ export default function TableQl(props) {
     <Paper sx={{ width: '100%', mb: 2 }}>
       {/* <Button variant="outlined" onClick={handleClickOpen}>Add</Button> */}
       {/* <Button variant="outlined" onClick={handleClickOpenEditGeneral}>Edit General</Button> */}
-      {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={props.tenTool} setTenTool={props.setTenTool} checked={checkedFilter} setChecked={setCheckedFilter} />}
+      {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={props.tenTool} setTenTool={props.setTenTool} checked={checkedFilter} setChecked={setCheckedFilter} handleClickOpenActivate={handleClickOpenActivate} />}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
@@ -1033,6 +1027,7 @@ export default function TableQl(props) {
       <FormActivateKey
         openActivate={openActivate}
         setOpenActivate={setOpenActivate}
+        handleClickOpenActivate={handleClickOpenActivate}
       />
     </Paper>
   )

@@ -17,7 +17,7 @@ import { toast } from 'wc-toast';
 import MediaQuery from "react-responsive";
 
 
-export default function MenuFilter({ tenTool, setTenTool, checked, setChecked }) {
+export default function MenuFilter({ tenTool, setTenTool, checked, setChecked, handleClickOpenActivate }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const allTool = getItemLocalStorage('all-tool')
 
@@ -153,6 +153,16 @@ export default function MenuFilter({ tenTool, setTenTool, checked, setChecked })
                 }
             >
                 Lọc mã
+            </Button>
+
+            <Button
+                title='Kích hoạt App'
+                variant="contained"
+                disableElevation
+                style={{ marginLeft: '16px' }}
+                onClick={handleClickOpenActivate}
+            >
+                Kích hoạt App
             </Button>
             {/* <Tooltip title='Filter list'>
                 <IconButton>
