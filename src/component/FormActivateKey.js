@@ -48,21 +48,22 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         setSdt('');
     }
 
-    const handleCopy = (val) => {
-        navigator.clipboard.writeText(val)
-            .then(rs => {
-                $('.btnCopy').text('Copied')
-            })
-            .catch(err => {
-                console.log(err)
-            })
+    const handleCopy = (text) => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text);
+            $('.btnCopy').text('Copied')
+        }
+        else {
+            console.log(text);
+        }
+
     };
 
 
     return (
         <div>
             <Dialog sx={{ height: '70%' }} open={openActivate} onClose={handleClose}>
-                <DialogTitle style={{widht: '100%',display: 'flex', justifyContent: 'space-between'}}><div>Kích hoạt Key</div>
+                <DialogTitle style={{ widht: '100%', display: 'flex', justifyContent: 'space-between' }}><div>Kích hoạt Key</div>
                     <div><Button style={{ display: 'none' }} className="btnCopy" onClick={e => handleCopy(`${name}_${sdt}_${keyActivate}`)}>Copy</Button></div>
                 </DialogTitle>
 
