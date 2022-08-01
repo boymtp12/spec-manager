@@ -1027,7 +1027,6 @@ export default function TableQl(props) {
       <FormActivateKey
         openActivate={openActivate}
         setOpenActivate={setOpenActivate}
-        handleClickOpenActivate={handleClickOpenActivate}
       />
     </Paper>
   )
