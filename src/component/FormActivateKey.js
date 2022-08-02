@@ -48,16 +48,14 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         setSdt('');
     }
 
-    const handleCopy = (text) => {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(text);
-            $('.btnCopy').text('Copied')
+    async function handleCopy(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          $('.btnCopy').text('Copied')
+        } catch (err) {
+          console.error('Failed to copy: ', err);
         }
-        else {
-            console.log(text);
-        }
-
-    };
+      }
 
 
     return (

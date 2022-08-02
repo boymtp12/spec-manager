@@ -870,6 +870,15 @@ export default function TableQl(props) {
       {/* <Button variant="outlined" onClick={handleClickOpen}>Add</Button> */}
       {/* <Button variant="outlined" onClick={handleClickOpenEditGeneral}>Edit General</Button> */}
       {phanQuyen.join('') !== "Admin" || <MenuFilter tenTool={props.tenTool} setTenTool={props.setTenTool} checked={checkedFilter} setChecked={setCheckedFilter} handleClickOpenActivate={handleClickOpenActivate} />}
+      {phanQuyen.join('') === "Admin" || <Button
+        title='Kích hoạt App'
+        variant="contained"
+        disableElevation
+        style={{ marginLeft: '16px', display: 'inline-block' }}
+        onClick={handleClickOpenActivate}
+      >
+        Kích hoạt App
+      </Button>}
       <EnhancedTableToolbar numSelected={selected.length} />
       <TableContainer>
         <Table
