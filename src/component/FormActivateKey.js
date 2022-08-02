@@ -48,15 +48,18 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         setSdt('');
     }
 
-    async function handleCopy(text) {
-        try {
-          await navigator.clipboard.writeText(text);
-          $('.btnCopy').text('Copied')
-        } catch (err) {
-          console.error('Failed to copy: ', err);
-        }
-      }
+    // async function handleCopy(text) {
+    //     try {
+    //         await navigator.clipboard.writeText(text);
+    //         $('.btnCopy').text('Copied')
+    //     } catch (err) {
+    //         console.error('Failed to copy: ', err);
+    //     }
+    // }
 
+    const handleCopy = (text) => {
+        window.prompt("Nhấn Ctrl + C, Enter", text);
+    }
 
     return (
         <div>
