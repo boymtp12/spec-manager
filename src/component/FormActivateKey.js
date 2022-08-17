@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { tinhTong } from '../libs/base';
+import { toast } from 'wc-toast';
 
 export default function FormActivateKey({ openActivate, setOpenActivate }) {
     const [maThietBi, setMaThietBi] = React.useState('');
@@ -48,16 +49,25 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         setSdt('');
     }
 
-    async function handleCopy(text) {
-        try {
-            await navigator.clipboard.writeText(text);
+    // async function copyToClipboard(text) {
+    //     try {
+    //         await navigator.clipboard.writeText(text);
+    //         $('.btnCopy').text('Copied')
+    //     } catch (err) {
+    //         console.error('Failed to copy: ', err);
+    //     }
+    // }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            toast.success("Đã coppy vào clipboard");
             $('.btnCopy').text('Copied')
-        } catch (err) {
-            console.error('Failed to copy: ', err);
-        }
+        }).catch((error) => {
+            toast.error(`Copy failed!`)
+        })
     }
 
-    // const handleCopy = (text) => {
+    // const copyToClipboard = (text) => {
     //     window.prompt("Nhấn Ctrl + C, Enter", text);
     // }
 
@@ -65,7 +75,7 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         <div>
             <Dialog sx={{ height: '70%' }} open={openActivate} onClose={handleClose}>
                 <DialogTitle style={{ widht: '100%', display: 'flex', justifyContent: 'space-between' }}><div>Kích hoạt Key</div>
-                    <div><Button style={{ display: 'none' }} className="btnCopy" onClick={e => handleCopy(`${name}_${sdt}_${keyActivate}`)}>Copy</Button></div>
+                    <div><Button style={{ display: 'none' }} className="btnCopy" onClick={e => copyToClipboard(`${name}_${sdt}_${keyActivate}`)}>Copy</Button></div>
                 </DialogTitle>
 
                 <DialogContent>
