@@ -11,8 +11,8 @@ export const URL_MAIN = window.location.origin + '/'
 
 
 
-const URL_HTTP = 'http://localhost:9667/'
-// const URL_HTTP = 'https://spec.edu.vn/goodchilds/'
+// const URL_HTTP = 'http://localhost:9667/'
+const URL_HTTP = 'https://spec.edu.vn/goodchilds/'
 
 
 const TOKENHEADER_VALUE = getCookie('Authorization')
