@@ -89,7 +89,7 @@ const Header = () => {
           await dispatch(action2)
           // renderData()
         } else {
-          toast.error('Không có số điện thoại nào khớp @@')
+          // toast.error('Không có số điện thoại nào khớp @@')
         }
       }).catch(err => {
         // console.log(err);
@@ -129,7 +129,7 @@ const Header = () => {
             await dispatch(action2)
             // renderData()
           } else {
-            toast.error('Không có số điện thoại nào khớp @@')
+            // toast.error('Không có số điện thoại nào khớp @@')
           }
         }).catch(err => {
           console.log(err);
