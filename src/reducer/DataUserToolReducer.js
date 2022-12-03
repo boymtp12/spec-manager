@@ -1,6 +1,7 @@
 const initialState = {
   dataUser: [{}],
-  typeTabs: 1
+  typeTabs: 1,
+  inputPhoneNumber: ''
 }
 const DataUserToolReducer = (state = initialState, action) => {
 
@@ -17,6 +18,15 @@ const DataUserToolReducer = (state = initialState, action) => {
         typeTabs: action.typeTabs
       }
     }
+
+    case 'CHANGE_INPUT_PHONE_NUMBER': {
+      return {
+        ...state,
+        inputPhoneNumber: action.inputPhoneNumber
+      }
+    }
+
+
 
     default: {
       return state

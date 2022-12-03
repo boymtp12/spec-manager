@@ -394,13 +394,13 @@ export default function TableQl(props) {
         .then(rs => {
           setSelected([]);
           handleCloseEditGeneral();
-          if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
-            props.getUserToolByFilter();
-          } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
-            props.getAllUser();
-          } else {
-            props.getAllUserByQuyen()
-          }
+          // if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+          //   props.getUserToolByFilter();
+          // } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+          //   props.getAllUser();
+          // } else {
+          //   props.getAllUserByQuyen()
+          // }
         })
         .catch(err => (console.log("error: ", err)))
     }
@@ -841,13 +841,13 @@ export default function TableQl(props) {
                 .then(rs => {
                   toast.success('Sửa phiếu thành công')
                   handleCloseEdit()
-                  if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
-                    props.getUserToolByFilter();
-                  } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
-                    props.getAllUser();
-                  } else {
-                    props.getAllUserByQuyen()
-                  }
+                  // if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
+                  //   props.getUserToolByFilter();
+                  // } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
+                  //   props.getAllUser();
+                  // } else {
+                  //   props.getAllUserByQuyen()
+                  // }
                 })
                 .catch(err => (console.log("error: ", err)))
 

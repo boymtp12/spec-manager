@@ -1,11 +1,11 @@
 import $ from 'jquery'
-import { Checkbox, FormControl, FormControlLabel, FormLabel, TextField, RadioGroup } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, FormLabel, TextField, RadioGroup, Paper } from "@mui/material";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { getItemLocalStorage } from "../libs/base";
 import { useDispatch, useSelector } from 'react-redux'
 import * as React from 'react'
 import { ajaxCallGet, setItemLocalStorage, URL_API_GET, createData } from '../libs/base'
-import { changeData, changeTypeTabs } from '../reducer_action/DataUserToolReducerAction'
+import { changeData, changeInputPhoneNumber, changeTypeTabs } from '../reducer_action/DataUserToolReducerAction'
 import { toast } from 'wc-toast';
 import MediaQuery, { useMediaQuery } from "react-responsive";
 import Box from '@mui/material/Box';
@@ -23,31 +23,20 @@ import Logout from '@mui/icons-material/Logout';
 import MenuAppBar from './MenuAppBar';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { IMAGES } from '../libs/Const_Image';
+import PersonIcon from '@mui/icons-material/Person';
+import { Search } from '@mui/icons-material'
+import { useState } from 'react';
+
 
 
 
 const Header = () => {
   let history = useNavigate();
   const dispatch = useDispatch()
-  const [time, setTime] = React.useState(0)
-  const mainDataUser = useSelector(state => state.userTool.dataUser)
-  const isDesktop = useMediaQuery({
-    query: "(min-width: 1224px)"
-  });
-  const isTablet = useMediaQuery({
-    query: "(max-width: 1224px)"
-  });
-  const isMobile = useMediaQuery({
-    query: "(max-width: 786px)"
-  });
-  const isPortrait = useMediaQuery({
-    query: "(orientation: portrait)"
-  });
-  const isRetina = useMediaQuery({
-    query: "(max-resolution: 300dpi)"
-  });
+  const [time, setTime] = useState(0)
+  const inputPhoneNumber = useSelector(state => state.userTool.inputPhoneNumber)
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -59,13 +48,47 @@ const Header = () => {
   const phanQuyen = getItemLocalStorage('dataQuyen');
   const localTenUserAdmin = getItemLocalStorage('tenUserAdmin');
 
-  const inputHandlerOfAdmin = e => {
-    clearTimeout(time)
-    let tm = setTimeout(async () => {
-      var inputCheck = e.target.value;
-      let dataa = [];
+  const handleSubmitByAdmin = (e) => {
+    e.preventDefault();
+    let dataa = [];
 
-      ajaxCallGet(`user-tool/find-like-sdt-all?sdt=${inputCheck}`).then(async rs => {
+    ajaxCallGet(`user-tool/find-like-sdt-all?sdt=${inputPhoneNumber}`).then(async rs => {
+      if (rs.data[0] !== undefined) {
+        for (let x in rs.data) {
+          let item = rs.data[x]
+          dataa.push(
+            createData(
+              item.clId,
+              item.clMaThietBi,
+              item.clMaTool,
+              item.clHoTen,
+              item.clSdt,
+              item.clGmail,
+              item.clChucVu,
+              item.clNoiLamViec,
+              item.clNgayDangKy,
+              item.clNgayHetHan
+            )
+          )
+        }
+        // setMainDataUser(dataa)
+        const action2 = changeData([...dataa])
+        await dispatch(action2)
+        // renderData()
+      } else {
+        toast.error('Không có số điện thoại nào khớp @@')
+      }
+    }).catch(err => {
+      // console.log(err);
+    })
+
+  }
+
+  const handleSubmitByPhanQuyen = (e) => {
+    e.preventDefault();
+    let dataa = [];
+    for (let i in phanQuyen) {
+      ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputPhoneNumber}&matool=${phanQuyen[i]}`).then(async rs => {
         if (rs.data[0] !== undefined) {
           for (let x in rs.data) {
             let item = rs.data[x]
@@ -89,56 +112,15 @@ const Header = () => {
           await dispatch(action2)
           // renderData()
         } else {
-          // toast.error('Không có số điện thoại nào khớp @@')
+          toast.error('Không có số điện thoại nào khớp @@')
         }
       }).catch(err => {
-        // console.log(err);
+        console.log(err);
       })
-    }, 1000)
-    setTime(tm)
+    }
   }
 
-
-  const inputHandlerOfQuyen = e => {
-    clearTimeout(time)
-    let tm = setTimeout(async () => {
-      var inputCheck = e.target.value;
-      let dataa = [];
-      for (let i in phanQuyen) {
-        ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputCheck}&matool=${phanQuyen[i]}`).then(async rs => {
-          if (rs.data[0] !== undefined) {
-            for (let x in rs.data) {
-              let item = rs.data[x]
-              dataa.push(
-                createData(
-                  item.clId,
-                  item.clMaThietBi,
-                  item.clMaTool,
-                  item.clHoTen,
-                  item.clSdt,
-                  item.clGmail,
-                  item.clChucVu,
-                  item.clNoiLamViec,
-                  item.clNgayDangKy,
-                  item.clNgayHetHan
-                )
-              )
-            }
-            // setMainDataUser(dataa)
-            const action2 = changeData([...dataa])
-            await dispatch(action2)
-            // renderData()
-          } else {
-            // toast.error('Không có số điện thoại nào khớp @@')
-          }
-        }).catch(err => {
-          console.log(err);
-        })
-      }
-    }, 1000)
-    setTime(tm)
-  }
-
+  
   const handleLogOut = () => {
     const action2 = changeData([])
     dispatch(action2)
@@ -157,14 +139,37 @@ const Header = () => {
         </div>
       </Link>
       <React.Fragment>
-        <Box sx={{display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-          <TextField
-            id='outlined-basic'
-            onChange={phanQuyen.join('') === "Admin" ? inputHandlerOfAdmin : inputHandlerOfQuyen}
-            label='Tìm kiếm'
-            variant='outlined'
-            style={{margin: '0px 16px'}}
-          />
+        <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+          <Paper
+            component="form"
+            onSubmit={(e) => { phanQuyen.join('') === "Admin" ? handleSubmitByAdmin(e) : handleSubmitByPhanQuyen(e) }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: 42,
+              border: '1px solid #e3e3e3',
+              pl: 2,
+              boxShadow: 'none',
+              mr: { sm: 5 },
+              maxWidth: { sm: 'auto', lg: '350px' }
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <PersonIcon sx={{ p: '10px', fontSize: '40px' }} />
+              <input
+                className='search-bar'
+                placeholder='Tìm kiếm'
+                value={inputPhoneNumber}
+                onChange={(e) => dispatch(changeInputPhoneNumber(e.target.value))}
+                style={{ border: 'none', outline: 'none', padding: '4px 8px', color: '#696969' }}
+              />
+            </div>
+            <IconButton type="submit" sx={{ p: '10px', color: '#1b78a4', fontWeight: 'bold' }}>
+              <Search />
+            </IconButton>
+          </Paper>
+         
           {/* <Typography sx={{ minWidth: 100 }}>Contact</Typography>
                 <Typography sx={{ minWidth: 100 }}>Profile</Typography> */}
           <Tooltip title="Account settings">
