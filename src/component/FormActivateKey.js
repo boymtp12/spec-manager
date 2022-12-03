@@ -58,14 +58,36 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
     //     }
     // }
 
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            toast.success("Đã coppy vào clipboard");
-            $('.btnCopy').text('Copied')
-        }).catch((error) => {
-            toast.error(`Copy failed!`)
-        })
+    function copyToClipboard(id1, id2, id3) {
+        let copyText1 = document.getElementById(id1)
+        let copyText2 = document.getElementById(id2)
+        let copyText3 = document.getElementById(id3)
+        let copyText = copyText1.value + '_' + copyText2.value + '_' + copyText3.value;
+        copyText1.select()
+        copyText1.setSelectionRange(0, 99999)
+        copyText2.select()
+        copyText2.setSelectionRange(0, 99999)
+        copyText3.select()
+        copyText3.setSelectionRange(0, 99999)
+        navigator.clipboard
+            .writeText(copyText)
+            .then(() => {
+                $('.btnCopy').text('Copied')
+                toast.success('Đã coppy vào clipboard')
+            })
+            .catch(error => {
+                toast.error(`Copy failed!`)
+            })
     }
+
+    // function copyToClipboard(text) {
+    //     navigator.clipboard.writeText(text).then(() => {
+    //         toast.success("Đã coppy vào clipboard");
+    //         $('.btnCopy').text('Copied')
+    //     }).catch((error) => {
+    //         toast.error(`Copy failed!`)
+    //     })
+    // }
 
     // const copyToClipboard = (text) => {
     //     window.prompt("Nhấn Ctrl + C, Enter", text);
@@ -75,7 +97,7 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
         <div>
             <Dialog sx={{ height: '70%' }} open={openActivate} onClose={handleClose}>
                 <DialogTitle style={{ widht: '100%', display: 'flex', justifyContent: 'space-between' }}><div>Kích hoạt Key</div>
-                    <div><Button style={{ display: 'none' }} className="btnCopy" onClick={e => copyToClipboard(`${name}_${sdt}_${keyActivate}`)}>Copy</Button></div>
+                    <div><Button style={{ display: 'none' }} className="btnCopy" onClick={e => copyToClipboard('text_active_name', 'text_active_sdt', 'text_active_key')}>Copy</Button></div>
                 </DialogTitle>
 
                 <DialogContent>
@@ -97,20 +119,21 @@ export default function FormActivateKey({ openActivate, setOpenActivate }) {
                             sx={{ m: 1, width: '250px' }}
                             value={name}
                             onChange={(e) => onChangeName(e)}
-                            id="outlined-basic"
+                            id="text_active_name"
                             label="Họ tên"
                             variant="outlined" />
                         <TextField
                             sx={{ m: 1, width: '250px' }}
                             value={sdt}
                             onChange={(e) => onChangeSdt(e)}
-                            id="outlined-basic"
+                            id="text_active_sdt"
                             label="Số điện thoại"
                             variant="outlined" />
-                        <TextField id="outlined-basic"
+                        <TextField
                             sx={{ m: 1, width: '250px' }}
                             value={keyActivate}
                             label="Key"
+                            id="text_active_key"
                             variant="outlined" />
                     </Box>
                 </DialogContent>
