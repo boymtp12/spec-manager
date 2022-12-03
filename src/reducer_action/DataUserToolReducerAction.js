@@ -10,3 +10,10 @@ export const changeTypeTabs = e => {
     typeTabs: e
   }
 }
+
+export const changeInputPhoneNumber = e => {
+  return {
+    type: 'CHANGE_INPUT_PHONE_NUMBER',
+    inputPhoneNumber: e
+  }
+}
