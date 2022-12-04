@@ -195,6 +195,7 @@ export default function TableQl(props) {
   const mainDataUser = useSelector(state => state.userTool.dataUser)
 
   const [rowsPerPage, setRowsPerPage] = React.useState(25)
+  const inputPhoneNumber = useSelector(state => state.userTool.inputPhoneNumber);
 
   const [date, setDate] = React.useState('')
 
@@ -391,9 +392,10 @@ export default function TableQl(props) {
 
         })
       await ajaxCallPut('user-tool', data)
-        .then(rs => {
+        .then(async rs => {
           setSelected([]);
           handleCloseEditGeneral();
+          await getAllUserByPhone();
           // if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
           //   props.getUserToolByFilter();
           // } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
@@ -801,17 +803,83 @@ export default function TableQl(props) {
   // }
 
 
+  const getAllUserByPhone = async () => {
+    if (phanQuyen[0] === 'Admin') {
+      let dataa = [];
+      console.log('admin')
+      await ajaxCallGet(`user-tool/find-like-sdt-all?sdt=${inputPhoneNumber}`).then(async rs => {
+        if (rs.data[0] !== undefined) {
+          for (let x in rs.data) {
+            let item = rs.data[x]
+            dataa.push(
+              createData(
+                item.clId,
+                item.clMaThietBi,
+                item.clMaTool,
+                item.clHoTen,
+                item.clSdt,
+                item.clGmail,
+                item.clChucVu,
+                item.clNoiLamViec,
+                item.clNgayDangKy,
+                item.clNgayHetHan
+              )
+            )
+          }
+          // setMainDataUser(dataa)
+          const action2 = changeData([...dataa])
+          await dispatch(action2)
+          // renderData()
+        }
+      }).catch(err => {
+        // console.log(err);
+      })
+    } else {
+      let dataa = [];
+      for (let i in phanQuyen) {
+        await ajaxCallGet(`user-tool/find-like-sdt?sdt=${inputPhoneNumber}&matool=${phanQuyen[i]}`).then(async rs => {
+          if (rs.data[0] !== undefined) {
+            for (let x in rs.data) {
+              let item = rs.data[x]
+              dataa.push(
+                createData(
+                  item.clId,
+                  item.clMaThietBi,
+                  item.clMaTool,
+                  item.clHoTen,
+                  item.clSdt,
+                  item.clGmail,
+                  item.clChucVu,
+                  item.clNoiLamViec,
+                  item.clNgayDangKy,
+                  item.clNgayHetHan
+                )
+              )
+            }
+            // setMainDataUser(dataa)
+            const action2 = changeData([...dataa])
+            await dispatch(action2)
+            // renderData()
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      }
+    }
+
+  }
+
   /**
 * Submit sửa
 *
 * @param 
 * @author HieuTN
 */
-  const handleSubmit = () => {
-    ajaxCallGet(`user-tool/${userId}`)
-      .then(rsGet => {
-        ajaxCallPost(`user-tool/delete?id=${userId}`)
-          .then(rs => {
+  const handleSubmit = async () => {
+    await ajaxCallGet(`user-tool/${userId}`)
+      .then(async rsGet => {
+        await ajaxCallPost(`user-tool/delete?id=${userId}`)
+          .then(async rs => {
             for (let i in maTool) {
               let data = {
                 "clMaThietBi": rsGet.clMaThietBi,
@@ -837,10 +905,11 @@ export default function TableQl(props) {
                 "clThoiGianTat": rsGet.clThoiGianTat,
               }
 
-              ajaxCallPost('user-tool', data)
-                .then(rs => {
+              await ajaxCallPost('user-tool', data)
+                .then(async rs => {
                   toast.success('Sửa phiếu thành công')
                   handleCloseEdit()
+                  await getAllUserByPhone();
                   // if (phanQuyen.join('') === "Admin" && props.tenTool.length !== 0) {
                   //   props.getUserToolByFilter();
                   // } else if (phanQuyen.join('') === "Admin" && props.tenTool.length === 0) {
